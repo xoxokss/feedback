@@ -16,7 +16,6 @@ model Project {
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(255)
   content   String?
-  published Boolean  @default(false)
 }
 
 model User {
