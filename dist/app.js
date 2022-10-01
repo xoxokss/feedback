@@ -9,6 +9,9 @@ var app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use("/api", index_1.router);
+app.use("/", function (req, res) {
+    res.send("hello");
+});
 app.listen(8000, function () {
     console.log("server start");
 });

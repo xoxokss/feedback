@@ -7,8 +7,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/api", router);
-app.use("/", (req: express.Request, res: express.Response)=> {res.send("hello")})
+app.use("/", (req: express.Request, res: express.Response) => {
+	res.send("hello");
+});
 
 app.listen(8000, () => {
-  console.log("server start");
+	console.log("server start");
 });
