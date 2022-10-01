@@ -1,6 +1,6 @@
-import express from "express"
-import prisma from "@prisma/client"
+import express from "express";
+import prisma from "@prisma/client";
 
-const addProject = "1"
+const addProject = "1";
 
-export default {addProject}
+export default { addProject };

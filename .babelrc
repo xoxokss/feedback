@@ -24,7 +24,7 @@
 					"@routes": "./src/routes",
 					"@utils": "./src/utils",
 					"@helper": "./src/utils/helper",
-					"@mddleware": "./src/middleware"
+					"@middleware": "./src/utils/middleware"
 				}
 			}
 		]
