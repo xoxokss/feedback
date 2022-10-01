@@ -7,6 +7,6 @@ exports.router = void 0;
 var express_1 = __importDefault(require("express"));
 var router = express_1.default.Router();
 exports.router = router;
-router.get('/', function (req, res) {
-    res.send('api페이지');
+router.get("/", function (req, res) {
+    res.send("api페이지");
 });

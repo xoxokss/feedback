@@ -10,17 +10,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model File {
+  ID          Int       @id @default(autoincrement())
+  FILE_NAME   String    @db.VarChar(255)
+  FILE_URL    String    @db.VarChar(255)
+  CREATED_AT   DateTime  @default(now())
+  UPDATED_AT  DateTime  @updatedAt
+}
+
 model Project {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
+  ID          Int         @id @default(autoincrement())
+  IMAGE_ID    Int         @unique 
+  CREATED_AT   DateTime   @default(now())
+  UPDATED_AT  DateTime    @updatedAt
+  TITLE       String      @db.VarChar(255)
+  INTRO       String      @db.VarChar(255)
+  CONTENT     String      @db.Text
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  userId  String  @unique
-  email   String   @unique
-  nickname    String? @unique
+  ID          Int         @id @default(autoincrement())
+  USERNAME    String      @db.VarChar(100) @unique
+  PASSWORD    String      @db.VarChar(100)
+  EMAIL       String      @db.VarChar(100) @unique
+  NICKNAME    String      @unique
 }
