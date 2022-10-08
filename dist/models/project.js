@@ -36,27 +36,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.projectController = void 0;
-var project_1 = require("@models/project");
-var projectController = {
-    getList: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var projectList, err_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, project_1.project.getProjectList()];
-                case 1:
-                    projectList = _a.sent();
-                    res.status(200).send(projectList);
-                    return [3 /*break*/, 3];
-                case 2:
-                    err_1 = _a.sent();
-                    res.status(500).send(err_1);
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
-            }
+exports.project = void 0;
+var client_1 = require("@prisma/client");
+var prisma = new client_1.PrismaClient();
+var project = {
+    getProjectList: function () {
+        return prisma.project.findMany({
+            include: {
+                IMAGE: true,
+            },
         });
-    }); },
+    },
+    getProject: function (id) {
+        return prisma.project.findUnique({
+            where: {
+                ID: id,
+            },
+            include: {
+                IMAGE: true,
+            },
+        });
+    },
+    addProject: function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+        return [2 /*return*/];
+    }); }); },
+    modifyProject: function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+        return [2 /*return*/];
+    }); }); },
+    removeProject: function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+        return [2 /*return*/];
+    }); }); },
 };
-exports.projectController = projectController;
+exports.project = project;
