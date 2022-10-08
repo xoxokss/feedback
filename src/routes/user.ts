@@ -1,5 +1,5 @@
 import express from "express";
-import UserController from "@controller/user";
+import UserController from "@controller/userController";
 
 //import { authMiddleware } from "@middleware/authMiddleware";
 

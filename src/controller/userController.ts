@@ -4,12 +4,9 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const signup = async (req: Request, res: Response) => {
-  const { userid, email, password, nickname, emailConfirm, passwordConfirm } =
+  const { userid, email, password, nickname} =
     req.body;
   try {
-    // const existUserid = await prisma.user.findUnique({
-    // })
-
     const data = {
       USERNAME: userid,
       EMAIL: email,
