@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
+import { projectController } from "@controller/projectController";
 
 const router = express.Router();
 
-router.get("/", function (req: Request, res: Response) {
-	res.send("api페이지");
-});
+router.get("/", projectController.getList);
+router.post("/", projectController.add);
 
 export default router;
