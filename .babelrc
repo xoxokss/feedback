@@ -1,0 +1,34 @@
+{
+	"presets": [
+		[
+			"@babel/env",
+			{
+				"targets": {
+					"node": "current"
+				}
+			}
+		],
+		"@babel/typescript"
+	],
+	"plugins": [
+		[
+			"module-resolver",
+			{
+				"extensions": [".ts"],
+				"root": ["."],
+				"alias": {
+					"~": "./src",
+					"@config": "./src/config",
+					"@controller": "./src/controller",
+					"@models": "./src/models",
+					"@routes": "./src/routes",
+					"@utils": "./src/utils",
+					"@helper": "./src/utils/helper",
+					"@middleware": "./src/utils/middleware"
+				}
+			}
+		]
+	],
+	"comments": false,
+	"ignore": ["./src/__tests__"]
+}
