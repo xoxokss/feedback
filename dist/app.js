@@ -4,12 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var index_1 = require("./routes/index");
+var index_1 = __importDefault(require("@routes/index"));
 var app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
-app.use("images", express_1.default.static("data/file"));
-app.use("/api", index_1.router);
+app.use("/api", index_1.default);
 app.use("/", function (req, res) {
     res.send("hello");
 });
