@@ -36,19 +36,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.projectController = void 0;
-var project_1 = require("@models/project");
-var projectController = {
-    getList: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var projectList, err_1;
+exports.fileController = void 0;
+var file_1 = require("@models/file");
+var fileController = {
+    upload: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var result, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, project_1.project.getProjectList()];
+                    return [4 /*yield*/, file_1.file.addFile(req.file)];
                 case 1:
-                    projectList = _a.sent();
-                    res.status(200).send(projectList);
+                    result = _a.sent();
+                    res.status(200).send(result);
                     return [3 /*break*/, 3];
                 case 2:
                     err_1 = _a.sent();
@@ -59,4 +59,4 @@ var projectController = {
         });
     }); },
 };
-exports.projectController = projectController;
+exports.fileController = fileController;

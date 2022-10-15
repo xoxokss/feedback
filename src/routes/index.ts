@@ -1,12 +1,16 @@
-import express from "express"
-const router = express.Router()
+import express, { Request, Response } from "express";
+import project from "@routes/project";
+import file from "@routes/file";
+import user from "@routes/user";
 
-import { userRouter } from "./user";
+const router = express.Router();
 
-router.get('/', function (req,res) {
-    res.send('api페이지')
-})
+router.get("/", function (req: Request, res: Response) {
+	res.send("api페이지");
+});
 
-router.use(`/user`, [userRouter]);
+router.use("/project", project);
+router.use("/file", file);
+router.use("/user", user);
 
-export default router
+export { router };
