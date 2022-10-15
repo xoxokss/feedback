@@ -22,14 +22,14 @@ const authMiddleware = async (req: Request, res: Response, next: any) => {
     return;
   }
   try {
-    const { USERNAME } = <jwt.UserIDJwtPayload>(
+    const { userId } = <jwt.UserIDJwtPayload>(
       jwt.verify(tokenValue, "sangseon")
     );
     console.log(tokenType);
     console.log("JWT 인증 미들웨어를 거치고 갔습니다.");
     //const user = await userDB.findById(userId);
     const user = await prisma.user.findUnique({
-      where: { USERNAME: USERNAME },
+      where: { username: userId },
     });
     res.locals.user = user;
     next();

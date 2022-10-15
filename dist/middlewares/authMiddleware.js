@@ -39,11 +39,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.authMiddleware = void 0;
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
 var authMiddleware = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var authorization, _a, tokenType, tokenValue, USERNAME, user, error_1;
+    var authorization, _a, tokenType, tokenValue, username, user, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -58,11 +59,11 @@ var authMiddleware = function (req, res, next) { return __awaiter(void 0, void 0
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
-                USERNAME = (jsonwebtoken_1.default.verify(tokenValue, "sangseon")).USERNAME;
+                username = (jsonwebtoken_1.default.verify(tokenValue, "sangseon")).username;
                 console.log(tokenType);
                 console.log("JWT 인증 미들웨어를 거치고 갔습니다.");
                 return [4 /*yield*/, prisma.user.findUnique({
-                        where: { USERNAME: USERNAME },
+                        where: { username: username },
                     })];
             case 2:
                 user = _b.sent();
@@ -80,4 +81,4 @@ var authMiddleware = function (req, res, next) { return __awaiter(void 0, void 0
         }
     });
 }); };
-exports.default = authMiddleware;
+exports.authMiddleware = authMiddleware;

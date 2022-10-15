@@ -9,16 +9,15 @@ const saltRounds = 10;
 const UserController = {
   //회원가입
   signup: async (req: Request, res: Response) => {
-    const { userid, email, password, nickname } = req.body;
+    const { userId, email, password, nickname } = req.body;
     try {
       //비밀번호 암호화
       const encryptPassword = bcrypt.hashSync(password, saltRounds);
-      
       const data = {
-        USERNAME: userid,
-        EMAIL: email,
-        NICKNAME: nickname,
-        PASSWORD: encryptPassword,
+        username: userId,
+        email: email,
+        nickname: nickname,
+        password: encryptPassword,
       };
       //DB에 유저정보 crete
       await prisma.user.create({
@@ -28,8 +27,8 @@ const UserController = {
       res.send({
         data: "success",
       });
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     } finally {
       async () => {
         await prisma.$disconnect();
@@ -38,27 +37,40 @@ const UserController = {
   },
   //로그인
   login: async (req: Request, res: Response) => {
-    const { userid, password } = req.body;
+    const { userId, password } = req.body;
     try {
       //DB에서 유저 정보 찾기
-      const user: any = await prisma.user.findUnique({
+      const user = await prisma.user.findUnique({
         where: {
-          USERNAME: userid,
+          username: userId,
         },
       });
       //비밀번호 복호화 매치
-      const match = bcrypt.compare(password, user?.PASSWORD);
+      const match = bcrypt.compareSync(password, user?.password ?? "");
       if (!match) {
         return res.status(400).send({ error: "로그인 정보를 확인하세요" });
       }
       //토큰 발행
-      const token = jwt.sign({ userid: user?.USERNAME }, "SECRET", {
+      const token = jwt.sign({ userId: user?.username }, "sangseon", {
         expiresIn: "24h",
       });
       //response
       res.status(200).send({ message: "로그인 성공", token });
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
+      res.status(400).send({
+        error: "로그인 정보를 확인하세요",
+      });
+    }
+  },
+  userInfo: async (req: Request, res: Response) => {
+    const { user } = res.locals;
+    try {
+      return res.status(200).send({message:"hi",
+        userId: user.username,
+      });
+    } catch (error) {
+      console.log(error);
       res.status(400).send({
         error: "로그인 정보를 확인하세요",
       });

@@ -8,34 +8,54 @@ datasource db {
 }
 
 model Project {
-  ID         Int      @id @default(autoincrement())
-  IMAGE_ID   Int      @unique
-  TITLE      String   @db.VarChar(255)
-  INTRO      String   @db.VarChar(255)
-  CONTENT    String   @db.Text
-  CREATED_AT DateTime @default(now())
-  UPDATED_AT DateTime @default(now())
-  File       File     @relation(fields: [IMAGE_ID], references: [ID])
+  id             Int              @id @default(autoincrement())
+  image_id       Int              @unique
+  title          String           @db.VarChar(255)
+  intro          String           @db.VarChar(255)
+  content        String           @db.Text
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @default(now())
+  File           File             @relation(fields: [image_id], references: [id])
+  ProjectsOnTags ProjectsOnTags[]
 }
 
 model User {
-  ID         Int      @id @default(autoincrement())
-  USERNAME   String   @unique @db.VarChar(100)
-  PASSWORD   String   @db.VarChar(100)
-  EMAIL      String   @unique @db.VarChar(100)
-  NICKNAME   String   @unique
-  CREATED_AT DateTime @default(now())
-  UPDATED_AT DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  username   String   @unique @db.VarChar(100)
+  password   String   @db.VarChar(100)
+  email      String   @unique @db.VarChar(100)
+  nickname   String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
 }
 
 model File {
-  ID         Int      @id @default(autoincrement())
-  FILE_NAME  String   @db.VarChar(255)
-  FILE_URL   String   @db.VarChar(255)
-  CREATED_AT DateTime @default(now())
-  UPDATED_AT DateTime
-  FILE_PATH  String   @db.VarChar(255)
-  FILE_SIZE  Int
-  FILE_TYPE  String   @db.VarChar(255)
+  id         Int      @id @default(autoincrement())
+  file_name  String   @db.VarChar(255)
+  file_type  String   @db.VarChar(255)
+  file_size  Int
+  file_path  String   @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime
   Project    Project?
+}
+
+model ProjectsOnTags {
+  project_id Int
+  tag_id     Int
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  Project    Project  @relation(fields: [project_id], references: [id])
+  Tag        Tag      @relation(fields: [tag_id], references: [id])
+
+  @@id([project_id, tag_id])
+  @@index([tag_id], map: "ProjectsOnTags_tag_id_fkey")
+}
+
+model Tag {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @default(now())
+  ProjectsOnTags ProjectsOnTags[]
 }

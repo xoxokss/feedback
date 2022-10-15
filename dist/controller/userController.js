@@ -46,34 +46,38 @@ var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var saltRounds = 10;
 var UserController = {
+    //회원가입
     signup: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var _a, userid, email, password, nickname, encryptPassword, data, err_1;
+        var _a, userId, email, password, nickname, encryptPassword, data, error_1;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    _a = req.body, userid = _a.userid, email = _a.email, password = _a.password, nickname = _a.nickname;
+                    _a = req.body, userId = _a.userId, email = _a.email, password = _a.password, nickname = _a.nickname;
                     _b.label = 1;
                 case 1:
                     _b.trys.push([1, 3, 4, 5]);
                     encryptPassword = bcrypt_1.default.hashSync(password, saltRounds);
                     data = {
-                        USERNAME: userid,
-                        EMAIL: email,
-                        NICKNAME: nickname,
-                        PASSWORD: encryptPassword,
+                        username: userId,
+                        email: email,
+                        nickname: nickname,
+                        password: encryptPassword,
                     };
+                    //DB에 유저정보 crete
                     return [4 /*yield*/, prisma.user.create({
                             data: data,
                         })];
                 case 2:
+                    //DB에 유저정보 crete
                     _b.sent();
+                    //response
                     res.send({
                         data: "success",
                     });
                     return [3 /*break*/, 5];
                 case 3:
-                    err_1 = _b.sent();
-                    console.log(err_1);
+                    error_1 = _b.sent();
+                    console.log(error_1);
                     return [3 /*break*/, 5];
                 case 4:
                     (function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -91,40 +95,61 @@ var UserController = {
             }
         });
     }); },
+    //로그인
     login: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var _a, userid, password, user, match, token, err_2;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _a, userId, password, user, match, token, error_2;
+        var _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
-                    _a = req.body, userid = _a.userid, password = _a.password;
-                    _b.label = 1;
+                    _a = req.body, userId = _a.userId, password = _a.password;
+                    _c.label = 1;
                 case 1:
-                    _b.trys.push([1, 3, , 4]);
+                    _c.trys.push([1, 3, , 4]);
                     return [4 /*yield*/, prisma.user.findUnique({
                             where: {
-                                USERNAME: userid,
+                                username: userId,
                             },
                         })];
                 case 2:
-                    user = _b.sent();
-                    match = bcrypt_1.default.compare(password, user === null || user === void 0 ? void 0 : user.PASSWORD);
+                    user = _c.sent();
+                    match = bcrypt_1.default.compareSync(password, (_b = user === null || user === void 0 ? void 0 : user.password) !== null && _b !== void 0 ? _b : "");
                     if (!match) {
                         return [2 /*return*/, res.status(400).send({ error: "로그인 정보를 확인하세요" })];
                     }
-                    token = jsonwebtoken_1.default.sign({ userid: user === null || user === void 0 ? void 0 : user.USERNAME }, "SECRET", {
+                    token = jsonwebtoken_1.default.sign({ userId: user === null || user === void 0 ? void 0 : user.username }, "sangseon", {
                         expiresIn: "24h",
                     });
+                    //response
                     res.status(200).send({ message: "로그인 성공", token: token });
                     return [3 /*break*/, 4];
                 case 3:
-                    err_2 = _b.sent();
-                    console.log(err_2);
+                    error_2 = _c.sent();
+                    console.log(error_2);
                     res.status(400).send({
                         error: "로그인 정보를 확인하세요",
                     });
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
+        });
+    }); },
+    userInfo: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var user;
+        return __generator(this, function (_a) {
+            user = res.locals.user;
+            try {
+                return [2 /*return*/, res.status(200).send({
+                        userId: user.userId,
+                    })];
+            }
+            catch (error) {
+                console.log(error);
+                res.status(400).send({
+                    error: "로그인 정보를 확인하세요",
+                });
+            }
+            return [2 /*return*/];
         });
     }); },
 };
