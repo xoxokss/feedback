@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const file = {
+export const fileModel = {
 	addFile: (file: Express.Multer.File) => {
 		return prisma.file.create({
 			data: {
@@ -14,5 +14,3 @@ const file = {
 		});
 	},
 };
-
-export { file };

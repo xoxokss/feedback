@@ -36,35 +36,68 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.project = void 0;
+exports.projectModel = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
-var project = {
-    getProjectList: function () {
-        return prisma.project.findMany({
-            include: {
-                IMAGE: true,
-            },
-        });
-    },
-    getProject: function (id) {
-        return prisma.project.findUnique({
-            where: {
-                ID: id,
-            },
-            include: {
-                IMAGE: true,
-            },
-        });
-    },
-    addProject: function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/];
-    }); }); },
-    modifyProject: function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/];
-    }); }); },
-    removeProject: function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/];
-    }); }); },
+var getProjectList = function () {
+    return prisma.project.findMany({
+        include: {
+            image: true,
+        },
+    });
 };
-exports.project = project;
+var getProjectById = function (id) {
+    return prisma.project.findUnique({
+        where: {
+            id: id,
+        },
+        include: {
+            image: true,
+        },
+    });
+};
+var addProject = function (_a) {
+    var title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId;
+    return prisma.project.create({
+        data: {
+            title: title,
+            intro: intro,
+            content: content,
+            imageId: imageId,
+        },
+    });
+};
+var modifyProject = function (_a) {
+    var id = _a.id, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId;
+    return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_b) {
+            return [2 /*return*/, prisma.project.update({
+                    where: {
+                        id: id,
+                    },
+                    data: {
+                        title: title,
+                        intro: intro,
+                        content: content,
+                        imageId: imageId,
+                    },
+                })];
+        });
+    });
+};
+var removeProject = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, prisma.project.delete({
+                where: {
+                    id: id,
+                },
+            })];
+    });
+}); };
+exports.projectModel = {
+    getProjectList: getProjectList,
+    getProjectById: getProjectById,
+    addProject: addProject,
+    modifyProject: modifyProject,
+    removeProject: removeProject,
+};

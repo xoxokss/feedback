@@ -38,25 +38,136 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.projectController = void 0;
 var project_1 = require("@models/project");
-var projectController = {
-    getList: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var projectList, err_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, project_1.project.getProjectList()];
-                case 1:
-                    projectList = _a.sent();
-                    res.status(200).send(projectList);
-                    return [3 /*break*/, 3];
-                case 2:
-                    err_1 = _a.sent();
-                    res.status(500).send(err_1);
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
-            }
-        });
-    }); },
+var resObj_1 = require("~/utils/helper/resObj");
+/**
+ * Get List All
+ */
+var getList = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var projectList, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, project_1.projectModel.getProjectList()];
+            case 1:
+                projectList = _a.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: projectList }));
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_1 }));
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+/**
+ * Get Project By Id
+ */
+var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, result, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, project_1.projectModel.getProjectById(Number(id))];
+            case 2:
+                result = _a.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
+                return [3 /*break*/, 4];
+            case 3:
+                err_2 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_2 }));
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+var add = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, title, intro, content, imageId, tags, result, err_3;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, project_1.projectModel.addProject({
+                        title: title,
+                        intro: intro,
+                        content: content,
+                        imageId: imageId,
+                    })];
+            case 2:
+                result = _b.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
+                return [3 /*break*/, 4];
+            case 3:
+                err_3 = _b.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_3 }));
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, _a, title, intro, content, imageId, result, err_4;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                id = req.params.id;
+                _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId;
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, project_1.projectModel.modifyProject({
+                        id: Number(id),
+                        title: title,
+                        intro: intro,
+                        content: content,
+                        imageId: imageId,
+                    })];
+            case 2:
+                result = _b.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
+                return [3 /*break*/, 4];
+            case 3:
+                err_4 = _b.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_4 }));
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, result, err_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, project_1.projectModel.removeProject(Number(id))];
+            case 2:
+                result = _a.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
+                return [3 /*break*/, 4];
+            case 3:
+                err_5 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_5 }));
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.projectController = {
+    getList: getList,
+    getProject: getProject,
+    add: add,
+    modify: modify,
+    remove: remove,
 };
-exports.projectController = projectController;

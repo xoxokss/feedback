@@ -36,28 +36,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fileController = void 0;
-var file_1 = require("@models/file");
-var resObj_1 = require("~/utils/helper/resObj");
-var fileController = {
-    upload: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-        var result, err_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, file_1.fileModel.addFile(req.file)];
-                case 1:
-                    result = _a.sent();
-                    res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
-                    return [3 /*break*/, 3];
-                case 2:
-                    err_1 = _a.sent();
-                    res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_1 }));
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
-            }
-        });
-    }); },
+exports.tagModel = void 0;
+var client_1 = require("@prisma/client");
+var prisma = new client_1.PrismaClient();
+var findTag = function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, prisma.tag.findUnique({
+                where: {
+                    name: tagName,
+                },
+            })];
+    });
+}); };
+exports.tagModel = {
+    findTag: findTag,
 };
-exports.fileController = fileController;
