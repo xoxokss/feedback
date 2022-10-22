@@ -1,6 +1,6 @@
 import express from "express";
 import { fileModel } from "@models/file";
-import { resObj } from "~/utils/helper/resObj";
+import { resObj } from "@helper/resObj";
 
 const fileController = {
 	upload: async (req: express.Request, res: express.Response) => {

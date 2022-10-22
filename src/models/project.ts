@@ -47,13 +47,7 @@ const addProject = ({ title, intro, content, imageId }: IAddProject) => {
 	});
 };
 
-const modifyProject = async ({
-	id,
-	title,
-	intro,
-	content,
-	imageId,
-}: IModifyProject) => {
+const modifyProject = async ({ id, title, intro, content, imageId }: IModifyProject) => {
 	return prisma.project.update({
 		where: {
 			id,

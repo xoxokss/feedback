@@ -11,7 +11,7 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use("/file", express_1.default.static("./data/file"));
 app.use("/api", index_1.router);
 app.use("/", function (req, res) {
-    res.send("hello");
+    res.send({ message: "없는 주소요" });
 });
 app.listen(8000, function () {
     console.log("server start");

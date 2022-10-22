@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fileController = void 0;
 var file_1 = require("@models/file");
-var resObj_1 = require("~/utils/helper/resObj");
+var resObj_1 = require("@helper/resObj");
 var fileController = {
     upload: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
         var result, err_1;

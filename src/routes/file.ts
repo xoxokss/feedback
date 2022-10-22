@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
-import { fileController } from "~/controller/fileController";
-import multerMiddleware from "~/utils/middleware/multer";
+import { fileController } from "@controller/fileController";
+import multerMiddleware from "@middleware/multerMiddleware";
 
 const router = express.Router();
 

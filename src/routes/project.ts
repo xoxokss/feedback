@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import { projectController } from "@controller/projectController";
 
 const router = express.Router();

@@ -6,10 +6,9 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 const saltRounds = 10;
 
-const UserController = {
+const userController = {
 	//회원가입
 	signup: async (req: Request, res: Response) => {
-		console.log("test");
 		const { userId, email, password, nickname } = req.body;
 		try {
 			//비밀번호 암호화
@@ -84,4 +83,4 @@ const UserController = {
 		}
 	},
 };
-export { UserController };
+export default userController;

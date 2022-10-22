@@ -1,18 +1,20 @@
 import express, { Request, Response } from "express";
-import project from "@routes/project";
-import tag from "@routes/tag";
-import file from "@routes/file";
-import { userRouter } from "./user";
+import projectRouter from "@routes/project";
+import tagRouter from "@routes/tag";
+import fileRouter from "@routes/file";
+import testRouter from "@routes/test";
+import userRouter from "@routes/user";
 
 const router = express.Router();
 
 router.get("/", function (req: Request, res: Response) {
-	res.send("api페이지");
+	res.send("API용 ROUTE");
 });
 
-router.use("/project", project);
-router.use("/tag", tag);
-router.use("/file", file);
+router.use("/project", projectRouter);
+router.use("/tag", tagRouter);
+router.use("/file", fileRouter);
 router.use("/user", userRouter);
+router.use("/test", testRouter);
 
 export { router };

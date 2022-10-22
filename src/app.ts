@@ -11,7 +11,7 @@ app.use("/file", express.static("./data/file"));
 app.use("/api", router);
 
 app.use("/", (req: express.Request, res: express.Response) => {
-	res.send("hello");
+	res.send({ message: "없는 주소요" });
 });
 
 app.listen(8000, () => {

@@ -38,8 +38,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.projectController = void 0;
 var project_1 = require("@models/project");
-var resObj_1 = require("~/utils/helper/resObj");
-var tag_1 = require("~/models/tag");
+var resObj_1 = require("@helper/resObj");
+var tag_1 = require("@models/tag");
 /**
  * Get List All
  */
@@ -88,56 +88,54 @@ var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var add = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, title, intro, content, imageId, tags, tagIdList;
+    var _a, title, intro, content, imageId, tags, tagIdList, result, err_3;
     return __generator(this, function (_b) {
-        _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
-        tagIdList = tags.map(function (tag) { return __awaiter(void 0, void 0, void 0, function () {
-            var findTag;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, tag_1.tagModel.getTagByTagName(tag)];
-                    case 1:
-                        findTag = _a.sent();
-                        if (findTag) {
-                            return [2 /*return*/, findTag.id];
+        switch (_b.label) {
+            case 0:
+                _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
+                tagIdList = [];
+                tags.forEach(function (tag) { return __awaiter(void 0, void 0, void 0, function () {
+                    var findTag, newTag;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, tag_1.tagModel.getTagByTagName(tag)];
+                            case 1:
+                                findTag = _a.sent();
+                                if (!findTag) return [3 /*break*/, 2];
+                                tagIdList.push(findTag.id);
+                                return [3 /*break*/, 4];
+                            case 2: return [4 /*yield*/, tag_1.tagModel.addTag(tag)];
+                            case 3:
+                                newTag = _a.sent();
+                                tagIdList.push(newTag.id);
+                                _a.label = 4;
+                            case 4: return [2 /*return*/];
                         }
-                        else {
-                            return [2 /*return*/, null];
-                        }
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-        tagIdList.map(function (v) { return __awaiter(void 0, void 0, void 0, function () {
-            var _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _b = (_a = console).log;
-                        return [4 /*yield*/, v];
-                    case 1:
-                        _b.apply(_a, [_c.sent()]);
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-        try {
-            // const result = await projectModel.addProject({
-            // 	title,
-            // 	intro,
-            // 	content,
-            // 	imageId,
-            // });
-            res.status(200).send(resObj_1.resObj.success({ status: 200, data: null }));
+                    });
+                }); });
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, project_1.projectModel.addProject({
+                        title: title,
+                        intro: intro,
+                        content: content,
+                        imageId: imageId,
+                    })];
+            case 2:
+                result = _b.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: null }));
+                return [3 /*break*/, 4];
+            case 3:
+                err_3 = _b.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_3 }));
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
-        catch (err) {
-            res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err }));
-        }
-        return [2 /*return*/];
     });
 }); };
 var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, title, intro, content, imageId, result, err_3;
+    var id, _a, title, intro, content, imageId, result, err_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -158,15 +156,15 @@ var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
                 return [3 /*break*/, 4];
             case 3:
-                err_3 = _b.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_3 }));
+                err_4 = _b.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_4 }));
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, result, err_4;
+    var id, result, err_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -180,8 +178,8 @@ var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
                 return [3 /*break*/, 4];
             case 3:
-                err_4 = _a.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_4 }));
+                err_5 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_5 }));
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

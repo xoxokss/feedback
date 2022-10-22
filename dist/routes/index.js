@@ -12,9 +12,10 @@ var user_1 = require("./user");
 var router = express_1.default.Router();
 exports.router = router;
 router.get("/", function (req, res) {
-    res.send("api페이지");
+    res.send("API용 ROUTE");
 });
 router.use("/project", project_1.default);
 router.use("/tag", tag_1.default);
 router.use("/file", file_1.default);
 router.use("/user", user_1.userRouter);
+router.use("/test", user_1.userRouter);

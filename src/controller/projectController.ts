@@ -1,7 +1,7 @@
 import express from "express";
 import { projectModel } from "@models/project";
-import { resObj } from "~/utils/helper/resObj";
-import { tagModel } from "~/models/tag";
+import { resObj } from "@helper/resObj";
+import { tagModel } from "@models/tag";
 
 /**
  * Get List All
@@ -32,26 +32,25 @@ const getProject = async (req: express.Request, res: express.Response) => {
 const add = async (req: express.Request, res: express.Response) => {
 	const { title, intro, content, imageId, tags } = req.body;
 
-	const tagIdList = tags.map(async (tag: string) => {
+	const tagIdList: Array<number> = [];
+
+	tags.forEach(async (tag: string) => {
 		const findTag = await tagModel.getTagByTagName(tag);
 		if (findTag) {
-			return findTag.id;
+			tagIdList.push(findTag.id);
 		} else {
-			return null;
+			const newTag = await tagModel.addTag(tag);
+			tagIdList.push(newTag.id);
 		}
 	});
 
-	tagIdList.map(async (v: string) => {
-		console.log(await v);
-	});
-
 	try {
-		// const result = await projectModel.addProject({
-		// 	title,
-		// 	intro,
-		// 	content,
-		// 	imageId,
-		// });
+		const result = await projectModel.addProject({
+			title,
+			intro,
+			content,
+			imageId,
+		});
 		res.status(200).send(resObj.success({ status: 200, data: null }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
