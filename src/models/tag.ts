@@ -22,18 +22,16 @@ const addTag = async (tagName: string) => {
 	});
 };
 
-const setProjectToTag = async (tagName: string) => {
-	try {
-		const tag = await getTagByTagName(tagName);
-		if (!tag) {
-			const result = await addTag(tagName);
-			return result;
-		} else {
-			return tag;
-		}
-	} catch (err) {
-		console.log("test");
-	}
+/**
+ * projectId에 tagId를 연결합니다.
+ */
+const setProjectToTag = async (projectId: number, tagId: number) => {
+	return await prisma.projectsOnTags.create({
+		data: {
+			projectId,
+			tagId,
+		},
+	});
 };
 
 export const tagModel = {
