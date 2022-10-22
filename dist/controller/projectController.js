@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.projectController = void 0;
 var project_1 = require("@models/project");
 var resObj_1 = require("~/utils/helper/resObj");
+var tag_1 = require("~/models/tag");
 /**
  * Get List All
  */
@@ -87,10 +88,39 @@ var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var add = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var data;
-    return __generator(this, function (_a) {
-        data = req.body;
-        console.log(data);
+    var _a, title, intro, content, imageId, tags, tagIdList;
+    return __generator(this, function (_b) {
+        _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
+        tagIdList = tags.map(function (tag) { return __awaiter(void 0, void 0, void 0, function () {
+            var findTag;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, tag_1.tagModel.getTagByTagName(tag)];
+                    case 1:
+                        findTag = _a.sent();
+                        if (findTag) {
+                            return [2 /*return*/, findTag.id];
+                        }
+                        else {
+                            return [2 /*return*/, null];
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        tagIdList.map(function (v) { return __awaiter(void 0, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _b = (_a = console).log;
+                        return [4 /*yield*/, v];
+                    case 1:
+                        _b.apply(_a, [_c.sent()]);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
         try {
             // const result = await projectModel.addProject({
             // 	title,
@@ -98,7 +128,7 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
             // 	content,
             // 	imageId,
             // });
-            res.status(200).send(resObj_1.resObj.success({ status: 200, data: data }));
+            res.status(200).send(resObj_1.resObj.success({ status: 200, data: null }));
         }
         catch (err) {
             res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err }));
