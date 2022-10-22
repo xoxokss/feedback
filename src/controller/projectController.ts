@@ -32,26 +32,37 @@ const getProject = async (req: express.Request, res: express.Response) => {
 const add = async (req: express.Request, res: express.Response) => {
 	const { title, intro, content, imageId, tags } = req.body;
 
-	const tagIdList: Array<number> = [];
-
-	tags.forEach(async (tag: string) => {
-		const findTag = await tagModel.getTagByTagName(tag);
-		if (findTag) {
-			tagIdList.push(findTag.id);
-		} else {
-			const newTag = await tagModel.addTag(tag);
-			tagIdList.push(newTag.id);
-		}
-	});
-
 	try {
+		// 프로젝트 추가
 		const result = await projectModel.addProject({
 			title,
 			intro,
 			content,
 			imageId,
 		});
-		res.status(200).send(resObj.success({ status: 200, data: null }));
+
+		const tagIdList: Array<number> = [];
+
+		// 태그명을 검색하고 있는 태그명은 바로 연결 / 없는 태그명은 생성 후 연결
+		tags.forEach(async (tag: string) => {
+			// 태그 명으로 태그가 있는지 검색
+			const findTag = await tagModel.getTagByTagName(tag);
+			if (findTag) {
+				// 태그가 있다면
+				tagIdList.push(findTag.id);
+				// 프로젝트와 태그 연결
+				tagModel.setProjectToTag(result.id, findTag.id);
+			} else {
+				// 태그가 없다면
+				const newTag = await tagModel.addTag(tag);
+				tagIdList.push(newTag.id);
+				// 프로젝트와 태그 연결
+				tagModel.setProjectToTag(result.id, newTag.id);
+			}
+		});
+
+		// 모든 처리가 정상적으로 이루어졌다면 201 응답 및 태그 포함 데이터 반환
+		res.status(200).send(resObj.success({ status: 201, data: { ...result, tags: [...tags] } }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
 	}
