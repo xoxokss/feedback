@@ -24,8 +24,16 @@ const addTag = async (tagName: string) => {
 
 const setProjectToTag = async (tagName: string) => {
 	try {
-		const tag = getTagByTagName(tagName);
-	} catch (err) {}
+		const tag = await getTagByTagName(tagName);
+		if (!tag) {
+			const result = await addTag(tagName);
+			return result;
+		} else {
+			return tag;
+		}
+	} catch (err) {
+		console.log("test");
+	}
 };
 
 export const tagModel = {

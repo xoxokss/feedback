@@ -87,34 +87,27 @@ var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var add = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, title, intro, content, imageId, tags, result, err_3;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
-                _b.label = 1;
-            case 1:
-                _b.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, project_1.projectModel.addProject({
-                        title: title,
-                        intro: intro,
-                        content: content,
-                        imageId: imageId,
-                    })];
-            case 2:
-                result = _b.sent();
-                res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
-                return [3 /*break*/, 4];
-            case 3:
-                err_3 = _b.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_3 }));
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+    var data;
+    return __generator(this, function (_a) {
+        data = req.body;
+        console.log(data);
+        try {
+            // const result = await projectModel.addProject({
+            // 	title,
+            // 	intro,
+            // 	content,
+            // 	imageId,
+            // });
+            res.status(200).send(resObj_1.resObj.success({ status: 200, data: data }));
         }
+        catch (err) {
+            res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err }));
+        }
+        return [2 /*return*/];
     });
 }); };
 var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, title, intro, content, imageId, result, err_4;
+    var id, _a, title, intro, content, imageId, result, err_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -135,15 +128,15 @@ var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
                 return [3 /*break*/, 4];
             case 3:
-                err_4 = _b.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_4 }));
+                err_3 = _b.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_3 }));
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, result, err_5;
+    var id, result, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -157,8 +150,8 @@ var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
                 return [3 /*break*/, 4];
             case 3:
-                err_5 = _a.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_5 }));
+                err_4 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_4 }));
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

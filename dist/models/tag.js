@@ -39,7 +39,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.tagModel = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
-var findTag = function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
+var getTagListAll = function () {
+    return prisma.tag.findMany();
+};
+var getTagByTagName = function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, prisma.tag.findUnique({
                 where: {
@@ -48,6 +51,42 @@ var findTag = function (tagName) { return __awaiter(void 0, void 0, void 0, func
             })];
     });
 }); };
+var addTag = function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, prisma.tag.create({
+                data: {
+                    name: tagName,
+                },
+            })];
+    });
+}); };
+var setProjectToTag = function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
+    var tag, result, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                return [4 /*yield*/, getTagByTagName(tagName)];
+            case 1:
+                tag = _a.sent();
+                if (!!tag) return [3 /*break*/, 3];
+                return [4 /*yield*/, addTag(tagName)];
+            case 2:
+                result = _a.sent();
+                return [2 /*return*/, result];
+            case 3: return [2 /*return*/, tag];
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                err_1 = _a.sent();
+                console.log("test");
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); };
 exports.tagModel = {
-    findTag: findTag,
+    getTagListAll: getTagListAll,
+    getTagByTagName: getTagByTagName,
+    addTag: addTag,
+    setProjectToTag: setProjectToTag,
 };
