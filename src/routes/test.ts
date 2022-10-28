@@ -1,5 +1,8 @@
 import express, { Request, Response } from "express";
+import testController from "~/controller/testController";
 
-const testController = express.Router();
+const router = express.Router();
 
-export default testController;
+router.get("/", testController.test);
+
+export default router;

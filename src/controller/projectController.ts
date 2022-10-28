@@ -2,6 +2,7 @@ import express from "express";
 import { projectModel } from "@models/project";
 import { resObj } from "@helper/resObj";
 import { tagModel } from "@models/tag";
+import { Tag } from "@prisma/client";
 
 /**
  * Get List All
@@ -9,6 +10,7 @@ import { tagModel } from "@models/tag";
 const getList = async (req: express.Request, res: express.Response) => {
 	try {
 		const projectList = await projectModel.getProjectList();
+
 		res.status(200).send(resObj.success({ status: 200, data: projectList }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
@@ -70,9 +72,10 @@ const add = async (req: express.Request, res: express.Response) => {
 
 const modify = async (req: express.Request, res: express.Response) => {
 	const { id } = req.params;
-	const { title, intro, content, imageId } = req.body;
+	const { title, intro, content, imageId, tags } = req.body;
 
 	try {
+		// 프로젝트 수정
 		const result = await projectModel.modifyProject({
 			id: Number(id),
 			title,
@@ -80,6 +83,10 @@ const modify = async (req: express.Request, res: express.Response) => {
 			content,
 			imageId,
 		});
+
+		// 태그 수정
+		tagModel.modifyProjectToTag(Number(id), tags);
+
 		res.status(200).send(resObj.success({ status: 200, data: result }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
@@ -90,7 +97,9 @@ const remove = async (req: express.Request, res: express.Response) => {
 	const { id } = req.params;
 
 	try {
+		// 프로젝트 삭제
 		const result = await projectModel.removeProject(Number(id));
+
 		res.status(200).send(resObj.success({ status: 200, data: result }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));

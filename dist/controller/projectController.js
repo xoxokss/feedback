@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,6 +45,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.projectController = void 0;
@@ -88,31 +108,11 @@ var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var add = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, title, intro, content, imageId, tags, tagIdList, result, err_3;
+    var _a, title, intro, content, imageId, tags, result_1, tagIdList_1, err_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
-                tagIdList = [];
-                tags.forEach(function (tag) { return __awaiter(void 0, void 0, void 0, function () {
-                    var findTag, newTag;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, tag_1.tagModel.getTagByTagName(tag)];
-                            case 1:
-                                findTag = _a.sent();
-                                if (!findTag) return [3 /*break*/, 2];
-                                tagIdList.push(findTag.id);
-                                return [3 /*break*/, 4];
-                            case 2: return [4 /*yield*/, tag_1.tagModel.addTag(tag)];
-                            case 3:
-                                newTag = _a.sent();
-                                tagIdList.push(newTag.id);
-                                _a.label = 4;
-                            case 4: return [2 /*return*/];
-                        }
-                    });
-                }); });
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
@@ -123,8 +123,35 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
                         imageId: imageId,
                     })];
             case 2:
-                result = _b.sent();
-                res.status(200).send(resObj_1.resObj.success({ status: 200, data: null }));
+                result_1 = _b.sent();
+                tagIdList_1 = [];
+                // 태그명을 검색하고 있는 태그명은 바로 연결 / 없는 태그명은 생성 후 연결
+                tags.forEach(function (tag) { return __awaiter(void 0, void 0, void 0, function () {
+                    var findTag, newTag;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, tag_1.tagModel.getTagByTagName(tag)];
+                            case 1:
+                                findTag = _a.sent();
+                                if (!findTag) return [3 /*break*/, 2];
+                                // 태그가 있다면
+                                tagIdList_1.push(findTag.id);
+                                // 프로젝트와 태그 연결
+                                tag_1.tagModel.setProjectToTag(result_1.id, findTag.id);
+                                return [3 /*break*/, 4];
+                            case 2: return [4 /*yield*/, tag_1.tagModel.addTag(tag)];
+                            case 3:
+                                newTag = _a.sent();
+                                tagIdList_1.push(newTag.id);
+                                // 프로젝트와 태그 연결
+                                tag_1.tagModel.setProjectToTag(result_1.id, newTag.id);
+                                _a.label = 4;
+                            case 4: return [2 /*return*/];
+                        }
+                    });
+                }); });
+                // 모든 처리가 정상적으로 이루어졌다면 201 응답 및 태그 포함 데이터 반환
+                res.status(200).send(resObj_1.resObj.success({ status: 201, data: __assign(__assign({}, result_1), { tags: __spreadArray([], tags, true) }) }));
                 return [3 /*break*/, 4];
             case 3:
                 err_3 = _b.sent();

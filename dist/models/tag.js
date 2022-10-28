@@ -60,27 +60,19 @@ var addTag = function (tagName) { return __awaiter(void 0, void 0, void 0, funct
             })];
     });
 }); };
-var setProjectToTag = function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
-    var tag, result, err_1;
+/**
+ * projectId에 tagId를 연결합니다.
+ */
+var setProjectToTag = function (projectId, tagId) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 5, , 6]);
-                return [4 /*yield*/, getTagByTagName(tagName)];
-            case 1:
-                tag = _a.sent();
-                if (!!tag) return [3 /*break*/, 3];
-                return [4 /*yield*/, addTag(tagName)];
-            case 2:
-                result = _a.sent();
-                return [2 /*return*/, result];
-            case 3: return [2 /*return*/, tag];
-            case 4: return [3 /*break*/, 6];
-            case 5:
-                err_1 = _a.sent();
-                console.log("test");
-                return [3 /*break*/, 6];
-            case 6: return [2 /*return*/];
+            case 0: return [4 /*yield*/, prisma.projectsOnTags.create({
+                    data: {
+                        projectId: projectId,
+                        tagId: tagId,
+                    },
+                })];
+            case 1: return [2 /*return*/, _a.sent()];
         }
     });
 }); };

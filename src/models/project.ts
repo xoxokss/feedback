@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Tag } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -21,6 +21,11 @@ const getProjectList = () => {
 	return prisma.project.findMany({
 		include: {
 			image: true,
+			ProjectsOnTags: {
+				select: {
+					tag: true,
+				},
+			},
 		},
 	});
 };
@@ -32,6 +37,11 @@ const getProjectById = (id: number) => {
 		},
 		include: {
 			image: true,
+			ProjectsOnTags: {
+				select: {
+					tag: true,
+				},
+			},
 		},
 	});
 };
@@ -62,7 +72,13 @@ const modifyProject = async ({ id, title, intro, content, imageId }: IModifyProj
 };
 
 const removeProject = async (id: number) => {
-	return prisma.project.delete({
+	await prisma.projectsOnTags.deleteMany({
+		where: {
+			projectId: id,
+		},
+	});
+
+	return await prisma.project.delete({
 		where: {
 			id,
 		},

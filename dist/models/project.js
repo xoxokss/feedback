@@ -43,6 +43,11 @@ var getProjectList = function () {
     return prisma.project.findMany({
         include: {
             image: true,
+            ProjectsOnTags: {
+                select: {
+                    tag: true,
+                },
+            },
         },
     });
 };
