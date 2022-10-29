@@ -7,6 +7,7 @@ interface IAddProject {
 	intro: string;
 	content: string;
 	imageId: number;
+	userId: number;
 }
 
 interface IModifyProject {
@@ -18,12 +19,18 @@ interface IModifyProject {
 }
 
 const getProjectList = () => {
+	// 프로젝트 전체조회
 	return prisma.project.findMany({
 		include: {
 			image: true,
 			ProjectsOnTags: {
 				select: {
 					tag: true,
+				},
+			},
+			User: {
+				select: {
+					nickname: true,
 				},
 			},
 		},
@@ -42,17 +49,23 @@ const getProjectById = (id: number) => {
 					tag: true,
 				},
 			},
+			User: {
+				select: {
+					nickname: true,
+				},
+			},
 		},
 	});
 };
 
-const addProject = ({ title, intro, content, imageId }: IAddProject) => {
+const addProject = ({ title, intro, content, imageId, userId }: IAddProject) => {
 	return prisma.project.create({
 		data: {
 			title,
 			intro,
 			content,
 			imageId,
+			userId,
 		},
 	});
 };

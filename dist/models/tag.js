@@ -42,6 +42,24 @@ var prisma = new client_1.PrismaClient();
 var getTagListAll = function () {
     return prisma.tag.findMany();
 };
+var getTagsByProjectId = function (projectId) { return __awaiter(void 0, void 0, void 0, function () {
+    var tagList;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.projectsOnTags.findMany({
+                    where: {
+                        projectId: projectId,
+                    },
+                    select: {
+                        tag: true,
+                    },
+                })];
+            case 1:
+                tagList = _a.sent();
+                return [2 /*return*/, tagList.map(function (tag) { return tag.tag; })];
+        }
+    });
+}); };
 var getTagByTagName = function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, prisma.tag.findUnique({
@@ -76,9 +94,31 @@ var setProjectToTag = function (projectId, tagId) { return __awaiter(void 0, voi
         }
     });
 }); };
+var modifyProjectToTag = function (id, tags) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.projectsOnTags.deleteMany({
+                    where: {
+                        projectId: id,
+                    },
+                })];
+            case 1:
+                _a.sent();
+                return [4 /*yield*/, prisma.projectsOnTags.createMany({
+                        data: tags.map(function (tag) { return ({
+                            projectId: id,
+                            tagId: tag.id,
+                        }); }),
+                    })];
+            case 2: return [2 /*return*/, _a.sent()];
+        }
+    });
+}); };
 exports.tagModel = {
     getTagListAll: getTagListAll,
+    getTagsByProjectId: getTagsByProjectId,
     getTagByTagName: getTagByTagName,
     addTag: addTag,
     setProjectToTag: setProjectToTag,
+    modifyProjectToTag: modifyProjectToTag,
 };

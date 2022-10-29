@@ -30,7 +30,9 @@ model Project {
   content        String           @db.Text
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
+  userId         Int              @map("user_id")
   ProjectsOnTags ProjectsOnTags[]
+  User           User             @relation(fields: [userId], references: [id])
 }
 
 model Tag {
@@ -60,4 +62,5 @@ model User {
   nickname  String   @unique
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  Project   Project[]
 }
