@@ -31,7 +31,7 @@ exports.resObj = {
         return {
             success: false,
             status: status,
-            error: error,
+            error: error.toString(),
         };
     },
 };

@@ -40,12 +40,18 @@ exports.projectModel = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
 var getProjectList = function () {
+    // 프로젝트 전체조회
     return prisma.project.findMany({
         include: {
             image: true,
             ProjectsOnTags: {
                 select: {
                     tag: true,
+                },
+            },
+            User: {
+                select: {
+                    nickname: true,
                 },
             },
         },
@@ -61,6 +67,11 @@ var getProjectById = function (id) {
             ProjectsOnTags: {
                 select: {
                     tag: true,
+                },
+            },
+            User: {
+                select: {
+                    nickname: true,
                 },
             },
         },
