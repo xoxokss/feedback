@@ -46,18 +46,40 @@ const setProjectToTag = async (projectId: number, tagId: number) => {
 	});
 };
 
-const modifyProjectToTag = async (id: number, tags: Array<Tag>) => {
+const modifyProjectToTag = async (id: number, tags: Array<string>) => {
 	await prisma.projectsOnTags.deleteMany({
 		where: {
 			projectId: id,
 		},
 	});
 
-	return await prisma.projectsOnTags.createMany({
-		data: tags.map((tag) => ({
-			projectId: id,
-			tagId: tag.id,
-		})),
+	const tagIdList: Array<number> = [];
+	// 태그명을 검색하고 있는 태그명은 바로 연결 / 없는 태그명은 생성 후 연결
+	tags.forEach(async (tagName: string) => {
+		// 태그 명으로 태그가 있는지 검색
+		const findTag = await tagModel.getTagByTagName(tagName);
+		if (findTag) {
+			// 태그가 있다면
+			tagIdList.push(findTag.id);
+			// 프로젝트와 태그 연결
+			await prisma.projectsOnTags.create({
+				data: {
+					projectId: id,
+					tagId: findTag.id,
+				},
+			});
+		} else {
+			// 태그가 없다면
+			const newTag = await tagModel.addTag(tagName);
+			tagIdList.push(newTag.id);
+			// 프로젝트와 태그 연결
+			await prisma.projectsOnTags.create({
+				data: {
+					projectId: id,
+					tagId: newTag.id,
+				},
+			});
+		}
 	});
 };
 

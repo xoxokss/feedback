@@ -32,7 +32,7 @@ export const resObj = {
 		return {
 			success: false,
 			status,
-			error,
+			error: error.toString(),
 		};
 	},
 };

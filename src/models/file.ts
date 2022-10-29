@@ -6,7 +6,8 @@ export const fileModel = {
 	addFile: (file: Express.Multer.File) => {
 		return prisma.file.create({
 			data: {
-				fileName: file.originalname,
+				// fileName: file.originalname,
+				fileName: file.filename,
 				filePath: file.path,
 				fileSize: file.size,
 				fileType: file.mimetype,

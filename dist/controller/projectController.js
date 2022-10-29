@@ -108,11 +108,12 @@ var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var add = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, title, intro, content, imageId, tags, result_1, tagIdList_1, err_3;
+    var _a, title, intro, content, imageId, tags, user, result_1, tagIdList_1, err_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
+                user = res.locals.user;
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
@@ -121,6 +122,7 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
                         intro: intro,
                         content: content,
                         imageId: imageId,
+                        userId: user.id,
                     })];
             case 2:
                 result_1 = _b.sent();
@@ -151,7 +153,7 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
                     });
                 }); });
                 // 모든 처리가 정상적으로 이루어졌다면 201 응답 및 태그 포함 데이터 반환
-                res.status(200).send(resObj_1.resObj.success({ status: 201, data: __assign(__assign({}, result_1), { tags: __spreadArray([], tags, true) }) }));
+                res.status(201).send(resObj_1.resObj.success({ status: 201, data: __assign(__assign({}, result_1), { tags: __spreadArray([], tags, true) }) }));
                 return [3 /*break*/, 4];
             case 3:
                 err_3 = _b.sent();
@@ -162,12 +164,12 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
     });
 }); };
 var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, title, intro, content, imageId, result, err_4;
+    var id, _a, title, intro, content, imageId, tags, result, err_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 id = req.params.id;
-                _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId;
+                _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
@@ -180,6 +182,8 @@ var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                     })];
             case 2:
                 result = _b.sent();
+                // 태그 수정
+                tag_1.tagModel.modifyProjectToTag(Number(id), tags);
                 res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
                 return [3 /*break*/, 4];
             case 3:

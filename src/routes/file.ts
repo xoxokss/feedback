@@ -1,9 +1,10 @@
 import express, { Request, Response } from "express";
 import { fileController } from "@controller/fileController";
 import multerMiddleware from "@middleware/multerMiddleware";
+import { authMiddleware } from "~/utils/middleware/authMiddleware";
 
 const router = express.Router();
 
-router.post("/", multerMiddleware.single("file"), fileController.upload);
+router.post("/", authMiddleware, multerMiddleware.single("file"), fileController.upload);
 
 export default router;

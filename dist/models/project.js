@@ -58,17 +58,23 @@ var getProjectById = function (id) {
         },
         include: {
             image: true,
+            ProjectsOnTags: {
+                select: {
+                    tag: true,
+                },
+            },
         },
     });
 };
 var addProject = function (_a) {
-    var title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId;
+    var title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, userId = _a.userId;
     return prisma.project.create({
         data: {
             title: title,
             intro: intro,
             content: content,
             imageId: imageId,
+            userId: userId,
         },
     });
 };
@@ -92,11 +98,21 @@ var modifyProject = function (_a) {
 };
 var removeProject = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        return [2 /*return*/, prisma.project.delete({
-                where: {
-                    id: id,
-                },
-            })];
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.projectsOnTags.deleteMany({
+                    where: {
+                        projectId: id,
+                    },
+                })];
+            case 1:
+                _a.sent();
+                return [4 /*yield*/, prisma.project.delete({
+                        where: {
+                            id: id,
+                        },
+                    })];
+            case 2: return [2 /*return*/, _a.sent()];
+        }
     });
 }); };
 exports.projectModel = {
