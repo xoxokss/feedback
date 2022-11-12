@@ -109,6 +109,59 @@ const getLikeMine = (projectId: number, userId: number) => {
 	});
 };
 
+const changeLike = async (projectId: number, userId: number) => {
+	const like = await getLikeMine(projectId, userId);
+	if (like) {
+		await prisma.projectOnLikes.delete({
+			where: {
+				projectId_userId: {
+					projectId,
+					userId,
+				},
+			},
+		});
+
+		const project = await prisma.project.update({
+			where: {
+				id: projectId,
+			},
+			data: {
+				likeCount: {
+					decrement: 1,
+				},
+			},
+		});
+
+		return {
+			likeCount: project.likeCount,
+			isLike: false,
+		};
+	} else {
+		await prisma.projectOnLikes.create({
+			data: {
+				projectId,
+				userId,
+			},
+		});
+
+		const project = await prisma.project.update({
+			where: {
+				id: projectId,
+			},
+			data: {
+				likeCount: {
+					increment: 1,
+				},
+			},
+		});
+
+		return {
+			isLike: true,
+			likeCount: project.likeCount,
+		};
+	}
+};
+
 export const projectModel = {
 	getProjectList,
 	getProjectById,
@@ -116,4 +169,5 @@ export const projectModel = {
 	modifyProject,
 	removeProject,
 	getLikeMine,
+	changeLike,
 };

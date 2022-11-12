@@ -12,4 +12,6 @@ router.get("/:id", projectController_1.projectController.getProject);
 router.post("/", authMiddleware_1.authMiddleware, projectController_1.projectController.add);
 router.put("/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.modify);
 router.delete("/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.remove);
+// like
+router.put("/like/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.like);
 exports.default = router;

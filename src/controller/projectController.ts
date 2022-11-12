@@ -136,10 +136,24 @@ const remove = async (req: express.Request, res: express.Response) => {
 	}
 };
 
+const like = async (req: express.Request, res: express.Response) => {
+	const { id } = req.params;
+	const { user } = res.locals;
+
+	try {
+		const result = await projectModel.changeLike(Number(id), user.id);
+
+		res.status(200).send(resObj.success({ status: 200, data: result }));
+	} catch (err) {
+		res.status(500).send(resObj.failed({ status: 500, error: err }));
+	}
+};
+
 export const projectController = {
 	getList,
 	getProject,
 	add,
 	modify,
 	remove,
+	like,
 };
