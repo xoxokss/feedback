@@ -60,6 +60,7 @@ exports.projectController = void 0;
 var project_1 = require("@models/project");
 var resObj_1 = require("@helper/resObj");
 var tag_1 = require("@models/tag");
+var auth_1 = require("~/utils/helper/auth");
 /**
  * Get List All
  */
@@ -86,24 +87,39 @@ var getList = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
  * Get Project By Id
  */
 var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, result, err_2;
+    var id, headers, result, isLike, auth, like_1, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = req.params.id;
+                headers = req.headers;
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
+                _a.trys.push([1, 6, , 7]);
                 return [4 /*yield*/, project_1.projectModel.getProjectById(Number(id))];
             case 2:
                 result = _a.sent();
-                res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
-                return [3 /*break*/, 4];
+                isLike = false;
+                if (!headers.authorization) return [3 /*break*/, 5];
+                return [4 /*yield*/, (0, auth_1.getUserByToken)(headers.authorization)];
             case 3:
+                auth = _a.sent();
+                if (!auth.result) return [3 /*break*/, 5];
+                return [4 /*yield*/, project_1.projectModel.getLikeMine(result.id, auth.user.id)];
+            case 4:
+                like_1 = _a.sent();
+                if (like_1) {
+                    isLike = true;
+                }
+                _a.label = 5;
+            case 5:
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: __assign(__assign({}, result), { isLike: isLike }) }));
+                return [3 /*break*/, 7];
+            case 6:
                 err_2 = _a.sent();
                 res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_2 }));
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
         }
     });
 }); };
@@ -236,10 +252,34 @@ var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
+var like = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, user, result, err_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                user = res.locals.user;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, project_1.projectModel.changeLike(Number(id), user.id)];
+            case 2:
+                result = _a.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
+                return [3 /*break*/, 4];
+            case 3:
+                err_6 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_6 }));
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
 exports.projectController = {
     getList: getList,
     getProject: getProject,
     add: add,
     modify: modify,
     remove: remove,
+    like: like,
 };

@@ -3,6 +3,7 @@ import { projectModel } from "@models/project";
 import { resObj } from "@helper/resObj";
 import { tagModel } from "@models/tag";
 import { Tag } from "@prisma/client";
+import { getUserByToken } from "~/utils/helper/auth";
 
 /**
  * Get List All
@@ -22,10 +23,24 @@ const getList = async (req: express.Request, res: express.Response) => {
  */
 const getProject = async (req: express.Request, res: express.Response) => {
 	const { id } = req.params;
+	const headers = req.headers;
 
 	try {
 		const result = await projectModel.getProjectById(Number(id));
-		res.status(200).send(resObj.success({ status: 200, data: result }));
+		let isLike = false; // 내가 좋아요 한 프로젝트인지 여부
+
+		if (headers.authorization) {
+			// 토큰이 있는 경우에만 체크하고 그게 아닌 경우에는 isLike는 false
+			const auth = await getUserByToken(headers.authorization);
+			if (auth.result) {
+				const like = await projectModel.getLikeMine(result!.id, auth.user!.id);
+
+				if (like) {
+					isLike = true;
+				}
+			}
+		}
+		res.status(200).send(resObj.success({ status: 200, data: { ...result, isLike } }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
 	}
@@ -121,10 +136,24 @@ const remove = async (req: express.Request, res: express.Response) => {
 	}
 };
 
+const like = async (req: express.Request, res: express.Response) => {
+	const { id } = req.params;
+	const { user } = res.locals;
+
+	try {
+		const result = await projectModel.changeLike(Number(id), user.id);
+
+		res.status(200).send(resObj.success({ status: 200, data: result }));
+	} catch (err) {
+		res.status(500).send(resObj.failed({ status: 500, error: err }));
+	}
+};
+
 export const projectController = {
 	getList,
 	getProject,
 	add,
 	modify,
 	remove,
+	like,
 };

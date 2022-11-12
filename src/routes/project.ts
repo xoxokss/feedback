@@ -10,4 +10,7 @@ router.post("/", authMiddleware, projectController.add);
 router.put("/:id", authMiddleware, projectController.modify);
 router.delete("/:id", authMiddleware, projectController.remove);
 
+// like
+router.put("/like/:id", authMiddleware, projectController.like);
+
 export default router;

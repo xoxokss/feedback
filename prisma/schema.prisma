@@ -28,6 +28,7 @@ model Project {
   title          String           @db.VarChar(255)
   intro          String           @db.VarChar(255)
   content        String           @db.Text
+  likeCount      Int              @db.SmallInt @default(0) @map("like_count")
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
   userId         Int              @map("user_id")
@@ -69,7 +70,7 @@ model User {
 
 model ProjectOnLikes {
   projectId Int      @map("project_id")
-  userId    Int      @map("like_id")
+  userId    Int      @map("user_id")
 
   project   Project  @relation(fields: [projectId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
