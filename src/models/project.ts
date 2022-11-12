@@ -98,10 +98,22 @@ const removeProject = async (id: number) => {
 	});
 };
 
+const getLikeMine = (projectId: number, userId: number) => {
+	return prisma.projectOnLikes.findUnique({
+		where: {
+			projectId_userId: {
+				projectId,
+				userId,
+			},
+		},
+	});
+};
+
 export const projectModel = {
 	getProjectList,
 	getProjectById,
 	addProject,
 	modifyProject,
 	removeProject,
+	getLikeMine,
 };
