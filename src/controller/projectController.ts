@@ -3,6 +3,7 @@ import { projectModel } from "@models/project";
 import { resObj } from "@helper/resObj";
 import { tagModel } from "@models/tag";
 import { Tag } from "@prisma/client";
+import { getUserByToken } from "~/utils/helper/auth";
 
 /**
  * Get List All
@@ -22,10 +23,24 @@ const getList = async (req: express.Request, res: express.Response) => {
  */
 const getProject = async (req: express.Request, res: express.Response) => {
 	const { id } = req.params;
+	const headers = req.headers;
 
 	try {
 		const result = await projectModel.getProjectById(Number(id));
-		res.status(200).send(resObj.success({ status: 200, data: result }));
+		let isLike = false; // 내가 좋아요 한 프로젝트인지 여부
+
+		if (headers.authorization) {
+			// 토큰이 있는 경우에만 체크하고 그게 아닌 경우에는 isLike는 false
+			const auth = await getUserByToken(headers.authorization);
+			if (auth.result) {
+				const like = await projectModel.getLikeMine(result!.id, auth.user!.id);
+
+				if (like) {
+					isLike = true;
+				}
+			}
+		}
+		res.status(200).send(resObj.success({ status: 200, data: { ...result, isLike } }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
 	}
@@ -33,6 +48,7 @@ const getProject = async (req: express.Request, res: express.Response) => {
 
 const add = async (req: express.Request, res: express.Response) => {
 	const { title, intro, content, imageId, tags } = req.body;
+	const { user } = res.locals;
 
 	try {
 		// 프로젝트 추가
@@ -41,6 +57,7 @@ const add = async (req: express.Request, res: express.Response) => {
 			intro,
 			content,
 			imageId,
+			userId: user.id,
 		});
 
 		const tagIdList: Array<number> = [];
@@ -64,7 +81,7 @@ const add = async (req: express.Request, res: express.Response) => {
 		});
 
 		// 모든 처리가 정상적으로 이루어졌다면 201 응답 및 태그 포함 데이터 반환
-		res.status(200).send(resObj.success({ status: 201, data: { ...result, tags: [...tags] } }));
+		res.status(201).send(resObj.success({ status: 201, data: { ...result, tags: [...tags] } }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
 	}
@@ -73,21 +90,28 @@ const add = async (req: express.Request, res: express.Response) => {
 const modify = async (req: express.Request, res: express.Response) => {
 	const { id } = req.params;
 	const { title, intro, content, imageId, tags } = req.body;
+	const { user } = res.locals;
 
 	try {
-		// 프로젝트 수정
-		const result = await projectModel.modifyProject({
-			id: Number(id),
-			title,
-			intro,
-			content,
-			imageId,
-		});
+		const oldProject = await projectModel.getProjectById(Number(id));
+		if (user.id === oldProject?.userId) {
+			// 프로젝트 수정
+			const result = await projectModel.modifyProject({
+				id: Number(id),
+				title,
+				intro,
+				content,
+				imageId,
+			});
 
-		// 태그 수정
-		tagModel.modifyProjectToTag(Number(id), tags);
+			// 태그 수정
+			tagModel.modifyProjectToTag(Number(id), tags);
 
-		res.status(200).send(resObj.success({ status: 200, data: result }));
+			const modify = await projectModel.getProjectById(Number(id));
+			res.status(200).send(resObj.success({ status: 200, data: modify }));
+		} else {
+			res.status(403).send(resObj.alert({ status: 403, message: "권한이 없습니다." }));
+		}
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
 	}
@@ -95,10 +119,29 @@ const modify = async (req: express.Request, res: express.Response) => {
 
 const remove = async (req: express.Request, res: express.Response) => {
 	const { id } = req.params;
+	const { user } = res.locals;
 
 	try {
-		// 프로젝트 삭제
-		const result = await projectModel.removeProject(Number(id));
+		const oldProject = await projectModel.getProjectById(Number(id));
+
+		if (user.id === oldProject?.userId) {
+			// 프로젝트 삭제
+			const result = await projectModel.removeProject(Number(id));
+
+			res.status(200).send(resObj.success({ status: 200, data: result }));
+		}
+		res.status(200).send(resObj.success({ status: 200, data: "삭제 실패" }));
+	} catch (err) {
+		res.status(500).send(resObj.failed({ status: 500, error: err }));
+	}
+};
+
+const like = async (req: express.Request, res: express.Response) => {
+	const { id } = req.params;
+	const { user } = res.locals;
+
+	try {
+		const result = await projectModel.changeLike(Number(id), user.id);
 
 		res.status(200).send(resObj.success({ status: 200, data: result }));
 	} catch (err) {
@@ -112,4 +155,5 @@ export const projectController = {
 	add,
 	modify,
 	remove,
+	like,
 };

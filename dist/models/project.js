@@ -40,12 +40,18 @@ exports.projectModel = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
 var getProjectList = function () {
+    // 프로젝트 전체조회
     return prisma.project.findMany({
         include: {
             image: true,
             ProjectsOnTags: {
                 select: {
                     tag: true,
+                },
+            },
+            User: {
+                select: {
+                    nickname: true,
                 },
             },
         },
@@ -58,17 +64,28 @@ var getProjectById = function (id) {
         },
         include: {
             image: true,
+            ProjectsOnTags: {
+                select: {
+                    tag: true,
+                },
+            },
+            User: {
+                select: {
+                    nickname: true,
+                },
+            },
         },
     });
 };
 var addProject = function (_a) {
-    var title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId;
+    var title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, userId = _a.userId;
     return prisma.project.create({
         data: {
             title: title,
             intro: intro,
             content: content,
             imageId: imageId,
+            userId: userId,
         },
     });
 };
@@ -92,11 +109,92 @@ var modifyProject = function (_a) {
 };
 var removeProject = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        return [2 /*return*/, prisma.project.delete({
-                where: {
-                    id: id,
-                },
-            })];
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.projectsOnTags.deleteMany({
+                    where: {
+                        projectId: id,
+                    },
+                })];
+            case 1:
+                _a.sent();
+                return [4 /*yield*/, prisma.project.delete({
+                        where: {
+                            id: id,
+                        },
+                    })];
+            case 2: return [2 /*return*/, _a.sent()];
+        }
+    });
+}); };
+var getLikeMine = function (projectId, userId) {
+    return prisma.projectOnLikes.findUnique({
+        where: {
+            projectId_userId: {
+                projectId: projectId,
+                userId: userId,
+            },
+        },
+    });
+};
+var changeLike = function (projectId, userId) { return __awaiter(void 0, void 0, void 0, function () {
+    var like, project, project;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, getLikeMine(projectId, userId)];
+            case 1:
+                like = _a.sent();
+                if (!like) return [3 /*break*/, 4];
+                return [4 /*yield*/, prisma.projectOnLikes.delete({
+                        where: {
+                            projectId_userId: {
+                                projectId: projectId,
+                                userId: userId,
+                            },
+                        },
+                    })];
+            case 2:
+                _a.sent();
+                return [4 /*yield*/, prisma.project.update({
+                        where: {
+                            id: projectId,
+                        },
+                        data: {
+                            likeCount: {
+                                decrement: 1,
+                            },
+                        },
+                    })];
+            case 3:
+                project = _a.sent();
+                return [2 /*return*/, {
+                        likeCount: project.likeCount,
+                        isLike: false,
+                    }];
+            case 4: return [4 /*yield*/, prisma.projectOnLikes.create({
+                    data: {
+                        projectId: projectId,
+                        userId: userId,
+                    },
+                })];
+            case 5:
+                _a.sent();
+                return [4 /*yield*/, prisma.project.update({
+                        where: {
+                            id: projectId,
+                        },
+                        data: {
+                            likeCount: {
+                                increment: 1,
+                            },
+                        },
+                    })];
+            case 6:
+                project = _a.sent();
+                return [2 /*return*/, {
+                        isLike: true,
+                        likeCount: project.likeCount,
+                    }];
+        }
     });
 }); };
 exports.projectModel = {
@@ -105,4 +203,6 @@ exports.projectModel = {
     addProject: addProject,
     modifyProject: modifyProject,
     removeProject: removeProject,
+    getLikeMine: getLikeMine,
+    changeLike: changeLike,
 };

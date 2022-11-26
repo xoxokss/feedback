@@ -42,6 +42,24 @@ var prisma = new client_1.PrismaClient();
 var getTagListAll = function () {
     return prisma.tag.findMany();
 };
+var getTagsByProjectId = function (projectId) { return __awaiter(void 0, void 0, void 0, function () {
+    var tagList;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.projectsOnTags.findMany({
+                    where: {
+                        projectId: projectId,
+                    },
+                    select: {
+                        tag: true,
+                    },
+                })];
+            case 1:
+                tagList = _a.sent();
+                return [2 /*return*/, tagList.map(function (tag) { return tag.tag; })];
+        }
+    });
+}); };
 var getTagByTagName = function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, prisma.tag.findUnique({
@@ -76,9 +94,68 @@ var setProjectToTag = function (projectId, tagId) { return __awaiter(void 0, voi
         }
     });
 }); };
+var modifyProjectToTag = function (id, tags) { return __awaiter(void 0, void 0, void 0, function () {
+    var tagIdList;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.projectsOnTags.deleteMany({
+                    where: {
+                        projectId: id,
+                    },
+                })];
+            case 1:
+                _a.sent();
+                tagIdList = [];
+                // 태그명을 검색하고 있는 태그명은 바로 연결 / 없는 태그명은 생성 후 연결
+                tags.forEach(function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
+                    var findTag, newTag;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, exports.tagModel.getTagByTagName(tagName)];
+                            case 1:
+                                findTag = _a.sent();
+                                if (!findTag) return [3 /*break*/, 3];
+                                // 태그가 있다면
+                                tagIdList.push(findTag.id);
+                                // 프로젝트와 태그 연결
+                                return [4 /*yield*/, prisma.projectsOnTags.create({
+                                        data: {
+                                            projectId: id,
+                                            tagId: findTag.id,
+                                        },
+                                    })];
+                            case 2:
+                                // 프로젝트와 태그 연결
+                                _a.sent();
+                                return [3 /*break*/, 6];
+                            case 3: return [4 /*yield*/, exports.tagModel.addTag(tagName)];
+                            case 4:
+                                newTag = _a.sent();
+                                tagIdList.push(newTag.id);
+                                // 프로젝트와 태그 연결
+                                return [4 /*yield*/, prisma.projectsOnTags.create({
+                                        data: {
+                                            projectId: id,
+                                            tagId: newTag.id,
+                                        },
+                                    })];
+                            case 5:
+                                // 프로젝트와 태그 연결
+                                _a.sent();
+                                _a.label = 6;
+                            case 6: return [2 /*return*/];
+                        }
+                    });
+                }); });
+                return [2 /*return*/];
+        }
+    });
+}); };
 exports.tagModel = {
     getTagListAll: getTagListAll,
+    getTagsByProjectId: getTagsByProjectId,
     getTagByTagName: getTagByTagName,
     addTag: addTag,
     setProjectToTag: setProjectToTag,
+    modifyProjectToTag: modifyProjectToTag,
 };

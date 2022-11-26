@@ -60,6 +60,7 @@ exports.projectController = void 0;
 var project_1 = require("@models/project");
 var resObj_1 = require("@helper/resObj");
 var tag_1 = require("@models/tag");
+var auth_1 = require("~/utils/helper/auth");
 /**
  * Get List All
  */
@@ -86,33 +87,49 @@ var getList = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
  * Get Project By Id
  */
 var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, result, err_2;
+    var id, headers, result, isLike, auth, like_1, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = req.params.id;
+                headers = req.headers;
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
+                _a.trys.push([1, 6, , 7]);
                 return [4 /*yield*/, project_1.projectModel.getProjectById(Number(id))];
             case 2:
                 result = _a.sent();
-                res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
-                return [3 /*break*/, 4];
+                isLike = false;
+                if (!headers.authorization) return [3 /*break*/, 5];
+                return [4 /*yield*/, (0, auth_1.getUserByToken)(headers.authorization)];
             case 3:
+                auth = _a.sent();
+                if (!auth.result) return [3 /*break*/, 5];
+                return [4 /*yield*/, project_1.projectModel.getLikeMine(result.id, auth.user.id)];
+            case 4:
+                like_1 = _a.sent();
+                if (like_1) {
+                    isLike = true;
+                }
+                _a.label = 5;
+            case 5:
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: __assign(__assign({}, result), { isLike: isLike }) }));
+                return [3 /*break*/, 7];
+            case 6:
                 err_2 = _a.sent();
                 res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_2 }));
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
         }
     });
 }); };
 var add = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, title, intro, content, imageId, tags, result_1, tagIdList_1, err_3;
+    var _a, title, intro, content, imageId, tags, user, result_1, tagIdList_1, err_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
+                user = res.locals.user;
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
@@ -121,6 +138,7 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
                         intro: intro,
                         content: content,
                         imageId: imageId,
+                        userId: user.id,
                     })];
             case 2:
                 result_1 = _b.sent();
@@ -151,7 +169,7 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
                     });
                 }); });
                 // 모든 처리가 정상적으로 이루어졌다면 201 응답 및 태그 포함 데이터 반환
-                res.status(200).send(resObj_1.resObj.success({ status: 201, data: __assign(__assign({}, result_1), { tags: __spreadArray([], tags, true) }) }));
+                res.status(201).send(resObj_1.resObj.success({ status: 201, data: __assign(__assign({}, result_1), { tags: __spreadArray([], tags, true) }) }));
                 return [3 /*break*/, 4];
             case 3:
                 err_3 = _b.sent();
@@ -162,15 +180,20 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
     });
 }); };
 var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, title, intro, content, imageId, result, err_4;
+    var id, _a, title, intro, content, imageId, tags, user, oldProject, result, modify_1, err_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 id = req.params.id;
-                _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId;
+                _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
+                user = res.locals.user;
                 _b.label = 1;
             case 1:
-                _b.trys.push([1, 3, , 4]);
+                _b.trys.push([1, 7, , 8]);
+                return [4 /*yield*/, project_1.projectModel.getProjectById(Number(id))];
+            case 2:
+                oldProject = _b.sent();
+                if (!(user.id === (oldProject === null || oldProject === void 0 ? void 0 : oldProject.userId))) return [3 /*break*/, 5];
                 return [4 /*yield*/, project_1.projectModel.modifyProject({
                         id: Number(id),
                         title: title,
@@ -178,35 +201,75 @@ var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                         content: content,
                         imageId: imageId,
                     })];
-            case 2:
-                result = _b.sent();
-                res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
-                return [3 /*break*/, 4];
             case 3:
+                result = _b.sent();
+                // 태그 수정
+                tag_1.tagModel.modifyProjectToTag(Number(id), tags);
+                return [4 /*yield*/, project_1.projectModel.getProjectById(Number(id))];
+            case 4:
+                modify_1 = _b.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: modify_1 }));
+                return [3 /*break*/, 6];
+            case 5:
+                res.status(403).send(resObj_1.resObj.alert({ status: 403, message: "권한이 없습니다." }));
+                _b.label = 6;
+            case 6: return [3 /*break*/, 8];
+            case 7:
                 err_4 = _b.sent();
                 res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_4 }));
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                return [3 /*break*/, 8];
+            case 8: return [2 /*return*/];
         }
     });
 }); };
 var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, result, err_5;
+    var id, user, oldProject, result, err_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = req.params.id;
+                user = res.locals.user;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 5, , 6]);
+                return [4 /*yield*/, project_1.projectModel.getProjectById(Number(id))];
+            case 2:
+                oldProject = _a.sent();
+                if (!(user.id === (oldProject === null || oldProject === void 0 ? void 0 : oldProject.userId))) return [3 /*break*/, 4];
+                return [4 /*yield*/, project_1.projectModel.removeProject(Number(id))];
+            case 3:
+                result = _a.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
+                _a.label = 4;
+            case 4:
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: "삭제 실패" }));
+                return [3 /*break*/, 6];
+            case 5:
+                err_5 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_5 }));
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); };
+var like = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, user, result, err_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                user = res.locals.user;
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, project_1.projectModel.removeProject(Number(id))];
+                return [4 /*yield*/, project_1.projectModel.changeLike(Number(id), user.id)];
             case 2:
                 result = _a.sent();
                 res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
                 return [3 /*break*/, 4];
             case 3:
-                err_5 = _a.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_5 }));
+                err_6 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_6 }));
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -218,4 +281,5 @@ exports.projectController = {
     add: add,
     modify: modify,
     remove: remove,
+    like: like,
 };

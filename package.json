@@ -4,11 +4,13 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "nodemon --watch \"*.ts\" --exec \"ts-node\" app.ts",
-		"build": "tsc && npm run copy-files",
 		"prestart": "tsc",
-		"start": "nodemon"
+		"start": "nodemon",
+		"pm:start": "pm2 start ecosystem.config.js",
+		"pm:stop": "pm2 stop ecosystem.config.js",
+		"pm:restart": "pm2 restart ecosystem.config.js",
+		"pm:delete": "pm2 delete ecosystem.config.js",
+		"babel": "babel-node --extensions '.ts' src/app.ts --project ./tsconfig.json"
 	},
 	"repository": {
 		"type": "git",
@@ -48,6 +50,7 @@
 		"babel-plugin-module-resolver": "^4.1.0",
 		"dotenv": "^16.0.2",
 		"nodemon": "^2.0.20",
+		"pm2": "^5.2.2",
 		"prettier": "^2.7.1",
 		"prisma": "^4.3.1",
 		"ts-node": "^10.9.1",

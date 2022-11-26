@@ -4,6 +4,8 @@ import { tagModel } from "~/models/tag";
 
 const testController = {
 	test: async (req: Request, res: Response) => {
+		const locals = res.locals;
+		// console.log(locals);
 		try {
 			const tags = await tagModel.getTagsByProjectId(5);
 			res.status(200).send(resObj.success({ status: 200, data: tags }));
