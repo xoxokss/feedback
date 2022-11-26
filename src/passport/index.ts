@@ -1,31 +1,52 @@
-import passport from "passport"
-import {Strategy as KakaoStrategy} from "passport-kakao"
+import passport from "passport";
+import { Strategy as KakaoStrategy } from "passport-kakao";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import bcrypt from "bcrypt";
-import {config as dotenv} from "dotenv";
+import { config as dotenv } from "dotenv";
 dotenv();
 
-export class SocialService {
-    public static async kakaoLogin(accessToken: string, refreshToken: string, profile: any, done: any) {
+module.exports = () => {
+  passport.use(
+    new KakaoStrategy(
+      {
+        clientID: process.env.KAKAO_ID!,
+        callbackURL: process.env.KAKAO_CALLBACK_URL!,
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        console.log(accessToken);
+        console.log(profile);
         try {
-            const {id, username, _json: {kakao_account: {email}}} = profile;
-            const user = await prisma.user.findUnique({where: {email, provider: "kakao"}});
-            if (user) {
-                return done(null, user);
-            }
+          const exUser = await prisma.user.findUnique({
+            where: {
+              email: profile._json.kakao_account.email,
+            },
+          });
+          if (exUser) {
+            done(null, exUser);
+          } else {
             const newUser = await prisma.user.create({
-                data: {
-                    email,
-                    username: username,
-                    provider: "kakao"
-                }
+              data: {
+                username: profile._json.kakao_account.profile.id,
+                password: "kakao",
+                nickname: profile._json.kakao_account.profile.nickname,
+                email: profile._json.kakao_account.email,
+              },
             });
-            return done(null, newUser);
+            done(null, newUser);
+          }
         } catch (error) {
-            console.error(error);
-            return done(error);
+          console.error(error);
+          done(error);
         }
-    }
+      }
+    )
+  );
 
-}
+  passport.serializeUser((user, done) => {
+    done(null, user);
+  });
+  passport.deserializeUser((user, done) => {
+    done(null, user!);
+  });
+};
