@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import passport from "passport";
 const saltRounds = 10;
 
 const userController = {
@@ -142,5 +143,13 @@ const userController = {
       };
     }
   },
-};
+  kakaoLogin: async (req: Request, res: Response) => {
+    passport.authenticate(
+      'kakao',
+      { failureRedirect: '/',
+    }), (req:Request, res:Response) => {
+      res.redirect('/')
+    }
+  }
+}
 export default userController;

@@ -2,7 +2,6 @@ import passport from "passport";
 import { Strategy as KakaoStrategy } from "passport-kakao";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-import bcrypt from "bcrypt";
 import { config as dotenv } from "dotenv";
 dotenv();
 
@@ -11,11 +10,11 @@ module.exports = () => {
     new KakaoStrategy(
       {
         clientID: process.env.KAKAO_ID!,
-        callbackURL: process.env.KAKAO_CALLBACK_URL!,
+        callbackURL: "/api/user/kakao/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
         console.log(accessToken);
-        console.log(profile);
+        console.log("kakao profile", profile);
         try {
           const exUser = await prisma.user.findUnique({
             where: {
@@ -27,7 +26,7 @@ module.exports = () => {
           } else {
             const newUser = await prisma.user.create({
               data: {
-                username: profile._json.kakao_account.profile.id,
+                username: "kakao_" + profile._json.kakao_account.nickname,
                 password: "kakao",
                 nickname: profile._json.kakao_account.profile.nickname,
                 email: profile._json.kakao_account.email,
