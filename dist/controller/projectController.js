@@ -84,10 +84,35 @@ var getList = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
     });
 }); };
 /**
+ * Get List Count Order By Like
+ */
+var getListOrderByLike = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, count, order, type, projectList, err_2;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = req.query, count = _a.count, order = _a.order, type = _a.type;
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, project_1.projectModel.getListOrderByLike(order === "desc" ? true : false, Number(count), type === "week" ? "WEEK" : "MONTH")];
+            case 2:
+                projectList = _b.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: projectList }));
+                return [3 /*break*/, 4];
+            case 3:
+                err_2 = _b.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_2 }));
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+/**
  * Get Project By Id
  */
 var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, headers, result, isLike, auth, like_1, err_2;
+    var id, headers, result, isLike, auth, like_1, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -116,15 +141,15 @@ var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 res.status(200).send(resObj_1.resObj.success({ status: 200, data: __assign(__assign({}, result), { isLike: isLike }) }));
                 return [3 /*break*/, 7];
             case 6:
-                err_2 = _a.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_2 }));
+                err_3 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_3 }));
                 return [3 /*break*/, 7];
             case 7: return [2 /*return*/];
         }
     });
 }); };
 var add = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, title, intro, content, imageId, tags, user, result_1, tagIdList_1, err_3;
+    var _a, title, intro, content, imageId, tags, user, result_1, tagIdList_1, err_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -172,15 +197,15 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
                 res.status(201).send(resObj_1.resObj.success({ status: 201, data: __assign(__assign({}, result_1), { tags: __spreadArray([], tags, true) }) }));
                 return [3 /*break*/, 4];
             case 3:
-                err_3 = _b.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_3 }));
+                err_4 = _b.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_4 }));
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, title, intro, content, imageId, tags, user, oldProject, result, modify_1, err_4;
+    var id, _a, title, intro, content, imageId, tags, user, oldProject, result, modify_1, err_5;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -215,15 +240,15 @@ var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 _b.label = 6;
             case 6: return [3 /*break*/, 8];
             case 7:
-                err_4 = _b.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_4 }));
+                err_5 = _b.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_5 }));
                 return [3 /*break*/, 8];
             case 8: return [2 /*return*/];
         }
     });
 }); };
 var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, user, oldProject, result, err_5;
+    var id, user, oldProject, result, err_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -245,15 +270,15 @@ var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 res.status(200).send(resObj_1.resObj.success({ status: 200, data: "삭제 실패" }));
                 return [3 /*break*/, 6];
             case 5:
-                err_5 = _a.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_5 }));
+                err_6 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_6 }));
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
         }
     });
 }); };
 var like = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, user, result, err_6;
+    var id, user, result, err_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -268,8 +293,8 @@ var like = function (req, res) { return __awaiter(void 0, void 0, void 0, functi
                 res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
                 return [3 /*break*/, 4];
             case 3:
-                err_6 = _a.sent();
-                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_6 }));
+                err_7 = _a.sent();
+                res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_7 }));
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -277,6 +302,7 @@ var like = function (req, res) { return __awaiter(void 0, void 0, void 0, functi
 }); };
 exports.projectController = {
     getList: getList,
+    getListOrderByLike: getListOrderByLike,
     getProject: getProject,
     add: add,
     modify: modify,
