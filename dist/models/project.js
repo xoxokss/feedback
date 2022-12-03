@@ -197,6 +197,47 @@ var changeLike = function (projectId, userId) { return __awaiter(void 0, void 0,
         }
     });
 }); };
+var getListOrderByLike = function (sort, count, type) { return __awaiter(void 0, void 0, void 0, function () {
+    var day, date, minDate, maxDate;
+    return __generator(this, function (_a) {
+        day = 0;
+        if (type === "WEEK") {
+            day = 7;
+        }
+        else if (type === "MONTH") {
+            day = 30;
+        }
+        date = new Date();
+        minDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - day);
+        maxDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + day);
+        return [2 /*return*/, prisma.project.findMany({
+                take: count,
+                where: {
+                    // createdAt find
+                    createdAt: {
+                        gt: new Date("".concat(minDate.getFullYear(), "-").concat(minDate.getMonth() + 1, "-").concat(minDate.getDate())),
+                        lt: new Date("".concat(maxDate.getFullYear(), "-").concat(maxDate.getMonth() + 1, "-").concat(maxDate.getDate())),
+                    },
+                },
+                include: {
+                    image: true,
+                    ProjectsOnTags: {
+                        select: {
+                            tag: true,
+                        },
+                    },
+                    User: {
+                        select: {
+                            nickname: true,
+                        },
+                    },
+                },
+                orderBy: {
+                    likeCount: sort ? "desc" : "asc",
+                },
+            })];
+    });
+}); };
 exports.projectModel = {
     getProjectList: getProjectList,
     getProjectById: getProjectById,
@@ -205,4 +246,5 @@ exports.projectModel = {
     removeProject: removeProject,
     getLikeMine: getLikeMine,
     changeLike: changeLike,
+    getListOrderByLike: getListOrderByLike,
 };

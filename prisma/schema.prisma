@@ -66,6 +66,7 @@ model User {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   Project   Project[]
   Like      ProjectOnLikes[]
+  Answer      SurveyAnswer[]
 }
 
 model ProjectOnLikes {
@@ -77,4 +78,36 @@ model ProjectOnLikes {
 
   @@id([projectId, userId])
   @@index([projectId, userId])
-} 
+}
+
+model Survey {
+  id              Int        @id @default(autoincrement())
+  surveyTitle     String     @db.VarChar(255) @map("survey_title")
+
+  SurveyQuestion SurveyQuestion[]
+}
+
+model SurveyQuestion {
+  id               Int        @id @default(autoincrement())
+  surveyId         Int        @map("survey_id")
+  questionTitle    String     @db.VarChar(255) @map("question_title")
+  questionType     String     @db.VarChar(255) @map("question_type")
+  questionModel    String     @db.VarChar(255) @map("question_model")
+  questionRequired Boolean    @map("question_required") @default(false)
+  questionOrder    Int        @map("question_order")
+
+  Survery Survey     @relation(fields: [surveyId], references: [id])
+  SurveyAnswer SurveyAnswer[]
+}
+
+model SurveyAnswer {
+  id                Int        @id @default(autoincrement())
+  questionId        Int        @map("question_id")
+  userId            Int        @map("user_id")
+  answer            String     @db.VarChar(255) @map("answer")
+
+  User              User                @relation(fields: [userId], references: [id])
+  SurveryQuestion   SurveyQuestion      @relation(fields: [questionId], references: [id])
+  
+  @@index([questionId, userId])
+}
