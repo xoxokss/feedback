@@ -10,6 +10,7 @@ var tag_1 = __importDefault(require("@routes/tag"));
 var file_1 = __importDefault(require("@routes/file"));
 var test_1 = __importDefault(require("@routes/test"));
 var user_1 = __importDefault(require("@routes/user"));
+var survey_1 = __importDefault(require("@routes/survey"));
 var router = express_1.default.Router();
 exports.router = router;
 router.get("/", function (req, res) {
@@ -19,4 +20,5 @@ router.use("/project", project_1.default);
 router.use("/tag", tag_1.default);
 router.use("/file", file_1.default);
 router.use("/user", user_1.default);
+router.use("/survey", survey_1.default);
 router.use("/test", test_1.default);
