@@ -162,6 +162,45 @@ const changeLike = async (projectId: number, userId: number) => {
 	}
 };
 
+const getListOrderByLike = async (sort: boolean, count: number, type: string) => {
+	let day = 0;
+	if (type === "WEEK") {
+		day = 7;
+	} else if (type === "MONTH") {
+		day = 30;
+	}
+	const date = new Date();
+	const minDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - day);
+	const maxDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + day);
+
+	return prisma.project.findMany({
+		take: count,
+		where: {
+			// createdAt find
+			createdAt: {
+				gt: new Date(`${minDate.getFullYear()}-${minDate.getMonth() + 1}-${minDate.getDate()}`),
+				lt: new Date(`${maxDate.getFullYear()}-${maxDate.getMonth() + 1}-${maxDate.getDate()}`),
+			},
+		},
+		include: {
+			image: true,
+			ProjectsOnTags: {
+				select: {
+					tag: true,
+				},
+			},
+			User: {
+				select: {
+					nickname: true,
+				},
+			},
+		},
+		orderBy: {
+			likeCount: sort ? "desc" : "asc",
+		},
+	});
+};
+
 export const projectModel = {
 	getProjectList,
 	getProjectById,
@@ -170,4 +209,5 @@ export const projectModel = {
 	removeProject,
 	getLikeMine,
 	changeLike,
+	getListOrderByLike,
 };

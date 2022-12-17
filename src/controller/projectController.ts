@@ -19,6 +19,24 @@ const getList = async (req: express.Request, res: express.Response) => {
 };
 
 /**
+ * Get List Count Order By Like
+ */
+const getListOrderByLike = async (req: express.Request, res: express.Response) => {
+	const { count, order, type } = req.query;
+	try {
+		const projectList = await projectModel.getListOrderByLike(
+			order === "desc" ? true : false,
+			Number(count),
+			type === "week" ? "WEEK" : "MONTH"
+		);
+
+		res.status(200).send(resObj.success({ status: 200, data: projectList }));
+	} catch (err) {
+		res.status(500).send(resObj.failed({ status: 500, error: err }));
+	}
+};
+
+/**
  * Get Project By Id
  */
 const getProject = async (req: express.Request, res: express.Response) => {
@@ -151,6 +169,7 @@ const like = async (req: express.Request, res: express.Response) => {
 
 export const projectController = {
 	getList,
+	getListOrderByLike,
 	getProject,
 	add,
 	modify,
