@@ -2,11 +2,14 @@ import express from "express";
 import userController from "@controller/userController";
 import { authMiddleware } from "@middleware/authMiddleware";
 import { resObj } from "~/utils/helper/resObj";
+import passport from "passport";
 
 const userRouter = express.Router();
 
 userRouter.post("/signup", userController.signup);
 userRouter.post("/login", userController.login);
+userRouter.post("/confirmId", userController.confirmId);
+userRouter.post("/confirmNick", userController.confirmNick);
 userRouter.get("/me", authMiddleware, userController.userInfo);
 userRouter.get("/feedback/rank", (req, res) => {
 	res.send(
@@ -42,5 +45,7 @@ userRouter.get("/feedback/rank", (req, res) => {
 		})
 	);
 });
+userRouter.get("/kakao", passport.authenticate("kakao"));
+userRouter.get("/kakao/callback", userController.kakaoLogin);
 
 export default userRouter;
