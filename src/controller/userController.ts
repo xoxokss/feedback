@@ -7,6 +7,8 @@ import bcrypt from "bcrypt";
 import passport from "passport";
 const saltRounds = 10;
 
+const SECRETKEY = "sangseon";
+
 const userController = {
   //회원가입
   signup: async (req: Request, res: Response) => {
@@ -52,7 +54,7 @@ const userController = {
         return res.status(400).send({ error: "로그인 정보를 확인하세요" });
       }
       //토큰 발행
-      const token = jwt.sign({ userId: user?.username }, "sangseon", {
+      const token = jwt.sign({ userId: user?.username }, SECRETKEY, {
         expiresIn: "24h",
       });
       //response
@@ -143,13 +145,17 @@ const userController = {
       };
     }
   },
-  kakaoLogin: async (req: Request, res: Response) => {
+  kakaoLogin: async (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate(
       'kakao',
-      { failureRedirect: '/',
-    }), (req:Request, res:Response) => {
-      res.redirect('/')
-    }
+      { failureRedirect: '/'},(err, user, info) => {
+      if (err) return next(err);
+        const {email} = user;
+        console.log("리다이렉트 :",user)
+        const token = jwt.sign({email}, SECRETKEY,{expiresIn: "24h"});
+        res.redirect(`http://54.180.121.151?token=${token}`)
+      }
+    )(req,res,next);
   }
 }
 export default userController;

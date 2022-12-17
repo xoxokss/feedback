@@ -11,11 +11,6 @@ userRouter.post("/confirmId", userController.confirmId);
 userRouter.post("/confirmNick", userController.confirmNick);
 userRouter.get("/me", authMiddleware, userController.userInfo);
 userRouter.get("/kakao", passport.authenticate("kakao"));
-//userRouter.get("/kakao/callback", userController.kakaoLogin);
-userRouter.get("/kakao/callback", passport.authenticate("kakao", {
-  failureRedirect: "/",
-}), (req,res) => {
-  res.redirect("/api");
-});
+userRouter.get("/kakao/callback", userController.kakaoLogin);
 
 export default userRouter;
