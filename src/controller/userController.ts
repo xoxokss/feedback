@@ -151,9 +151,9 @@ const userController = {
       { failureRedirect: '/'},(err, user, info) => {
       if (err) return next(err);
         const {email} = user;
-        console.log("리다이렉트 :",user)
+    
         const token = jwt.sign({email}, SECRETKEY,{expiresIn: "24h"});
-        res.redirect(`http://54.180.121.151?token=${token}`)
+        res.redirect(`http://localhost:3000?token=${token}`)
       }
     )(req,res,next);
   }
