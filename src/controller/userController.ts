@@ -153,7 +153,7 @@ const userController = {
         const {email} = user;
     
         const token = jwt.sign({email}, SECRETKEY,{expiresIn: "24h"});
-        res.redirect(`http://localhost:3000?token=${token}`)
+        res.redirect(`http://54.180.121.151?token=${token}`)
       }
     )(req,res,next);
   }
