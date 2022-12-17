@@ -33,7 +33,7 @@ model Project {
   Likes          ProjectOnLikes[]
   ProjectsOnTags ProjectsOnTags[]
 
-  @@index([userId], map: "Project_user_id_fkey")
+  @@index([userId])
 }
 
 model Tag {
@@ -53,7 +53,7 @@ model ProjectsOnTags {
   tag       Tag      @relation(fields: [tagId], references: [id])
 
   @@id([projectId, tagId])
-  @@index([tagId], map: "ProjectsOnTags_tag_id_fkey")
+  @@index([tagId])
 }
 
 model User {
@@ -109,5 +109,5 @@ model SurveyQuestion {
   Survey            Survey         @relation(fields: [survey_id], references: [id])
   SurveyAnswer      SurveyAnswer[]
 
-  @@index([survey_id], map: "SurveyQuestion_survey_id_fkey")
+  @@index([survey_id])
 }
