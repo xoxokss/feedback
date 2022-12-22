@@ -147,15 +147,16 @@ const userController = {
   },
   kakaoLogin: async (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate(
-      'kakao',
-      { failureRedirect: '/'},(err, user, info) => {
-      if (err) return next(err);
-        const {email} = user;
-    
-        const token = jwt.sign({email}, SECRETKEY,{expiresIn: "24h"});
-        res.redirect(`http://localhost:3000?token=${token}`)
+      "kakao",
+      { failureRedirect: "/" },
+      (err, user, info) => {
+        if (err) return next(err);
+        const token = jwt.sign({ userId: user.username }, SECRETKEY, {
+          expiresIn: "24h",
+        });
+        res.send({ success: true, token });
       }
-    )(req,res,next);
-  }
-}
+    )(req, res, next);
+  },
+};
 export default userController;

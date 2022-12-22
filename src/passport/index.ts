@@ -4,17 +4,17 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import { config as dotenv } from "dotenv";
 dotenv();
+import jwt from "jsonwebtoken";
+const SECRETKEY = "sangseon";
 
 module.exports = () => {
   passport.use(
     new KakaoStrategy(
       {
         clientID: process.env.KAKAO_ID!,
-        callbackURL: "/api/user/kakao/callback",
+        callbackURL: "http://localhost:8000/api/user/kakao/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
-        console.log(accessToken);
-        console.log("kakao profile", profile);
         try {
           const exUser = await prisma.user.findUnique({
             where: {
@@ -24,13 +24,14 @@ module.exports = () => {
           if (exUser) {
             done(null, exUser);
           } else {
+            const data = {
+              username: profile._json.id.toString(),
+              nickname: profile._json.kakao_account.profile.nickname,
+              email: profile._json.kakao_account.email,
+              // provider: "kakao",
+            };
             const newUser = await prisma.user.create({
-              data: {
-                username: "kakao_" + profile._json.kakao_account.nickname,
-                password: "kakao",
-                nickname: profile._json.kakao_account.profile.nickname,
-                email: profile._json.kakao_account.email,
-              },
+              data: data,
             });
             done(null, newUser);
           }
