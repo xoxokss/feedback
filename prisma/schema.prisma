@@ -109,4 +109,5 @@ model SurveyAnswer {
   User            User           @relation(fields: [userId], references: [id])
 
   @@index([questionId, userId])
+  @@index([userId], map: "SurveyAnswer_user_id_fkey")
 }
