@@ -154,7 +154,7 @@ const userController = {
         const token = jwt.sign({ userId: user.username }, SECRETKEY, {
           expiresIn: "24h",
         });
-        res.send({ success: true, token });
+        res.send({ data: "success", token });
       }
     )(req, res, next);
   },
