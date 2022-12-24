@@ -18,7 +18,6 @@ module.exports = () => {
         try {
           const exUser = await prisma.user.findUnique({
             where: {
-              email: profile._json.kakao_account.email,
               username: profile._json.id.toString(),
             },
           });
