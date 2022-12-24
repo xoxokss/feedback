@@ -82,32 +82,32 @@ model ProjectOnLikes {
 
 model Survey {
   id             Int              @id @default(autoincrement())
-  surveyTitle    String           @map("survey_title") @db.VarChar(255)
+  survey_title   String           @db.VarChar(255)
   SurveyQuestion SurveyQuestion[]
 }
 
-model SurveyQuestion {
-  id               Int            @id @default(autoincrement())
-  surveyId         Int            @map("survey_id")
-  questionTitle    String         @map("question_title") @db.VarChar(255)
-  questionType     String         @map("question_type") @db.VarChar(255)
-  questionModel    String         @map("question_model") @db.VarChar(255)
-  questionRequired Boolean        @default(false) @map("question_required")
-  questionOrder    Int            @map("question_order")
-  Survery          Survey         @relation(fields: [surveyId], references: [id])
-  SurveyAnswer     SurveyAnswer[]
+model SurveyAnswer {
+  id             Int            @id @default(autoincrement())
+  question_id    Int
+  user_id        Int
+  answer         String         @db.VarChar(255)
+  SurveyQuestion SurveyQuestion @relation(fields: [question_id], references: [id])
+  User           User           @relation(fields: [user_id], references: [id])
 
-  @@index([surveyId])
+  @@index([question_id, user_id])
+  @@index([user_id], map: "SurveyAnswer_user_id_fkey")
 }
 
-model SurveyAnswer {
-  id              Int            @id @default(autoincrement())
-  questionId      Int            @map("question_id")
-  userId          Int            @map("user_id")
-  answer          String         @db.VarChar(255)
-  SurveryQuestion SurveyQuestion @relation(fields: [questionId], references: [id])
-  User            User           @relation(fields: [userId], references: [id])
+model SurveyQuestion {
+  id                Int            @id @default(autoincrement())
+  survey_id         Int
+  question_title    String         @db.VarChar(255)
+  question_type     String         @db.VarChar(255)
+  question_model    String         @db.VarChar(255)
+  question_required Boolean        @default(false)
+  question_order    Int
+  Survey            Survey         @relation(fields: [survey_id], references: [id])
+  SurveyAnswer      SurveyAnswer[]
 
-  @@index([questionId, userId])
-  @@index([userId], map: "SurveyAnswer_user_id_fkey")
+  @@index([survey_id])
 }
