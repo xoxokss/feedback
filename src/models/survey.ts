@@ -1,11 +1,12 @@
-import { PrismaClient, Tag } from "@prisma/client";
+import { PrismaClient, Tag, User } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const addSurveyPage = (title: string) => {
+const addSurveyPage = (title: string, auth: { result: boolean; user?: User | null }) => {
 	// 설문지 양식 추가
 	return prisma.survey.create({
 		data: {
+			userId: auth.user!.id,
 			surveyTitle: title,
 		},
 	});
@@ -50,8 +51,29 @@ const getSurvey = (id: number) => {
 	});
 };
 
+const addSurveyAnswer = (auth: any, questionId: number, surveyId: number, answer: string) => {
+	return prisma.surveyAnswer.create({
+		data: {
+			userId: auth.user!.id,
+			surveyId,
+			questionId,
+			answer,
+		},
+	});
+};
+
+const getSurveyAnswer = (id: number) => {
+	return prisma.surveyAnswer.findMany({
+		where: {
+			surveyId: id,
+		},
+	});
+};
+
 export const surveyModel = {
 	addSurveyPage,
 	addSurveyQuestion,
 	getSurvey,
+	addSurveyAnswer,
+	getSurveyAnswer,
 };
