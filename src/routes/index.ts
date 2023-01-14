@@ -4,6 +4,7 @@ import tagRouter from "@routes/tag";
 import fileRouter from "@routes/file";
 import testRouter from "@routes/test";
 import userRouter from "@routes/user";
+import surveyRouter from "@routes/survey";
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.use("/tag", tagRouter);
 router.use("/file", fileRouter);
 router.use("/user", userRouter);
 router.use("/test", testRouter);
+router.use("/survey", surveyRouter);
 
 export { router };
