@@ -9,7 +9,7 @@ import sendGmail from "~/utils/helper/mail";
 import "dotenv/config";
 const saltRounds = 10;
 
-const SECRETKEY = process.env.SECRET;
+const SECRETKEY: any = process.env.SECRET;
 
 const userController = {
   //회원가입
@@ -59,6 +59,7 @@ const userController = {
       const token = jwt.sign({ userId: user?.username }, SECRETKEY, {
         expiresIn: "24h",
       });
+
       //response
       res.status(200).send({ message: "로그인 성공", token });
     } catch (error) {
