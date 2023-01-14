@@ -5,9 +5,11 @@ const prisma = new PrismaClient();
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import passport from "passport";
+import sendGmail from "~/utils/helper/mail";
+import "dotenv/config";
 const saltRounds = 10;
 
-const SECRETKEY = "sangseon";
+const SECRETKEY = process.env.SECRET;
 
 const userController = {
   //회원가입
@@ -133,7 +135,9 @@ const userController = {
   userInfo: async (req: Request, res: Response) => {
     const { user } = res.locals;
     try {
-      return res.status(200).send({ message: "hi", userId: user.username });
+      return res
+        .status(200)
+        .send({ message: "success", userId: user.username });
     } catch (error) {
       console.log(error);
       res.status(400).send({
@@ -158,5 +162,58 @@ const userController = {
       }
     )(req, res, next);
   },
+  verifyEmail: async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+    try {
+      const signNum = Math.random().toString().substring(2, 8);
+      const exUser = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (exUser) {
+        return res
+          .status(400)
+          .send({ success: false, message: "이미 가입된 이메일입니다." });
+      }
+      const emailParams = {
+        to: email,
+        subject: "Feedback 이메일 인증번호 발송 메일",
+        //text: `인증번호는 ${signNum} 입니다.`,
+        html: `<h4>인증번호는</h4> </br> <h1>${signNum}</h1> </br><h4> 입니다.</h4>`,
+      };
+      if (!exUser) {
+        sendGmail(emailParams);
+        res.status(200).send({ success: true, data: signNum });
+      }
+    } catch (err) {
+      console.log(err);
+      res
+        .status(400)
+        .send({ success: false, error: "이메일 발송에 실패했습니다" });
+    }
+  },
+  deleteUser: async (req: Request, res: Response) => {
+    const { user } = res.locals;
+    try {
+      const exUser = await prisma.user.findUnique({
+        where: {
+          username: user.username,
+        },
+      });
+      if (exUser) {
+        await prisma.user.delete({
+          where: {
+            username: user.username,
+          },
+        });
+        res.status(200).send({ message: "유저 삭제 성공" });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(400).send({ error: "유저 삭제 실패" });
+    }
+  },
 };
+
 export default userController;

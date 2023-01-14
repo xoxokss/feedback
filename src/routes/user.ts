@@ -12,5 +12,7 @@ userRouter.post("/confirmNick", userController.confirmNick);
 userRouter.get("/me", authMiddleware, userController.userInfo);
 userRouter.get("/kakao", passport.authenticate("kakao"));
 userRouter.get("/kakao/callback", userController.kakaoLogin);
+userRouter.get("/verifyEmail", userController.verifyEmail);
+userRouter.delete("/delete", authMiddleware, userController.deleteUser);
 
 export default userRouter;

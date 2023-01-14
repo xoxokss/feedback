@@ -2,10 +2,7 @@ import passport from "passport";
 import { Strategy as KakaoStrategy } from "passport-kakao";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-import { config as dotenv } from "dotenv";
-dotenv();
-import jwt from "jsonwebtoken";
-const SECRETKEY = "sangseon";
+import "dotenv/config";
 
 module.exports = () => {
   passport.use(
@@ -16,6 +13,7 @@ module.exports = () => {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
+          // 일반 회원가입으로 이메일이 중복되면 어떻게 처리하지..
           const exUser = await prisma.user.findUnique({
             where: {
               email: profile._json.kakao_account.email,
