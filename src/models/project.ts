@@ -18,9 +18,9 @@ interface IModifyProject {
 	imageId: number;
 }
 
-const getProjectList = () => {
+const getProjectList = async () => {
 	// 프로젝트 전체조회
-	return prisma.project.findMany({
+	const projects = await prisma.project.findMany({
 		include: {
 			image: true,
 			ProjectsOnTags: {
@@ -35,10 +35,28 @@ const getProjectList = () => {
 			},
 		},
 	});
+
+	return projects.map((project) => {
+		const data = {
+			id: project.id,
+			title: project.title,
+			intro: project.intro,
+			content: project.content,
+			createdAt: project.createdAt,
+			updatedAt: project.updatedAt,
+			userId: project.userId,
+			userNickname: project.User.nickname,
+			imageId: project.imageId,
+			imagePath: project.image?.filePath,
+			tags: project.ProjectsOnTags.map((projectOnTag) => projectOnTag.tag.name),
+		};
+
+		return data;
+	});
 };
 
-const getProjectById = (id: number) => {
-	return prisma.project.findUnique({
+const getProjectById = async (id: number) => {
+	const project = await prisma.project.findUnique({
 		where: {
 			id,
 		},
@@ -56,6 +74,20 @@ const getProjectById = (id: number) => {
 			},
 		},
 	});
+
+	return {
+		id: project?.id,
+		title: project?.title,
+		intro: project?.intro,
+		content: project?.content,
+		createdAt: project?.createdAt,
+		updatedAt: project?.updatedAt,
+		userId: project?.userId,
+		userNickname: project?.User.nickname,
+		imageId: project?.imageId,
+		imagePath: project?.image?.filePath,
+		tags: project?.ProjectsOnTags.map((projectOnTag) => projectOnTag.tag.name),
+	};
 };
 
 const addProject = ({ title, intro, content, imageId, userId }: IAddProject) => {
@@ -173,7 +205,7 @@ const getListOrderByLike = async (sort: boolean, count: number, type: string) =>
 	const minDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - day);
 	const maxDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + day);
 
-	return prisma.project.findMany({
+	const projects = await prisma.project.findMany({
 		take: count,
 		where: {
 			// createdAt find
@@ -198,6 +230,25 @@ const getListOrderByLike = async (sort: boolean, count: number, type: string) =>
 		orderBy: {
 			likeCount: sort ? "desc" : "asc",
 		},
+	});
+
+	return projects.map((project) => {
+		const data = {
+			id: project.id,
+			title: project.title,
+			intro: project.intro,
+			content: project.content,
+			createdAt: project.createdAt,
+			updatedAt: project.updatedAt,
+			userId: project.userId,
+			userNickname: project.User.nickname,
+			imageId: project.imageId,
+			imagePath: project.image?.filePath,
+			tags: project.ProjectsOnTags.map((projectOnTag) => projectOnTag.tag.name),
+			likeCount: project.likeCount,
+		};
+
+		return data;
 	});
 };
 
