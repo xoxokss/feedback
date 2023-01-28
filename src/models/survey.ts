@@ -63,11 +63,23 @@ const addSurveyAnswer = (auth: any, questionId: number, surveyId: number, answer
 };
 
 const getSurveyAnswer = (id: number) => {
-	return prisma.surveyAnswer.findMany({
-		where: {
-			surveyId: id,
-		},
-	});
+	return prisma.$queryRaw`
+		SELECT
+			sa.id,
+			sa.survey_id AS surveyId,
+			sa.question_id AS questionId,
+			sa.user_id AS userId,
+			sq.question_title AS questionTitle,
+			sq.question_model AS questionModel,
+			sa.answer AS answer
+		FROM SurveyAnswer AS sa
+		INNER JOIN 
+			SurveyQuestion AS sq
+		ON 
+			sa.question_id = sq.id
+		WHERE
+			sa.survey_id = ${id}
+	`;
 };
 
 export const surveyModel = {

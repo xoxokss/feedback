@@ -39,44 +39,88 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.projectModel = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
-var getProjectList = function () {
-    // 프로젝트 전체조회
-    return prisma.project.findMany({
-        include: {
-            image: true,
-            ProjectsOnTags: {
-                select: {
-                    tag: true,
-                },
-            },
-            User: {
-                select: {
-                    nickname: true,
-                },
-            },
-        },
+var getProjectList = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var projects;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.project.findMany({
+                    include: {
+                        image: true,
+                        ProjectsOnTags: {
+                            select: {
+                                tag: true,
+                            },
+                        },
+                        User: {
+                            select: {
+                                nickname: true,
+                            },
+                        },
+                    },
+                })];
+            case 1:
+                projects = _a.sent();
+                return [2 /*return*/, projects.map(function (project) {
+                        var _a;
+                        var data = {
+                            id: project.id,
+                            title: project.title,
+                            intro: project.intro,
+                            content: project.content,
+                            createdAt: project.createdAt,
+                            updatedAt: project.updatedAt,
+                            userId: project.userId,
+                            userNickname: project.User.nickname,
+                            imageId: project.imageId,
+                            imagePath: (_a = project.image) === null || _a === void 0 ? void 0 : _a.filePath,
+                            tags: project.ProjectsOnTags.map(function (projectOnTag) { return projectOnTag.tag.name; }),
+                        };
+                        return data;
+                    })];
+        }
     });
-};
-var getProjectById = function (id) {
-    return prisma.project.findUnique({
-        where: {
-            id: id,
-        },
-        include: {
-            image: true,
-            ProjectsOnTags: {
-                select: {
-                    tag: true,
-                },
-            },
-            User: {
-                select: {
-                    nickname: true,
-                },
-            },
-        },
+}); };
+var getProjectById = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+    var project;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4 /*yield*/, prisma.project.findUnique({
+                    where: {
+                        id: id,
+                    },
+                    include: {
+                        image: true,
+                        ProjectsOnTags: {
+                            select: {
+                                tag: true,
+                            },
+                        },
+                        User: {
+                            select: {
+                                nickname: true,
+                            },
+                        },
+                    },
+                })];
+            case 1:
+                project = _b.sent();
+                return [2 /*return*/, {
+                        id: project === null || project === void 0 ? void 0 : project.id,
+                        title: project === null || project === void 0 ? void 0 : project.title,
+                        intro: project === null || project === void 0 ? void 0 : project.intro,
+                        content: project === null || project === void 0 ? void 0 : project.content,
+                        createdAt: project === null || project === void 0 ? void 0 : project.createdAt,
+                        updatedAt: project === null || project === void 0 ? void 0 : project.updatedAt,
+                        userId: project === null || project === void 0 ? void 0 : project.userId,
+                        userNickname: project === null || project === void 0 ? void 0 : project.User.nickname,
+                        imageId: project === null || project === void 0 ? void 0 : project.imageId,
+                        imagePath: (_a = project === null || project === void 0 ? void 0 : project.image) === null || _a === void 0 ? void 0 : _a.filePath,
+                        tags: project === null || project === void 0 ? void 0 : project.ProjectsOnTags.map(function (projectOnTag) { return projectOnTag.tag.name; }),
+                    }];
+        }
     });
-};
+}); };
 var addProject = function (_a) {
     var title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, userId = _a.userId;
     return prisma.project.create({
@@ -198,44 +242,67 @@ var changeLike = function (projectId, userId) { return __awaiter(void 0, void 0,
     });
 }); };
 var getListOrderByLike = function (sort, count, type) { return __awaiter(void 0, void 0, void 0, function () {
-    var day, date, minDate, maxDate;
+    var day, date, minDate, maxDate, projects;
     return __generator(this, function (_a) {
-        day = 0;
-        if (type === "WEEK") {
-            day = 7;
-        }
-        else if (type === "MONTH") {
-            day = 30;
-        }
-        date = new Date();
-        minDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - day);
-        maxDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + day);
-        return [2 /*return*/, prisma.project.findMany({
-                take: count,
-                where: {
-                    // createdAt find
-                    createdAt: {
-                        gt: new Date("".concat(minDate.getFullYear(), "-").concat(minDate.getMonth() + 1, "-").concat(minDate.getDate())),
-                        lt: new Date("".concat(maxDate.getFullYear(), "-").concat(maxDate.getMonth() + 1, "-").concat(maxDate.getDate())),
-                    },
-                },
-                include: {
-                    image: true,
-                    ProjectsOnTags: {
-                        select: {
-                            tag: true,
+        switch (_a.label) {
+            case 0:
+                day = 0;
+                if (type === "WEEK") {
+                    day = 7;
+                }
+                else if (type === "MONTH") {
+                    day = 30;
+                }
+                date = new Date();
+                minDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - day);
+                maxDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + day);
+                return [4 /*yield*/, prisma.project.findMany({
+                        take: count,
+                        where: {
+                            // createdAt find
+                            createdAt: {
+                                gt: new Date("".concat(minDate.getFullYear(), "-").concat(minDate.getMonth() + 1, "-").concat(minDate.getDate())),
+                                lt: new Date("".concat(maxDate.getFullYear(), "-").concat(maxDate.getMonth() + 1, "-").concat(maxDate.getDate())),
+                            },
                         },
-                    },
-                    User: {
-                        select: {
-                            nickname: true,
+                        include: {
+                            image: true,
+                            ProjectsOnTags: {
+                                select: {
+                                    tag: true,
+                                },
+                            },
+                            User: {
+                                select: {
+                                    nickname: true,
+                                },
+                            },
                         },
-                    },
-                },
-                orderBy: {
-                    likeCount: sort ? "desc" : "asc",
-                },
-            })];
+                        orderBy: {
+                            likeCount: sort ? "desc" : "asc",
+                        },
+                    })];
+            case 1:
+                projects = _a.sent();
+                return [2 /*return*/, projects.map(function (project) {
+                        var _a;
+                        var data = {
+                            id: project.id,
+                            title: project.title,
+                            intro: project.intro,
+                            content: project.content,
+                            createdAt: project.createdAt,
+                            updatedAt: project.updatedAt,
+                            userId: project.userId,
+                            userNickname: project.User.nickname,
+                            imageId: project.imageId,
+                            imagePath: (_a = project.image) === null || _a === void 0 ? void 0 : _a.filePath,
+                            tags: project.ProjectsOnTags.map(function (projectOnTag) { return projectOnTag.tag.name; }),
+                            likeCount: project.likeCount,
+                        };
+                        return data;
+                    })];
+        }
     });
 }); };
 exports.projectModel = {

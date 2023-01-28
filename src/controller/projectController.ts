@@ -50,7 +50,7 @@ const getProject = async (req: express.Request, res: express.Response) => {
 		if (headers.authorization) {
 			// 토큰이 있는 경우에만 체크하고 그게 아닌 경우에는 isLike는 false
 			const auth = await getUserByToken(headers.authorization);
-			if (auth.result) {
+			if (auth.result && result.id) {
 				const like = await projectModel.getLikeMine(result!.id, auth.user!.id);
 
 				if (like) {

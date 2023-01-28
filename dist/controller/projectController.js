@@ -129,7 +129,7 @@ var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 return [4 /*yield*/, (0, auth_1.getUserByToken)(headers.authorization)];
             case 3:
                 auth = _a.sent();
-                if (!auth.result) return [3 /*break*/, 5];
+                if (!(auth.result && result.id)) return [3 /*break*/, 5];
                 return [4 /*yield*/, project_1.projectModel.getLikeMine(result.id, auth.user.id)];
             case 4:
                 like_1 = _a.sent();
