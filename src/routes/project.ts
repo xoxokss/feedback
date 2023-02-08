@@ -7,8 +7,6 @@ const router = express.Router();
 // like
 router.get("/like", projectController.getListOrderByLike);
 router.put("/like/:id", authMiddleware, projectController.like);
-
-// project
 router.get("/", projectController.getList);
 router.get("/:id", projectController.getProject);
 router.post("/", authMiddleware, projectController.add);

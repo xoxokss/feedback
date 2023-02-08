@@ -28,7 +28,7 @@ const addSurveyQuestion = ({
 	qOrder: number;
 }) => {
 	// 설문지 질문 추가
-	return prisma.surveyQuestion.create({
+	return prisma.question.create({
 		data: {
 			surveyId,
 			questionTitle: qTitle,
@@ -46,20 +46,42 @@ const getSurvey = (id: number) => {
 			id,
 		},
 		include: {
-			SurveyQuestion: true,
+			Question: true,
 		},
 	});
 };
 
-const addSurveyAnswer = (auth: any, questionId: number, surveyId: number, answer: string) => {
-	return prisma.surveyAnswer.create({
+const addSurveyAnswerSheet = (auth: any, surveyId: number) => {
+	const answerSheetResult = prisma.answerSheet.create({
 		data: {
 			userId: auth.user!.id,
 			surveyId,
+		},
+	});
+
+	console.log(answerSheetResult);
+
+	return answerSheetResult;
+};
+
+const addSurveyAnswer = (answerSheetId: number, questionId: number, answer: string) => {
+	const answerResult = prisma.answer.create({
+		data: {
 			questionId,
+			answerSheetId,
 			answer,
 		},
 	});
+
+	return answerResult;
+};
+
+const getSurveyAnswerUserList = (id: number) => {
+	// return prisma.$queryRaw`
+	// 	SELECT
+	// 		sa.user_id AS userId
+	// 	FROM SurveyAnswer AS sa
+	// `;
 };
 
 const getSurveyAnswer = (id: number) => {
@@ -86,6 +108,8 @@ export const surveyModel = {
 	addSurveyPage,
 	addSurveyQuestion,
 	getSurvey,
+	addSurveyAnswerSheet,
 	addSurveyAnswer,
 	getSurveyAnswer,
+	getSurveyAnswerUserList,
 };

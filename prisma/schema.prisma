@@ -57,17 +57,17 @@ model ProjectsOnTags {
 }
 
 model User {
-  id           Int              @id @default(autoincrement())
-  username     String           @unique @db.VarChar(100)
-  password     String?          @db.VarChar(100)
-  email        String           @unique @db.VarChar(100)
-  nickname     String           @unique
-  createdAt    DateTime         @default(now()) @map("created_at")
-  updatedAt    DateTime         @default(now()) @updatedAt @map("updated_at")
-  Project      Project[]
-  Like         ProjectOnLikes[]
-  SurveyAnswer SurveyAnswer[]
-  Survey       Survey[]
+  id          Int              @id @default(autoincrement())
+  username    String           @unique @db.VarChar(100)
+  password    String?          @db.VarChar(100)
+  email       String           @unique @db.VarChar(100)
+  nickname    String           @unique
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at")
+  AnswerSheet AnswerSheet[]
+  Project     Project[]
+  Like        ProjectOnLikes[]
+  Survey      Survey[]
 }
 
 model ProjectOnLikes {
@@ -78,40 +78,54 @@ model ProjectOnLikes {
 
   @@id([projectId, userId])
   @@index([projectId, userId])
+  @@index([userId], map: "ProjectOnLikes_userId_fkey")
 }
 
 model Survey {
-  id             Int             @id @default(autoincrement())
-  userId         Int             @map("user_id")
-  surveyTitle    String          @db.VarChar(255)
-  SurveyQuestion SurveyQuestion[]
-  User           User            @relation(fields: [userId], references: [id])
-  SurveyAnswer   SurveyAnswer[]
+  id          Int           @id @default(autoincrement())
+  userId      Int           @map("user_id")
+  surveyTitle String        @db.VarChar(255)
+  User        User          @relation(fields: [userId], references: [id])
+  AnswerSheet AnswerSheet[]
+  Question    Question[]
+
+  @@index([userId], map: "Survey_user_id_fkey")
 }
 
-model SurveyAnswer {
-  id             Int            @id @default(autoincrement())
-  surveyId       Int            @map("survey_id")
-  questionId     Int            @map("question_id")
-  userId         Int            @map("user_id")
-  answer         String         @db.VarChar(255)
-  SurveyQuestion SurveyQuestion @relation(fields: [questionId], references: [id])
-  Survey         Survey         @relation(fields: [surveyId], references: [id])
-  User           User           @relation(fields: [userId], references: [id])
-
-  @@index([questionId, userId])
-}
-
-model SurveyQuestion {
-  id               Int           @id @default(autoincrement())
-  surveyId         Int            @map("survey_id")
-  questionTitle    String         @db.VarChar(255) @map("question_title")
-  questionType     String         @db.VarChar(255)  @map("question_type")
-  questionModel    String         @db.VarChar(255)  @map("question_model")
-  questionRequired Boolean        @default(false) @map("question_required")
-  questionOrder    Int            @map("question_order")
-  Survey            Survey        @relation(fields: [surveyId], references: [id])
-  SurveyAnswer      SurveyAnswer[]
+model Question {
+  id               Int      @id @default(autoincrement())
+  surveyId         Int      @map("survey_id")
+  questionTitle    String   @map("question_title") @db.VarChar(255)
+  questionType     String   @map("question_type") @db.VarChar(255)
+  questionModel    String   @map("question_model") @db.VarChar(255)
+  questionRequired Boolean  @default(false) @map("question_required")
+  questionOrder    Int      @map("question_order")
+  Survey           Survey   @relation(fields: [surveyId], references: [id])
+  SurveyAnswer     Answer[]
 
   @@index([surveyId])
+}
+
+model AnswerSheet {
+  id       Int      @id @default(autoincrement())
+  surveyId Int      @map("survey_id")
+  userId   Int      @map("user_id")
+  Survey   Survey   @relation(fields: [surveyId], references: [id])
+  User     User     @relation(fields: [userId], references: [id])
+  Answer   Answer[]
+
+  @@index([surveyId], map: "AnswerSheet_survey_id_fkey")
+  @@index([userId], map: "AnswerSheet_user_id_fkey")
+}
+
+model Answer {
+  id            Int         @id @default(autoincrement())
+  answerSheetId Int         @map("answer_sheet_id")
+  questionId    Int         @map("question_id")
+  answer        String      @db.VarChar(255)
+  AnswerSheet   AnswerSheet @relation(fields: [answerSheetId], references: [id])
+  Question      Question    @relation(fields: [questionId], references: [id])
+
+  @@index([questionId, answerSheetId])
+  @@index([answerSheetId], map: "Answer_answer_sheet_id_fkey")
 }

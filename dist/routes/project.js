@@ -10,7 +10,6 @@ var router = express_1.default.Router();
 // like
 router.get("/like", projectController_1.projectController.getListOrderByLike);
 router.put("/like/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.like);
-// project
 router.get("/", projectController_1.projectController.getList);
 router.get("/:id", projectController_1.projectController.getProject);
 router.post("/", authMiddleware_1.authMiddleware, projectController_1.projectController.add);

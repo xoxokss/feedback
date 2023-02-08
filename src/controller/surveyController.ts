@@ -61,12 +61,36 @@ const submitSurvey = async (req: Request, res: Response) => {
 	try {
 		const auth = await getUserByToken(authorization as string);
 
+		const surveyAnswerResult = await surveyModel.addSurveyAnswerSheet(auth, Number(id));
+		// const survey = await surveyModel.addSurveyAnswer(surveyAnswerResult.id, answer);
 		answer.map(async (item: any) => {
 			// survey 추가
-			surveyModel.addSurveyAnswer(auth, item.questionId, Number(id), String(item.answer));
+			return await surveyModel.addSurveyAnswer(
+				surveyAnswerResult.id,
+				Number(item.questionId),
+				String(item.answer)
+			);
 		});
 
-		res.status(200).send(resObj.success({ status: 200, data: "success" }));
+		res.status(200).send(
+			resObj.success({
+				status: 200,
+				data: {
+					result: true,
+				},
+			})
+		);
+	} catch (err) {
+		res.status(500).send(resObj.success({ status: 500, data: err }));
+	}
+};
+
+const getSurveyAnswerUserList = async (req: Request, res: Response) => {
+	const { id } = req.params;
+
+	try {
+		const result = await surveyModel.getSurveyAnswerUserList(Number(id));
+		res.status(200).send(resObj.success({ status: 200, data: result }));
 	} catch (err) {
 		res.status(500).send(resObj.success({ status: 500, data: err }));
 	}
@@ -79,9 +103,7 @@ const getSurveyAnswerList = async (req: Request, res: Response) => {
 		const result = await surveyModel.getSurveyAnswer(Number(id));
 
 		res.status(200).send(resObj.success({ status: 200, data: result }));
-	} catch (err) {
-		res.status(500).send(resObj.success({ status: 500, data: err }));
-	}
+	} catch (err) {}
 };
 
 export const surveyController = {
@@ -89,4 +111,5 @@ export const surveyController = {
 	getSurvey,
 	submitSurvey,
 	getSurveyAnswerList,
+	getSurveyAnswerUserList,
 };

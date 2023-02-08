@@ -73,6 +73,7 @@ var getList = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
                 return [4 /*yield*/, project_1.projectModel.getProjectList()];
             case 1:
                 projectList = _a.sent();
+                console.log(projectList);
                 res.status(200).send(resObj_1.resObj.success({ status: 200, data: projectList }));
                 return [3 /*break*/, 3];
             case 2:

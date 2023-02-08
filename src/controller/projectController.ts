@@ -12,6 +12,8 @@ const getList = async (req: express.Request, res: express.Response) => {
 	try {
 		const projectList = await projectModel.getProjectList();
 
+		console.log(projectList);
+
 		res.status(200).send(resObj.success({ status: 200, data: projectList }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
