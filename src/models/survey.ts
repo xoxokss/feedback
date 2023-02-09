@@ -76,12 +76,12 @@ const addSurveyAnswer = (answerSheetId: number, questionId: number, answer: stri
 	return answerResult;
 };
 
-const getSurveyAnswerUserList = (id: number) => {
-	// return prisma.$queryRaw`
-	// 	SELECT
-	// 		sa.user_id AS userId
-	// 	FROM SurveyAnswer AS sa
-	// `;
+const getSurveyAnswerListShortInfo = (id: number) => {
+	return prisma.$queryRaw`
+		SELECT
+			sa.user_id AS userId
+		FROM SurveyAnswer AS sa
+	`;
 };
 
 const getSurveyAnswer = (id: number) => {
@@ -104,6 +104,14 @@ const getSurveyAnswer = (id: number) => {
 	`;
 };
 
+const getSurveyListByUserId = (userId: number) => {
+	return prisma.survey.findMany({
+		where: {
+			userId,
+		},
+	});
+};
+
 export const surveyModel = {
 	addSurveyPage,
 	addSurveyQuestion,
@@ -111,5 +119,6 @@ export const surveyModel = {
 	addSurveyAnswerSheet,
 	addSurveyAnswer,
 	getSurveyAnswer,
-	getSurveyAnswerUserList,
+	getSurveyAnswerListShortInfo,
+	getSurveyListByUserId,
 };
