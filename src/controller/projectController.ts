@@ -67,7 +67,7 @@ const getProject = async (req: express.Request, res: express.Response) => {
 };
 
 const add = async (req: express.Request, res: express.Response) => {
-	const { title, intro, content, imageId, tags } = req.body;
+	const { title, intro, content, surveyId, imageId, tags } = req.body;
 	const { user } = res.locals;
 
 	try {
@@ -76,6 +76,7 @@ const add = async (req: express.Request, res: express.Response) => {
 			title,
 			intro,
 			content,
+			surveyId,
 			imageId,
 			userId: user.id,
 		});

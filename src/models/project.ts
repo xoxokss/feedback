@@ -1,14 +1,19 @@
 import { PrismaClient, Tag } from "@prisma/client";
 
-const prisma = new PrismaClient();
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Project:
+ *       type: object
+ *       properties:
+ *        id:
+ *          type: integer
+ *          description: 프로젝트 아이디
+ *          example: 10
+ */
 
-interface IAddProject {
-	title: string;
-	intro: string;
-	content: string;
-	imageId: number;
-	userId: number;
-}
+const prisma = new PrismaClient();
 
 interface IModifyProject {
 	id: number;
@@ -90,12 +95,22 @@ const getProjectById = async (id: number) => {
 	};
 };
 
-const addProject = ({ title, intro, content, imageId, userId }: IAddProject) => {
+interface IAddProject {
+	title: string;
+	intro: string;
+	content: string;
+	imageId: number;
+	userId: number;
+	surveyId: number;
+}
+
+const addProject = ({ title, intro, content, surveyId, imageId, userId }: IAddProject) => {
 	return prisma.project.create({
 		data: {
 			title,
 			intro,
 			content,
+			surveyId,
 			imageId,
 			userId,
 		},

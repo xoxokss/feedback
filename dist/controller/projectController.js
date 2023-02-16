@@ -150,11 +150,11 @@ var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var add = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, title, intro, content, imageId, tags, user, result_1, tagIdList_1, err_4;
+    var _a, title, intro, content, surveyId, imageId, tags, user, result_1, tagIdList_1, err_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, tags = _a.tags;
+                _a = req.body, title = _a.title, intro = _a.intro, content = _a.content, surveyId = _a.surveyId, imageId = _a.imageId, tags = _a.tags;
                 user = res.locals.user;
                 _b.label = 1;
             case 1:
@@ -163,6 +163,7 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
                         title: title,
                         intro: intro,
                         content: content,
+                        surveyId: surveyId,
                         imageId: imageId,
                         userId: user.id,
                     })];

@@ -122,12 +122,13 @@ var getProjectById = function (id) { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 var addProject = function (_a) {
-    var title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, userId = _a.userId;
+    var title = _a.title, intro = _a.intro, content = _a.content, surveyId = _a.surveyId, imageId = _a.imageId, userId = _a.userId;
     return prisma.project.create({
         data: {
             title: title,
             intro: intro,
             content: content,
+            surveyId: surveyId,
             imageId: imageId,
             userId: userId,
         },

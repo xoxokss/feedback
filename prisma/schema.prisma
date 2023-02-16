@@ -21,6 +21,7 @@ model File {
 model Project {
   id             Int              @id @default(autoincrement())
   imageId        Int              @unique @map("image_id")
+  surveyId       Int              @unique @map("survey_id")
   title          String           @db.VarChar(255)
   intro          String           @db.VarChar(255)
   content        String           @db.Text
@@ -30,6 +31,7 @@ model Project {
   userId         Int              @map("user_id")
   image          File             @relation(fields: [imageId], references: [id])
   User           User             @relation(fields: [userId], references: [id])
+  Survey         Survey           @relation(fields: [surveyId], references: [id])
   Likes          ProjectOnLikes[]
   ProjectsOnTags ProjectsOnTags[]
 
@@ -88,6 +90,7 @@ model Survey {
   User        User          @relation(fields: [userId], references: [id])
   AnswerSheet AnswerSheet[]
   Question    Question[]
+  Projects    Project[]
 
   @@index([userId], map: "Survey_user_id_fkey")
 }
