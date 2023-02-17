@@ -17,15 +17,42 @@ var router = express_1.default.Router();
  *      responses:
  *        200:
  *          description: 프로젝트 리스트 조회 성공
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  success:
+ *                    type: boolean
+ *                    description: 성공여부
+ *                    example: true
+ *                  status:
+ *                    type: number
+ *                    description: 상태코드
+ *                    example: 200
+ *                  data:
+ *                    type: array
+ *                    description: 응답 데이터
+ *                    items:
+ *                      type: object
+ *                      properties:
+ *                        id:
+ *                          $ref: '#/components/schemas/Project/properties/id'
+ *                        title:
+ *                          type: string
+ *                          description: 프로젝트 제목
+ *                          content: 내용
+ *                          example: 제목입니다
+ *
  */
-router.get("/", projectController_1.projectController.getList);
+router.get("/", projectController_1.projectController.getProjectList);
 /**
  * @swagger
  * paths:
  *  /api/project:
  *    post:
  *      tags: [Project]
- *      summary: 프로젝트 추가
+ *      summary: 프로젝트 추가 (로그인 필요)
  *      requestBody:
  *        description: 프로젝트를 추가합니다
  *        content:
@@ -39,14 +66,13 @@ router.get("/", projectController_1.projectController.getList);
  *                  type: string
  *                  description: 프로젝트 제목
  *                  content: 내용
- *                  example: 제목입니다
  *                intro:
  *                  type: string
  *                  description: 프로젝트 소개
  *                  content: 내용
  *      responses:
  *        200:
- *          description: 프로젝트 리스트 조회 성공
+ *          description: 프로젝트 리스트 추가 성공
  */
 router.post("/", authMiddleware_1.authMiddleware, projectController_1.projectController.add);
 router.get("/like", projectController_1.projectController.getListOrderByLike);

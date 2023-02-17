@@ -60,6 +60,46 @@ const getProjectList = async () => {
 	});
 };
 
+const getProjectListByUserId = async (userId: number) => {
+	// 프로젝트 유저 아이디로 조회
+	const projects = await prisma.project.findMany({
+		where: {
+			userId,
+		},
+		include: {
+			image: true,
+			ProjectsOnTags: {
+				select: {
+					tag: true,
+				},
+			},
+			User: {
+				select: {
+					nickname: true,
+				},
+			},
+		},
+	});
+
+	return projects.map((project) => {
+		const data = {
+			id: project.id,
+			title: project.title,
+			intro: project.intro,
+			content: project.content,
+			createdAt: project.createdAt,
+			updatedAt: project.updatedAt,
+			userId: project.userId,
+			userNickname: project.User.nickname,
+			imageId: project.imageId,
+			imagePath: project.image?.filePath,
+			tags: project.ProjectsOnTags.map((projectOnTag) => projectOnTag.tag.name),
+		};
+
+		return data;
+	});
+};
+
 const getProjectById = async (id: number) => {
 	const project = await prisma.project.findUnique({
 		where: {
@@ -269,6 +309,7 @@ const getListOrderByLike = async (sort: boolean, count: number, type: string) =>
 
 export const projectModel = {
 	getProjectList,
+	getProjectListByUserId,
 	getProjectById,
 	addProject,
 	modifyProject,
