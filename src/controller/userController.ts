@@ -138,7 +138,8 @@ const userController = {
     try {
       return res
         .status(200)
-        .send({ message: "success", userId: user.username });
+        .send({ message: "success", userId: user.username, nickname: user.nickname, email: user.email, profileImg: user.profileImg , //user.phone
+      });
     } catch (error) {
       console.log(error);
       res.status(400).send({
