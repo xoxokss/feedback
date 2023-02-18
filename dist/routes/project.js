@@ -20,7 +20,7 @@ var router = express_1.default.Router();
  *        - user 파라미터에 0 값을 넣으면 자기 자신의 프로젝트 목록을 조회합니다. <b>(Auth 토큰 필요)</b><br/>
  *        - user 파라미터를 넣지 않으면 전체 프로젝트를 조회합니다.
  *      security:
- *       - bearerAuth: []
+ *        - bearerAuth: []
  *      parameters:
  *        - in: query
  *          name: user
