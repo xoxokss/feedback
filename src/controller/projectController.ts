@@ -8,15 +8,46 @@ import { getUserByToken } from "~/utils/helper/auth";
 /**
  * Get List All
  */
-const getList = async (req: express.Request, res: express.Response) => {
+const getProjectList = async (req: express.Request, res: express.Response) => {
+	const query = req.query;
+	const headers = req.headers;
+
 	try {
-		const projectList = await projectModel.getProjectList();
+		// parameter에 user=0이면 내 정보 조회, 아니면 해당 유저 조회, user가 없다면 전체 조회
+		const userId = query?.user;
+		let projectList = null;
+		if (userId) {
+			if (typeof Number(userId) === "number") {
+				if (Number(userId) === 0) {
+					// 내 프로젝트 조회
+					if (headers?.authorization) {
+						const auth = await getUserByToken(headers.authorization);
+						projectList = await projectModel.getProjectListByUserId(Number(auth.user?.id));
+					} else {
+						res.status(500).send(
+							resObj.failed({
+								status: 500,
+								error: "토큰이 없습니다.",
+							})
+						);
+						return;
+					}
+				} else {
+					// 다른 유저 프로젝트 조회
+					projectList = await projectModel.getProjectListByUserId(Number(query.user));
+				}
+			}
+		} else {
+			projectList = await projectModel.getProjectList();
+		}
 
 		res.status(200).send(resObj.success({ status: 200, data: projectList }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
 	}
 };
+
+const getProjectListByMe = async (req: express.Request, res: express.Response) => {};
 
 /**
  * Get List Count Order By Like
@@ -64,8 +95,8 @@ const getProject = async (req: express.Request, res: express.Response) => {
 	}
 };
 
-const add = async (req: express.Request, res: express.Response) => {
-	const { title, intro, content, imageId, tags } = req.body;
+const addProject = async (req: express.Request, res: express.Response) => {
+	const { title, intro, content, surveyId, imageId, tags } = req.body;
 	const { user } = res.locals;
 
 	try {
@@ -74,6 +105,7 @@ const add = async (req: express.Request, res: express.Response) => {
 			title,
 			intro,
 			content,
+			surveyId,
 			imageId,
 			userId: user.id,
 		});
@@ -105,7 +137,7 @@ const add = async (req: express.Request, res: express.Response) => {
 	}
 };
 
-const modify = async (req: express.Request, res: express.Response) => {
+const modifyProject = async (req: express.Request, res: express.Response) => {
 	const { id } = req.params;
 	const { title, intro, content, imageId, tags } = req.body;
 	const { user } = res.locals;
@@ -135,7 +167,7 @@ const modify = async (req: express.Request, res: express.Response) => {
 	}
 };
 
-const remove = async (req: express.Request, res: express.Response) => {
+const removeProject = async (req: express.Request, res: express.Response) => {
 	const { id } = req.params;
 	const { user } = res.locals;
 
@@ -168,11 +200,11 @@ const like = async (req: express.Request, res: express.Response) => {
 };
 
 export const projectController = {
-	getList,
+	getProjectList,
 	getListOrderByLike,
 	getProject,
-	add,
-	modify,
-	remove,
+	addProject,
+	modifyProject,
+	removeProject,
 	like,
 };

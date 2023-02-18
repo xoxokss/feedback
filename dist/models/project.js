@@ -80,6 +80,50 @@ var getProjectList = function () { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
+var getProjectListByUserId = function (userId) { return __awaiter(void 0, void 0, void 0, function () {
+    var projects;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.project.findMany({
+                    where: {
+                        userId: userId,
+                    },
+                    include: {
+                        image: true,
+                        ProjectsOnTags: {
+                            select: {
+                                tag: true,
+                            },
+                        },
+                        User: {
+                            select: {
+                                nickname: true,
+                            },
+                        },
+                    },
+                })];
+            case 1:
+                projects = _a.sent();
+                return [2 /*return*/, projects.map(function (project) {
+                        var _a;
+                        var data = {
+                            id: project.id,
+                            title: project.title,
+                            intro: project.intro,
+                            content: project.content,
+                            createdAt: project.createdAt,
+                            updatedAt: project.updatedAt,
+                            userId: project.userId,
+                            userNickname: project.User.nickname,
+                            imageId: project.imageId,
+                            imagePath: (_a = project.image) === null || _a === void 0 ? void 0 : _a.filePath,
+                            tags: project.ProjectsOnTags.map(function (projectOnTag) { return projectOnTag.tag.name; }),
+                        };
+                        return data;
+                    })];
+        }
+    });
+}); };
 var getProjectById = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     var project;
     var _a;
@@ -122,12 +166,13 @@ var getProjectById = function (id) { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 var addProject = function (_a) {
-    var title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, userId = _a.userId;
+    var title = _a.title, intro = _a.intro, content = _a.content, surveyId = _a.surveyId, imageId = _a.imageId, userId = _a.userId;
     return prisma.project.create({
         data: {
             title: title,
             intro: intro,
             content: content,
+            surveyId: surveyId,
             imageId: imageId,
             userId: userId,
         },
@@ -307,6 +352,7 @@ var getListOrderByLike = function (sort, count, type) { return __awaiter(void 0,
 }); };
 exports.projectModel = {
     getProjectList: getProjectList,
+    getProjectListByUserId: getProjectListByUserId,
     getProjectById: getProjectById,
     addProject: addProject,
     modifyProject: modifyProject,

@@ -2,14 +2,6 @@ import { PrismaClient, Tag } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-interface IAddProject {
-	title: string;
-	intro: string;
-	content: string;
-	imageId: number;
-	userId: number;
-}
-
 interface IModifyProject {
 	id: number;
 	title: string;
@@ -21,6 +13,46 @@ interface IModifyProject {
 const getProjectList = async () => {
 	// 프로젝트 전체조회
 	const projects = await prisma.project.findMany({
+		include: {
+			image: true,
+			ProjectsOnTags: {
+				select: {
+					tag: true,
+				},
+			},
+			User: {
+				select: {
+					nickname: true,
+				},
+			},
+		},
+	});
+
+	return projects.map((project) => {
+		const data = {
+			id: project.id,
+			title: project.title,
+			intro: project.intro,
+			content: project.content,
+			createdAt: project.createdAt,
+			updatedAt: project.updatedAt,
+			userId: project.userId,
+			userNickname: project.User.nickname,
+			imageId: project.imageId,
+			imagePath: project.image?.filePath,
+			tags: project.ProjectsOnTags.map((projectOnTag) => projectOnTag.tag.name),
+		};
+
+		return data;
+	});
+};
+
+const getProjectListByUserId = async (userId: number) => {
+	// 프로젝트 유저 아이디로 조회
+	const projects = await prisma.project.findMany({
+		where: {
+			userId,
+		},
 		include: {
 			image: true,
 			ProjectsOnTags: {
@@ -90,12 +122,22 @@ const getProjectById = async (id: number) => {
 	};
 };
 
-const addProject = ({ title, intro, content, imageId, userId }: IAddProject) => {
+interface IAddProject {
+	title: string;
+	intro: string;
+	content: string;
+	imageId: number;
+	userId: number;
+	surveyId: number;
+}
+
+const addProject = ({ title, intro, content, surveyId, imageId, userId }: IAddProject) => {
 	return prisma.project.create({
 		data: {
 			title,
 			intro,
 			content,
+			surveyId,
 			imageId,
 			userId,
 		},
@@ -254,6 +296,7 @@ const getListOrderByLike = async (sort: boolean, count: number, type: string) =>
 
 export const projectModel = {
 	getProjectList,
+	getProjectListByUserId,
 	getProjectById,
 	addProject,
 	modifyProject,
