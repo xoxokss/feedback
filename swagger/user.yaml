@@ -1,0 +1,35 @@
+# /swagger/project.yaml
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 유저 식별 id
+          example: 1
+        username:
+          type: string
+          description: 계정 아이디
+          example: test1234
+        password:
+          type: string
+          description: 계정 비밀번호
+          password: pass1234
+        email:
+          type: string
+          description: 이메일 주소
+          example: test1234@test.com
+        nickname:
+          type: string
+          description: 계정 닉네임
+          example: aaaa
+        createAt:
+          type: string
+          description: 생성일
+          example: 2023-02-17 14:25:01.502
+        updatedAt:
+          type: string
+          description: 수정일
+          example: 2023-02-17 14:25:01.502
