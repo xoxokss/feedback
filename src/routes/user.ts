@@ -19,7 +19,7 @@ userRouter.post(
   "/profileImg",
   multerMiddleware.single("file"),
   authMiddleware,
-  userController.profileImg
+  userController.UpdateProfileImg
 );
 
 export default userRouter;

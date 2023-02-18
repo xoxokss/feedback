@@ -9,7 +9,7 @@ components:
           type: integer
           description: 유저 식별 id
           example: 1
-        username:
+        userId:
           type: string
           description: 계정 아이디
           example: test1234

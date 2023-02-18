@@ -7,6 +7,7 @@ import passport from "passport";
 import sendGmail from "~/utils/helper/mail";
 import "dotenv/config";
 import { resObj } from "@helper/resObj";
+import { userModel } from "~/models/user";
 
 const saltRounds = 10;
 const salt = bcrypt.genSaltSync(saltRounds);
@@ -20,7 +21,7 @@ const userController = {
       //비밀번호 암호화
       const encryptPassword = bcrypt.hashSync(password, salt);
       const data = {
-        username: userId,
+        userId: userId,
         email: email,
         nickname: nickname,
         password: encryptPassword,
@@ -52,16 +53,17 @@ const userController = {
       //DB에서 유저 정보 찾기
       const user = await prisma.user.findUnique({
         where: {
-          username: userId,
+          userId: userId,
         },
       });
+
       //비밀번호 복호화 매치
       const match = bcrypt.compareSync(password, user?.password ?? "");
       if (!match) {
         return res.status(400).send({ error: "로그인 정보를 확인하세요" });
       }
       //토큰 발행
-      const token = jwt.sign({ userId: user?.username }, SECRETKEY, {
+      const token = jwt.sign({ userId: user?.userId }, SECRETKEY, {
         expiresIn: "24h",
       });
 
@@ -84,7 +86,7 @@ const userController = {
       const { userId } = req.body;
       const user = await prisma.user.findUnique({
         where: {
-          username: userId,
+          userId: userId,
         },
       });
       if (user) {
@@ -143,7 +145,7 @@ const userController = {
     try {
       return res.status(200).send({
         message: "success",
-        userId: user.username,
+        userId: user.userId,
         nickname: user.nickname,
         email: user.email,
         profileImg: user.profileImg, //user.phone
@@ -165,7 +167,7 @@ const userController = {
       { failureRedirect: "/" },
       (err, user, info) => {
         if (err) return next(err);
-        const token = jwt.sign({ userId: user.username }, SECRETKEY, {
+        const token = jwt.sign({ userId: user.userId }, SECRETKEY, {
           expiresIn: "24h",
         });
         res.send({ data: "success", token });
@@ -208,13 +210,13 @@ const userController = {
     try {
       const exUser = await prisma.user.findUnique({
         where: {
-          username: user.username,
+          userId: user.userId,
         },
       });
       if (exUser) {
         await prisma.user.delete({
           where: {
-            username: user.username,
+            userId: user.userId,
           },
         });
         res.status(200).send({ message: "유저 삭제 성공" });
@@ -224,16 +226,17 @@ const userController = {
       res.status(400).send({ error: "유저 삭제 실패" });
     }
   },
-  profileImg: async (req: Request, res: Response) => {
+  UpdateProfileImg: async (req: Request, res: Response) => {
     try {
       const { user } = res.locals;
       const file = req.file as Express.Multer.File;
       const result = await prisma.user.update({
         where: {
-          username: user.username,
+          userId: user.userId,
         },
         data: {
-          profileImg: file.filename,
+          profileImg: file.path,
+          // path로 저장할지, file name 이나 url로 저장해야 되는지
         },
       });
       res.status(200).send(resObj.success({ status: 200, data: result }));
