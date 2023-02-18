@@ -1,14 +1,15 @@
 import express, { Request, Response, NextFunction, Router } from "express";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import sendGmail from "~/utils/helper/mail";
 import "dotenv/config";
-const saltRounds = 10;
+import { resObj } from "@helper/resObj";
 
+const saltRounds = 10;
+const salt = bcrypt.genSaltSync(saltRounds);
 const SECRETKEY: any = process.env.SECRET;
 
 const userController = {
@@ -17,12 +18,13 @@ const userController = {
     const { userId, email, password, nickname } = req.body;
     try {
       //비밀번호 암호화
-      const encryptPassword = bcrypt.hashSync(password, saltRounds);
+      const encryptPassword = bcrypt.hashSync(password, salt);
       const data = {
         username: userId,
         email: email,
         nickname: nickname,
         password: encryptPassword,
+        profileImg: "https://i.imgur.com/9LDfN2H.png",
       };
       //DB에 유저정보 create
       await prisma.user.create({
@@ -34,6 +36,9 @@ const userController = {
       });
     } catch (error) {
       console.log(error);
+      res
+        .status(500)
+        .send(resObj.failed({ status: 500, error: "회원가입에 실패했습니다" }));
     } finally {
       async () => {
         await prisma.$disconnect();
@@ -136,9 +141,12 @@ const userController = {
   userInfo: async (req: Request, res: Response) => {
     const { user } = res.locals;
     try {
-      return res
-        .status(200)
-        .send({ message: "success", userId: user.username, nickname: user.nickname, email: user.email, profileImg: user.profileImg , //user.phone
+      return res.status(200).send({
+        message: "success",
+        userId: user.username,
+        nickname: user.nickname,
+        email: user.email,
+        profileImg: user.profileImg, //user.phone
       });
     } catch (error) {
       console.log(error);
@@ -214,6 +222,24 @@ const userController = {
     } catch (err) {
       console.log(err);
       res.status(400).send({ error: "유저 삭제 실패" });
+    }
+  },
+  profileImg: async (req: Request, res: Response) => {
+    try {
+      const { user } = res.locals;
+      const file = req.file as Express.Multer.File;
+      const result = await prisma.user.update({
+        where: {
+          username: user.username,
+        },
+        data: {
+          profileImg: file.filename,
+        },
+      });
+      res.status(200).send(resObj.success({ status: 200, data: result }));
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(resObj.failed({ status: 500, error: err }));
     }
   },
 };
