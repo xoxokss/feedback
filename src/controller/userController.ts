@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction, Router } from "express";
+import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import jwt from "jsonwebtoken";
