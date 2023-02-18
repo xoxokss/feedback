@@ -38,18 +38,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.projectModel = void 0;
 var client_1 = require("@prisma/client");
-/**
- * @swagger
- * components:
- *   schemas:
- *     Project:
- *       type: object
- *       properties:
- *        id:
- *          type: integer
- *          description: 프로젝트 아이디
- *          example: 10
- */
 var prisma = new client_1.PrismaClient();
 var getProjectList = function () { return __awaiter(void 0, void 0, void 0, function () {
     var projects;

@@ -14,6 +14,20 @@ var router = express_1.default.Router();
  *    get:
  *      tags: [Project]
  *      summary: 프로젝트 리스트 조회
+ *      description:
+ *        프로젝트 리스트 조회입니다.<br/><br/>
+ *        - user 파라미터를 넣으면 해당 유저의 프로젝트만 조회합니다.<br/>
+ *        - user 파라미터에 0 값을 넣으면 자기 자신의 프로젝트 목록을 조회합니다. <b>(Auth 토큰 필요)</b><br/>
+ *        - user 파라미터를 넣지 않으면 전체 프로젝트를 조회합니다.
+ *      security:
+ *       - bearerAuth: []
+ *      parameters:
+ *        - in: query
+ *          name: user
+ *          schema:
+ *            type: integer
+ *            description: 유저 아이디
+ *            example: 0
  *      responses:
  *        200:
  *          description: 프로젝트 리스트 조회 성공
@@ -74,10 +88,10 @@ router.get("/", projectController_1.projectController.getProjectList);
  *        200:
  *          description: 프로젝트 리스트 추가 성공
  */
-router.post("/", authMiddleware_1.authMiddleware, projectController_1.projectController.add);
+router.post("/", authMiddleware_1.authMiddleware, projectController_1.projectController.addProject);
 router.get("/like", projectController_1.projectController.getListOrderByLike);
 router.put("/like/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.like);
 router.get("/:id", projectController_1.projectController.getProject);
-router.put("/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.modify);
-router.delete("/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.remove);
+router.put("/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.modifyProject);
+router.delete("/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.removeProject);
 exports.default = router;

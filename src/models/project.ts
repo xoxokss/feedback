@@ -1,18 +1,5 @@
 import { PrismaClient, Tag } from "@prisma/client";
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Project:
- *       type: object
- *       properties:
- *        id:
- *          type: integer
- *          description: 프로젝트 아이디
- *          example: 10
- */
-
 const prisma = new PrismaClient();
 
 interface IModifyProject {

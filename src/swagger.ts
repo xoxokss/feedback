@@ -11,7 +11,7 @@ const options = {
 		},
 		basePath: "/",
 	},
-	apis: ["./src/routes/*.ts", "./src/models/*.ts"],
+	apis: ["./src/routes/*.ts", "./src/models/*.ts", "./swagger/*.yaml"],
 };
 const specs = swaggereJsdoc(options);
 export { swaggerUi, specs };

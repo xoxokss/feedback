@@ -65,21 +65,21 @@ var auth_1 = require("~/utils/helper/auth");
  * Get List All
  */
 var getProjectList = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var params, headers, userId, projectList, auth, err_1;
+    var query, headers, userId, projectList, auth, err_1;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                params = req.params;
+                query = req.query;
                 headers = req.headers;
                 _b.label = 1;
             case 1:
-                _b.trys.push([1, 11, , 12]);
-                userId = params === null || params === void 0 ? void 0 : params.user;
+                _b.trys.push([1, 12, , 13]);
+                userId = query === null || query === void 0 ? void 0 : query.user;
                 projectList = null;
-                if (!userId) return [3 /*break*/, 8];
-                if (!(typeof Number(userId) === "number")) return [3 /*break*/, 7];
-                if (!(Number(userId) === 0)) return [3 /*break*/, 5];
+                if (!userId) return [3 /*break*/, 9];
+                if (!(typeof Number(userId) === "number")) return [3 /*break*/, 8];
+                if (!(Number(userId) === 0)) return [3 /*break*/, 6];
                 if (!(headers === null || headers === void 0 ? void 0 : headers.authorization)) return [3 /*break*/, 4];
                 return [4 /*yield*/, (0, auth_1.getUserByToken)(headers.authorization)];
             case 2:
@@ -87,26 +87,32 @@ var getProjectList = function (req, res) { return __awaiter(void 0, void 0, void
                 return [4 /*yield*/, project_1.projectModel.getProjectListByUserId(Number((_a = auth.user) === null || _a === void 0 ? void 0 : _a.id))];
             case 3:
                 projectList = _b.sent();
-                _b.label = 4;
-            case 4: return [3 /*break*/, 7];
-            case 5: return [4 /*yield*/, project_1.projectModel.getProjectListByUserId(Number(params.user))];
-            case 6:
+                return [3 /*break*/, 5];
+            case 4:
+                res.status(500).send(resObj_1.resObj.failed({
+                    status: 500,
+                    error: "토큰이 없습니다.",
+                }));
+                return [2 /*return*/];
+            case 5: return [3 /*break*/, 8];
+            case 6: return [4 /*yield*/, project_1.projectModel.getProjectListByUserId(Number(query.user))];
+            case 7:
                 // 다른 유저 프로젝트 조회
                 projectList = _b.sent();
-                _b.label = 7;
-            case 7: return [3 /*break*/, 10];
-            case 8: return [4 /*yield*/, project_1.projectModel.getProjectList()];
-            case 9:
-                projectList = _b.sent();
-                _b.label = 10;
+                _b.label = 8;
+            case 8: return [3 /*break*/, 11];
+            case 9: return [4 /*yield*/, project_1.projectModel.getProjectList()];
             case 10:
-                res.status(200).send(resObj_1.resObj.success({ status: 200, data: projectList }));
-                return [3 /*break*/, 12];
+                projectList = _b.sent();
+                _b.label = 11;
             case 11:
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: projectList }));
+                return [3 /*break*/, 13];
+            case 12:
                 err_1 = _b.sent();
                 res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_1 }));
-                return [3 /*break*/, 12];
-            case 12: return [2 /*return*/];
+                return [3 /*break*/, 13];
+            case 13: return [2 /*return*/];
         }
     });
 }); };
@@ -178,7 +184,7 @@ var getProject = function (req, res) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-var add = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var addProject = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, title, intro, content, surveyId, imageId, tags, user, result_1, tagIdList_1, err_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -235,8 +241,8 @@ var add = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, title, intro, content, imageId, tags, user, oldProject, result, modify_1, err_5;
+var modifyProject = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, _a, title, intro, content, imageId, tags, user, oldProject, result, modify, err_5;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -263,8 +269,8 @@ var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 tag_1.tagModel.modifyProjectToTag(Number(id), tags);
                 return [4 /*yield*/, project_1.projectModel.getProjectById(Number(id))];
             case 4:
-                modify_1 = _b.sent();
-                res.status(200).send(resObj_1.resObj.success({ status: 200, data: modify_1 }));
+                modify = _b.sent();
+                res.status(200).send(resObj_1.resObj.success({ status: 200, data: modify }));
                 return [3 /*break*/, 6];
             case 5:
                 res.status(403).send(resObj_1.resObj.alert({ status: 403, message: "권한이 없습니다." }));
@@ -278,7 +284,7 @@ var modify = function (req, res) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
-var remove = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var removeProject = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id, user, oldProject, result, err_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -335,8 +341,8 @@ exports.projectController = {
     getProjectList: getProjectList,
     getListOrderByLike: getListOrderByLike,
     getProject: getProject,
-    add: add,
-    modify: modify,
-    remove: remove,
+    addProject: addProject,
+    modifyProject: modifyProject,
+    removeProject: removeProject,
     like: like,
 };
