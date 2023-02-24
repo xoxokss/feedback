@@ -16,13 +16,6 @@ components:
         answer:
           type: string
           description: 파일타입
-          example: "[
-            {
-              id: 1,
-              question: 1,
-              answer: 1
-            }
-          ]"
         createdAt:
           type: string
           description: 생성일
