@@ -33,3 +33,7 @@ components:
           type: string
           description: 수정일
           example: 2023-02-17 14:25:01.502
+        profileId:
+          type: number
+          description: 프로필 이미지 id
+          example: 1
