@@ -1,0 +1,35 @@
+# /swagger/file.yaml
+
+components:
+  schemas:
+    Like:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 파일 아이디
+          example: 1
+        fileName:
+          type: string
+          description: 파일명
+          example: 1
+        fileType:
+          type: string
+          description: 파일타입
+          example: 1
+        fileSize:
+          type: integer
+          description: 파일크기
+          example: 1
+        filePath:
+          type: string
+          description: 파일경로
+          example: 1
+        createdAt:
+          type: string
+          description: 생성일
+          example: 2023-02-17 14:32:11.893
+        updatedAt:
+          type: string
+          description: 수정일
+          example: 2023-02-17 14:32:11.893

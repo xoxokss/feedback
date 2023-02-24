@@ -1,0 +1,19 @@
+# /swagger/survey.yaml
+
+components:
+  schemas:
+    Like:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 좋아요 아이디
+          example: 1
+        userId:
+          type: integer
+          description: 유저 아이디
+          example: 1
+        projectId:
+          type: integer
+          description: 프로젝트 아이디
+          example: 1

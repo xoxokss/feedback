@@ -1,0 +1,25 @@
+# /swagger/tag.yaml
+
+components:
+  schemas:
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 태그 아이디 (primary key)
+          example: 1
+        projectId:
+          type: integer
+          description: 프로젝트 아이디
+        name:
+          type: string
+          description: 태그명
+        createdAt:
+          type: string
+          description: 생성일
+          example: 2023-02-17 14:32:11.893
+        updatedAt:
+          type: string
+          description: 수정일
+          example: 2023-02-17 14:32:11.893

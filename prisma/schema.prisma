@@ -7,129 +7,129 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model File {
-  id        Int      @id @default(autoincrement())
-  fileName  String   @map("file_name") @db.VarChar(255)
-  fileType  String   @map("file_type") @db.VarChar(255)
-  fileSize  Int      @map("file_size")
-  filePath  String   @map("file_path") @db.VarChar(255)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  Project   Project?
-}
+model Answer {
+  id              Int         @id @default(autoincrement())
+  answer_sheet_id Int
+  question_id     Int
+  answer          String      @db.VarChar(255)
+  AnswerSheet     AnswerSheet @relation(fields: [answer_sheet_id], references: [id])
+  Question        Question    @relation(fields: [question_id], references: [id])
 
-model Project {
-  id             Int              @id @default(autoincrement())
-  imageId        Int              @unique @map("image_id")
-  surveyId       Int              @unique @map("survey_id")
-  title          String           @db.VarChar(255)
-  intro          String           @db.VarChar(255)
-  content        String           @db.Text
-  likeCount      Int              @default(0) @map("like_count") @db.SmallInt
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
-  userId         Int              @map("user_id")
-  image          File             @relation(fields: [imageId], references: [id])
-  User           User             @relation(fields: [userId], references: [id])
-  Survey         Survey           @relation(fields: [surveyId], references: [id])
-  Likes          ProjectOnLikes[]
-  ProjectsOnTags ProjectsOnTags[]
-
-  @@index([userId])
-}
-
-model Tag {
-  id             Int              @id @default(autoincrement())
-  name           String           @unique @db.VarChar(255)
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
-  ProjectsOnTags ProjectsOnTags[]
-}
-
-model ProjectsOnTags {
-  projectId Int      @map("project_id")
-  tagId     Int      @map("tag_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  project   Project  @relation(fields: [projectId], references: [id])
-  tag       Tag      @relation(fields: [tagId], references: [id])
-
-  @@id([projectId, tagId])
-  @@index([tagId])
-}
-
-model User {
-  id          Int              @id @default(autoincrement())
-  userId      String           @unique @db.VarChar(100)
-  password    String?          @db.VarChar(100)
-  email       String           @unique @db.VarChar(100)
-  nickname    String           @unique @db.VarChar(100)
-  createdAt   DateTime         @default(now()) @map("created_at")
-  updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at")
-  AnswerSheet AnswerSheet[]
-  profileImg  String?          @db.VarChar(100)
-  Project     Project[]
-  Like        ProjectOnLikes[]
-  Survey      Survey[]
-}
-
-model ProjectOnLikes {
-  projectId Int     @map("project_id")
-  userId    Int     @map("user_id")
-  project   Project @relation(fields: [projectId], references: [id])
-  user      User    @relation(fields: [userId], references: [id])
-
-  @@id([projectId, userId])
-  @@index([projectId, userId])
-  @@index([userId], map: "ProjectOnLikes_userId_fkey")
-}
-
-model Survey {
-  id          Int           @id @default(autoincrement())
-  userId      Int           @map("user_id")
-  surveyTitle String        @db.VarChar(255)
-  User        User          @relation(fields: [userId], references: [id])
-  AnswerSheet AnswerSheet[]
-  Question    Question[]
-  Projects    Project[]
-
-  @@index([userId], map: "Survey_user_id_fkey")
-}
-
-model Question {
-  id               Int      @id @default(autoincrement())
-  surveyId         Int      @map("survey_id")
-  questionTitle    String   @map("question_title") @db.VarChar(255)
-  questionType     String   @map("question_type") @db.VarChar(255)
-  questionModel    String   @map("question_model") @db.VarChar(255)
-  questionRequired Boolean  @default(false) @map("question_required")
-  questionOrder    Int      @map("question_order")
-  Survey           Survey   @relation(fields: [surveyId], references: [id])
-  SurveyAnswer     Answer[]
-
-  @@index([surveyId])
+  @@index([answer_sheet_id], map: "Answer_answer_sheet_id_fkey")
+  @@index([question_id, answer_sheet_id])
 }
 
 model AnswerSheet {
-  id       Int      @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   surveyId Int      @map("survey_id")
   userId   Int      @map("user_id")
-  Survey   Survey   @relation(fields: [surveyId], references: [id])
-  User     User     @relation(fields: [userId], references: [id])
-  Answer   Answer[]
+  Survey    Survey   @relation(fields: [surveyId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+  Answer    Answer[]
 
   @@index([surveyId], map: "AnswerSheet_survey_id_fkey")
   @@index([userId], map: "AnswerSheet_user_id_fkey")
 }
 
-model Answer {
-  id            Int         @id @default(autoincrement())
-  answerSheetId Int         @map("answer_sheet_id")
-  questionId    Int         @map("question_id")
-  answer        String      @db.VarChar(255)
-  AnswerSheet   AnswerSheet @relation(fields: [answerSheetId], references: [id])
-  Question      Question    @relation(fields: [questionId], references: [id])
+model File {
+  id         Int      @id @default(autoincrement())
+  file_name  String   @db.VarChar(255)
+  file_type  String   @db.VarChar(255)
+  file_size  Int
+  file_path  String   @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime
+  Project    Project?
+}
 
-  @@index([questionId, answerSheetId])
-  @@index([answerSheetId], map: "Answer_answer_sheet_id_fkey")
+model Project {
+  id             Int              @id @default(autoincrement())
+  image_id       Int              @unique
+  survey_id      Int              @unique
+  title          String           @db.VarChar(255)
+  intro          String           @db.VarChar(255)
+  content        String           @db.Text
+  like_count     Int              @default(0) @db.SmallInt
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @default(now())
+  user_id        Int
+  File           File             @relation(fields: [image_id], references: [id])
+  Survey         Survey           @relation(fields: [survey_id], references: [id])
+  User           User             @relation(fields: [user_id], references: [id])
+  ProjectOnLikes ProjectOnLikes[]
+  ProjectsOnTags ProjectsOnTags[]
+
+  @@index([user_id])
+}
+
+model ProjectOnLikes {
+  project_id Int
+  user_id    Int
+  Project    Project @relation(fields: [project_id], references: [id])
+  User       User    @relation(fields: [user_id], references: [id])
+
+  @@id([project_id, user_id])
+  @@index([project_id, user_id])
+  @@index([user_id], map: "ProjectOnLikes_userId_fkey")
+}
+
+model ProjectsOnTags {
+  project_id Int
+  tag_id     Int
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  Project    Project  @relation(fields: [project_id], references: [id])
+  Tag        Tag      @relation(fields: [tag_id], references: [id])
+
+  @@id([project_id, tag_id])
+  @@index([tag_id])
+}
+
+model Question {
+  id                Int      @id @default(autoincrement())
+  survey_id         Int
+  question_title    String   @db.VarChar(255)
+  question_type     String   @db.VarChar(255)
+  question_model    String   @db.VarChar(255)
+  question_required Boolean  @default(false)
+  question_order    Int
+  Survey            Survey   @relation(fields: [survey_id], references: [id])
+  Answer            Answer[]
+
+  @@index([survey_id])
+}
+
+model Survey {
+  id          Int           @id @default(autoincrement())
+  user_id     Int
+  surveyTitle String        @db.VarChar(255)
+  User        User          @relation(fields: [user_id], references: [id])
+  AnswerSheet AnswerSheet[]
+  Project     Project?
+  Question    Question[]
+
+  @@index([user_id], map: "Survey_user_id_fkey")
+}
+
+model Tag {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @default(now())
+  ProjectsOnTags ProjectsOnTags[]
+}
+
+model User {
+  id             Int              @id @default(autoincrement())
+  userId         String           @unique @db.VarChar(100)
+  password       String?          @db.VarChar(100)
+  email          String           @unique @db.VarChar(100)
+  nickname       String           @unique @db.VarChar(100)
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @default(now())
+  profileImg     String?          @db.VarChar(100)
+  AnswerSheet    AnswerSheet[]
+  Project        Project[]
+  ProjectOnLikes ProjectOnLikes[]
+  Survey         Survey[]
 }
