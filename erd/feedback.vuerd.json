@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 3000,
     "height": 3000,
-    "scrollTop": -235,
-    "scrollLeft": -1311,
+    "scrollTop": -90,
+    "scrollLeft": -1695,
     "zoomLevel": 1,
     "show": {
       "tableComment": true,
@@ -212,7 +212,7 @@
           "active": false,
           "left": 1023.893,
           "top": 324.0193,
-          "zIndex": 8,
+          "zIndex": 6,
           "widthName": 60,
           "widthComment": 60
         },
@@ -759,7 +759,7 @@
           "active": false,
           "left": 1611.4166,
           "top": 303.2494,
-          "zIndex": 27,
+          "zIndex": 8,
           "widthName": 60,
           "widthComment": 60
         },
@@ -980,9 +980,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 2187.0003,
-          "top": 319.833,
-          "zIndex": 7,
+          "left": 2189.0003,
+          "top": 273.833,
+          "zIndex": 12,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1090,7 +1090,7 @@
           "active": false,
           "left": 1598.5597,
           "top": 554.1073,
-          "zIndex": 32,
+          "zIndex": 10,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1198,7 +1198,7 @@
           "active": false,
           "left": 1600.4918,
           "top": 899.6115,
-          "zIndex": 29,
+          "zIndex": 9,
           "widthName": 66.93492126464844,
           "widthComment": 60
         },
@@ -1421,7 +1421,7 @@
           "active": false,
           "left": 1041.4481,
           "top": 1213.9091,
-          "zIndex": 16,
+          "zIndex": 7,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1519,8 +1519,8 @@
           "columnIds": [
             "c024501d-bc61-421d-bdfe-c3485e9a97fe"
           ],
-          "x": 2187.0003,
-          "y": 446.583,
+          "x": 2189.0003,
+          "y": 400.583,
           "direction": "left"
         },
         "constraintName": "fk_survey_to_question",

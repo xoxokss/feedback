@@ -60,14 +60,14 @@ model ProjectsOnTags {
 
 model User {
   id          Int              @id @default(autoincrement())
-  userId      String           @unique @db.VarChar(100)
+  userId      String           @unique @db.VarChar(100) @map("user_id")
   password    String?          @db.VarChar(100)
   email       String           @unique @db.VarChar(100)
   nickname    String           @unique @db.VarChar(100)
   createdAt   DateTime         @default(now()) @map("created_at")
   updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at")
   AnswerSheet AnswerSheet[]
-  profileImg  String?          @db.VarChar(100)
+  profileImg  String?          @db.VarChar(100) @map("profile_image")
   Project     Project[]
   Like        ProjectOnLikes[]
   Survey      Survey[]
@@ -87,7 +87,7 @@ model ProjectOnLikes {
 model Survey {
   id          Int           @id @default(autoincrement())
   userId      Int           @map("user_id")
-  surveyTitle String        @db.VarChar(255)
+  surveyTitle String        @db.VarChar(255) @map("survey_title")
   User        User          @relation(fields: [userId], references: [id])
   AnswerSheet AnswerSheet[]
   Question    Question[]
