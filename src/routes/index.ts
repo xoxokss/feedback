@@ -5,6 +5,7 @@ import fileRouter from "@routes/file";
 import testRouter from "@routes/test";
 import userRouter from "@routes/user";
 import surveyRouter from "@routes/survey";
+import answerRouter from "@routes/answer";
 
 const router = express.Router();
 
@@ -59,5 +60,13 @@ router.use("/test", testRouter);
  *  description: 설문 API
  */
 router.use("/survey", surveyRouter);
+
+/**
+ * @swagger
+ * tags:
+ *  name: Stat
+ *  description: 응답 API
+ */
+router.use("/answer", answerRouter);
 
 export { router };
