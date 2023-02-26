@@ -17,6 +17,7 @@ module.exports = () => {
           const exUser = await prisma.user.findUnique({
             where: {
               userId: profile._json.id.toString(),
+              provider: "kakao",
             },
           });
           if (exUser) {
@@ -26,7 +27,7 @@ module.exports = () => {
               userId: profile._json.id.toString(),
               nickname: profile._json.kakao_account.profile.nickname,
               email: profile._json.kakao_account.email,
-              // provider: "kakao",
+              provider: "kakao",
             };
             const newUser = await prisma.user.create({
               data: data,
