@@ -1,0 +1,28 @@
+# /swagger/survey.yaml
+
+components:
+  schemas:
+    SurveyCopy:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 프로젝트 아이디
+          example: 1
+        userId:
+          type: integer
+          description: 유저 아이디
+          example: 1
+        title:
+          type: 설문 페이지명
+          example: 섦문페이지
+        question:
+          type: 설문지 내용 모델
+        createdAt:
+          type: string
+          description: 생성일
+          example: 2023-02-17 14:32:11.893
+        updatedAt:
+          type: string
+          description: 수정일
+          example: 2023-02-17 14:32:11.893
