@@ -17,7 +17,6 @@ module.exports = () => {
           const exUser = await prisma.user.findUnique({
             where: {
               userId: profile._json.id.toString(),
-              provider: "kakao",
             },
           });
           if (exUser) {
