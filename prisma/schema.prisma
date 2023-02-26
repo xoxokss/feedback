@@ -66,6 +66,7 @@ model User {
   nickname    String           @unique @db.VarChar(100)
   createdAt   DateTime         @default(now()) @map("created_at")
   updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at")
+  provider    String?          @db.VarChar(100)
   AnswerSheet AnswerSheet[]
   profileImg  String?          @db.VarChar(100) @map("profile_image")
   Project     Project[]
