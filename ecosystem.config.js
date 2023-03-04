@@ -4,7 +4,7 @@ module.exports = {
 			name: "feedback",
 			script: "npm -- run babel",
 			watch: true,
-			ignore_watch: ["node_modules", "public", "dist"],
+			ignore_watch: ["node_modules", "public", "dist", "data"],
 		},
 	],
 };
