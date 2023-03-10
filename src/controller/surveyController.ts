@@ -1,139 +1,98 @@
 import { Request, Response } from "express";
-import { surveyModel } from "@models/survey";
+import { SurveyModel } from "@models/survey";
 import { resObj } from "~/utils/helper/resObj";
-import { getUserByToken } from "~/utils/helper/auth";
+import { getUserByToken } from "@utils/helper/auth";
+import { PrismaClient } from "@prisma/client";
+// import { mgQuestion } from "~/mongoose/mgQuestion";
 
-interface ISurvey {
-	surveyTitle: string;
-	surveyQuestions: Array<{
-		qTitle: string;
-		qType: string;
-		qModel: string;
-		qRequired: boolean;
-		qOrder: number;
-	}>;
+interface SurveyParams {
+	title: string;
+	question: questionParams[];
 }
 
-// 설문지 등록
-const addSurvey = async (req: Request, res: Response) => {
-	const { surveyTitle, surveyQuestions }: ISurvey = req.body;
-	const { authorization } = req.headers;
+interface questionParams {
+	id: number;
+	order: number;
+	title: string;
+	type: "ONE" | "MUL" | "TXT" | "LTXT";
+	choice?: choiceItem[];
+}
 
-	try {
-		const auth = await getUserByToken(authorization as string);
-		const result = await surveyModel.addSurveyPage(surveyTitle, auth);
+interface choiceItem {
+	id: number;
+	order: number;
+	text: string;
+}
 
-		const response = await Promise.all(
-			surveyQuestions.map(async ({ qTitle, qType, qModel, qRequired, qOrder }) => {
-				return surveyModel.addSurveyQuestion({
-					surveyId: result.id,
-					qTitle,
-					qType,
-					qModel: JSON.stringify(qModel),
-					qRequired,
-					qOrder,
-				});
-			})
-		);
+const prisma = new PrismaClient();
 
-		res.status(201).send(resObj.success({ status: 201, data: response }));
-	} catch (err) {
-		res.status(500).send(resObj.failed({ status: 500, error: err }));
+export class SurveyController {
+	// 설문지 추가
+	static async addSurvey(req: Request, res: Response) {
+		const { title, question }: SurveyParams = req.body;
+		const { authorization } = req.headers;
+
+		try {
+			const auth = await getUserByToken(authorization as string);
+
+			// user 정보가 없을 경우 에러 메세지
+			if (!auth.user) res.status(500).send(resObj.failed({ status: 500, error: "User not found" }));
+
+			// question은 현재 order 값을 활용하여 id를 만들어줌
+			const result = await SurveyModel.add({
+				userId: auth.user!.id,
+				title,
+				question: question.map((item) => ({ ...item, id: item.order })),
+			});
+
+			res.status(200).send(resObj.success({ status: 200, data: result }));
+		} catch (err) {
+			res.status(500).send(resObj.failed({ status: 500, error: err }));
+		}
 	}
-};
 
-// 설문 응답을 위한 단일 설문 조회
-const getSurvey = async (req: Request, res: Response) => {
-	const { id } = req.params;
+	static async getSurvey(req: Request, res: Response) {
+		const { id } = req.params;
 
-	try {
-		const result = await surveyModel.getSurvey(parseInt(id));
+		try {
+			const result = await SurveyModel.findOneById(parseInt(id));
 
-		res.status(200).send(resObj.success({ status: 200, data: result }));
-	} catch (err) {
-		res.status(500).send(resObj.success({ status: 500, data: err }));
-	}
-};
-
-// 내가 작성한 설문지 리스트 가져오기
-const getSurveyList = async (req: Request, res: Response) => {
-	const { authorization } = req.headers;
-
-	try {
-		// User 정보 가져오기
-		const auth = await getUserByToken(authorization!);
-
-		// User가 자신이 만든 설문지 목록 가져오기
-		const result = await surveyModel.getSurveyListByUserId(auth.user!.id);
-
-		res.status(200).send(resObj.success({ status: 200, data: result }));
-	} catch (err) {
-		res.status(500).send(resObj.success({ status: 500, data: err }));
-	}
-};
-
-// 설문 응답 등록
-const submitSurvey = async (req: Request, res: Response) => {
-	const { id } = req.params;
-	const { authorization } = req.headers;
-	const { answer } = req.body;
-
-	try {
-		const auth = await getUserByToken(authorization!);
-
-		const surveyAnswerResult = await surveyModel.addSurveyAnswerSheet(auth, Number(id));
-		// const survey = await surveyModel.addSurveyAnswer(surveyAnswerResult.id, answer);
-		answer.map(async (item: any) => {
-			// survey 추가
-			return await surveyModel.addSurveyAnswer(
-				surveyAnswerResult.id,
-				Number(item.questionId),
-				String(item.answer)
+			res.status(200).send(
+				resObj.success({
+					status: 200,
+					data: { ...result[0], question: JSON.parse(result[0].question) },
+				})
 			);
-		});
-
-		res.status(200).send(
-			resObj.success({
-				status: 200,
-				data: {
-					result: true,
-				},
-			})
-		);
-	} catch (err) {
-		res.status(500).send(resObj.success({ status: 500, data: err }));
+		} catch (err) {
+			res.status(500).send(resObj.failed({ status: 500, error: err }));
+		}
 	}
-};
 
-// 해당 설문의 응답 리스트 가져오기
-const getSurveyAnswerListShortInfo = async (req: Request, res: Response) => {
-	const { id } = req.params;
+	static async modifySurvey(req: Request, res: Response) {
+		const { id } = req.params;
+		const { title, question }: SurveyParams = req.body;
 
-	try {
-		const result = await surveyModel.getSurveyAnswerListShortInfo(Number(id));
-		res.status(200).send(resObj.success({ status: 200, data: result }));
-	} catch (err) {
-		res.status(500).send(resObj.success({ status: 500, data: err }));
+		try {
+			const result = await SurveyModel.update(parseInt(id), {
+				title,
+				question: question.map((item) => ({ ...item, id: item.order })),
+			});
+
+			res.status(200).send(resObj.success({ status: 200, data: result }));
+		} catch (err) {
+			res.status(500).send(resObj.failed({ status: 500, error: err }));
+		}
 	}
-};
 
-const getSurveyAnswerList = async (req: Request, res: Response) => {
-	const { id } = req.params;
+	static async removeSurvey(req: Request, res: Response) {
+		const { id } = req.params;
 
-	try {
-		const result = await surveyModel.getSurveyAnswer(Number(id));
+		try {
+			const result = await SurveyModel.remove(parseInt(id));
 
-		res.status(200).send(resObj.success({ status: 200, data: result }));
-	} catch (err) {
-		res.status(500).send(resObj.success({ status: 500, data: err }));
+			res.status(200).send(resObj.success({ status: 200, data: result }));
+		} catch (err) {
+			res.status(500).send(resObj.failed({ status: 500, error: err }));
+		}
 	}
-};
-
-export const surveyController = {
-	addSurvey,
-	getSurvey,
-	getSurveyList,
-	submitSurvey,
-	getSurveyAnswerListShortInfo,
-	getSurveyAnswerList,
-};
+}

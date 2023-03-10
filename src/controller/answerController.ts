@@ -34,6 +34,7 @@ question: [
 */
 
 /*
+저장시에는 JSON.stringify, 불러올때는 JSON.parse
 DBName: Answer
 id: number
 survey_copy_id: number

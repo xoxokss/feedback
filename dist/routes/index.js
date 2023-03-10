@@ -6,11 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 var express_1 = __importDefault(require("express"));
 var project_1 = __importDefault(require("@routes/project"));
-var tag_1 = __importDefault(require("@routes/tag"));
+// import tagRouter from "@routes/tag";
 var file_1 = __importDefault(require("@routes/file"));
 var test_1 = __importDefault(require("@routes/test"));
 var user_1 = __importDefault(require("@routes/user"));
 var survey_1 = __importDefault(require("@routes/survey"));
+var answer_1 = __importDefault(require("@routes/answer"));
 var router = express_1.default.Router();
 exports.router = router;
 router.get("/", function (req, res) {
@@ -29,7 +30,7 @@ router.use("/project", project_1.default);
  *  name: Tag
  *  description: 태그 API
  */
-router.use("/tag", tag_1.default);
+// router.use("/tag", tagRouter);
 /**
  * @swagger
  * tags:
@@ -58,3 +59,10 @@ router.use("/test", test_1.default);
  *  description: 설문 API
  */
 router.use("/survey", survey_1.default);
+/**
+ * @swagger
+ * tags:
+ *  name: Stat
+ *  description: 응답 API
+ */
+router.use("/answer", answer_1.default);

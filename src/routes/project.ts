@@ -1,5 +1,5 @@
 import express from "express";
-import { projectController } from "@controller/projectController";
+// import { projectController } from "@controller/projectController";
 import { authMiddleware } from "~/utils/middleware/authMiddleware";
 
 const router = express.Router();
@@ -56,7 +56,7 @@ const router = express.Router();
  *                          example: 제목입니다
  *
  */
-router.get("/", projectController.getProjectList);
+// router.get("/", projectController.getProjectList);
 
 /**
  * @swagger
@@ -86,12 +86,12 @@ router.get("/", projectController.getProjectList);
  *        200:
  *          description: 프로젝트 리스트 추가 성공
  */
-router.post("/", authMiddleware, projectController.addProject);
+// router.post("/", authMiddleware, projectController.addProject);
 
-router.get("/like", projectController.getListOrderByLike);
-router.put("/like/:id", authMiddleware, projectController.like);
-router.get("/:id", projectController.getProject);
-router.put("/:id", authMiddleware, projectController.modifyProject);
-router.delete("/:id", authMiddleware, projectController.removeProject);
+// router.get("/like", projectController.getListOrderByLike);
+// router.put("/like/:id", authMiddleware, projectController.like);
+// router.get("/:id", projectController.getProject);
+// router.put("/:id", authMiddleware, projectController.modifyProject);
+// router.delete("/:id", authMiddleware, projectController.removeProject);
 
 export default router;

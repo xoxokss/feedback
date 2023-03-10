@@ -1,124 +1,168 @@
-import { PrismaClient, Tag, User } from "@prisma/client";
+import { PrismaClient, Tag, User, Survey } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const addSurveyPage = (title: string, auth: { result: boolean; user?: User | null }) => {
-	// 설문지 양식 추가
-	return prisma.survey.create({
-		data: {
-			userId: auth.user!.id,
-			surveyTitle: title,
-		},
-	});
-};
+/*
+DBName: SurveyCopy
+id: number
+project_id: number
+title: string
+question: [
+	{
+		question_id: 1,
+		order: 1,
+		question: "질문1",
+		type: "ONE", // ONE, MUL, TXT, LTXT
+		choice: [
+			{
+				choice_id: 1,
+				order: 1,
+				text: "선택지1"
+			},
+			{
+				choice_id: 2,
+				order: 2,
+				text: "선택지2"
+			} 
+		]
+	},
+	{
+		choice_id: 2,
+		order: 2,
+		question: "질문2",
+		type: "LTXT", // ONE, MUL, TXT, LTXT
+	},
+]
+*/
 
-const addSurveyQuestion = ({
-	surveyId,
-	qTitle,
-	qType,
-	qModel,
-	qRequired,
-	qOrder,
-}: {
-	surveyId: number;
-	qTitle: string;
-	qType: string;
-	qModel: string;
-	qRequired: boolean;
-	qOrder: number;
-}) => {
-	// 설문지 질문 추가
-	return prisma.question.create({
-		data: {
-			surveyId,
-			questionTitle: qTitle,
-			questionType: qType,
-			questionModel: qModel,
-			questionRequired: qRequired,
-			questionOrder: qOrder,
-		},
-	});
-};
+/*
+저장시에는 JSON.stringify, 불러올때는 JSON.parse
+DBName: Answer
+id: number
+survey_copy_id: number
+user_id: number
+answer: [
+	{
+		question_id: 1,
+		type: "ONE",
+		choice_id: 1
+	},
+	{
+		question_id: 2,
+		type: "MUL",
+		choice_id: [1, 2]
+	},
+	{
+		question_id: 3,
+		type: "TXT",
+		text: "답변"
+	}
+]
+*/
 
-const getSurvey = (id: number) => {
-	return prisma.survey.findUnique({
-		where: {
-			id,
-		},
-		include: {
-			Question: true,
-		},
-	});
-};
+interface addSurveyParams {
+	userId: number;
+	title: string;
+	question: questionParams[];
+}
 
-const addSurveyAnswerSheet = (auth: any, surveyId: number) => {
-	const answerSheetResult = prisma.answerSheet.create({
-		data: {
-			userId: auth.user!.id,
-			surveyId,
-		},
-	});
+interface questionParams {
+	order: number;
+	title: string;
+	type: "ONE" | "MUL" | "TXT" | "LTXT";
+	choice?: choiceItem[];
+}
 
-	console.log(answerSheetResult);
+interface choiceItem {
+	order: number;
+	text: string;
+}
 
-	return answerSheetResult;
-};
+export class SurveyModel {
+	static async findOneById(id: number) {
+		const survey = await prisma.$queryRaw<
+			{
+				id: number;
+				userId: number;
+				title: string;
+				question: string;
+			}[]
+		>`
+      SELECT
+				Survey.id as id,
+				Survey.user_id as userId,
+				title,
+				question as question
+      From
+        Survey
+      INNER JOIN
+        User
+      ON
+        Survey.user_id = User.id
+      WHERE
+        Survey.id = ${id}
+		`;
 
-const addSurveyAnswer = (answerSheetId: number, questionId: number, answer: string) => {
-	const answerResult = prisma.answer.create({
-		data: {
-			questionId,
-			answerSheetId,
-			answer,
-		},
-	});
+		return survey;
+	}
 
-	return answerResult;
-};
+	static async findAllByUserId(userId: number) {
+		const surveys = await prisma.$queryRaw<
+			{
+				id: number;
+				userId: number;
+				title: string;
+				question: JSON;
+			}[]
+		>`
+      SELECT
+				Survey.id as id,
+				Survey.user_id as userId,
+				title,
+				question
+      From
+        Survey
+      INNER JOIN
+        User
+      ON
+        Survey.user_id = User.id
+      WHERE
+        Survey.user_id = ${userId}
+    `;
 
-const getSurveyAnswerListShortInfo = (id: number) => {
-	return prisma.$queryRaw`
-		SELECT
-			sa.user_id AS userId
-		FROM SurveyAnswer AS sa
-	`;
-};
+		return surveys;
+	}
 
-const getSurveyAnswer = (id: number) => {
-	return prisma.$queryRaw`
-		SELECT
-			sa.id,
-			sa.survey_id AS surveyId,
-			sa.question_id AS questionId,
-			sa.user_id AS userId,
-			sq.question_title AS questionTitle,
-			sq.question_model AS questionModel,
-			sa.answer AS answer
-		FROM SurveyAnswer AS sa
-		INNER JOIN 
-			SurveyQuestion AS sq
-		ON 
-			sa.question_id = sq.id
-		WHERE
-			sa.survey_id = ${id}
-	`;
-};
+	static async add({ userId, title, question }: addSurveyParams) {
+		return prisma.survey.create({
+			data: {
+				userId: userId,
+				title: title,
+				question: JSON.stringify(question),
+			},
+		});
+	}
 
-const getSurveyListByUserId = (userId: number) => {
-	return prisma.survey.findMany({
-		where: {
-			userId,
-		},
-	});
-};
+	static async update(
+		id: number,
+		{ title, question }: { title: string; question: questionParams[] }
+	) {
+		return prisma.survey.update({
+			where: {
+				id: id,
+			},
+			data: {
+				title: title,
+				question: JSON.stringify(question),
+			},
+		});
+	}
 
-export const surveyModel = {
-	addSurveyPage,
-	addSurveyQuestion,
-	getSurvey,
-	addSurveyAnswerSheet,
-	addSurveyAnswer,
-	getSurveyAnswer,
-	getSurveyAnswerListShortInfo,
-	getSurveyListByUserId,
-};
+	static async remove(id: number) {
+		return prisma.survey.delete({
+			where: {
+				id: id,
+			},
+		});
+	}
+}

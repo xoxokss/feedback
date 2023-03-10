@@ -9,6 +9,7 @@ var cors_1 = __importDefault(require("cors"));
 var passport_1 = __importDefault(require("passport"));
 var express_session_1 = __importDefault(require("express-session"));
 var swagger_1 = require("./swagger");
+require("dotenv/config");
 var app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use("/api-docs", swagger_1.swaggerUi.serve, swagger_1.swaggerUi.setup(swagger_1.specs));

@@ -15,121 +15,62 @@ model File {
   filePath  String   @map("file_path") @db.VarChar(255)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  Project   Project?
 }
 
 model Project {
-  id             Int              @id @default(autoincrement())
-  imageId        Int              @unique @map("image_id")
-  surveyId       Int              @unique @map("survey_id")
-  title          String           @db.VarChar(255)
-  intro          String           @db.VarChar(255)
-  content        String           @db.Text
-  likeCount      Int              @default(0) @map("like_count") @db.SmallInt
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
-  userId         Int              @map("user_id")
-  image          File             @relation(fields: [imageId], references: [id])
-  User           User             @relation(fields: [userId], references: [id])
-  Survey         Survey           @relation(fields: [surveyId], references: [id])
-  Likes          ProjectOnLikes[]
-  ProjectsOnTags ProjectsOnTags[]
-
-  @@index([userId])
+  id        Int      @id @default(autoincrement())
+  imageId   Int      @unique @map("image_id")
+  userId    Int      @map("user_id")
+  SurveyCopyId Int   @unique @map("survey_copy_id")
+  title     String   @db.VarChar(255)
+  intro     String   @db.VarChar(255)
+  content   String   @db.Text
+  likeCount Int      @default(0) @map("like_count") @db.SmallInt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 }
 
 model Tag {
-  id             Int              @id @default(autoincrement())
-  name           String           @unique @db.VarChar(255)
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
-  ProjectsOnTags ProjectsOnTags[]
-}
-
-model ProjectsOnTags {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar(255)
   projectId Int      @map("project_id")
-  tagId     Int      @map("tag_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  project   Project  @relation(fields: [projectId], references: [id])
-  tag       Tag      @relation(fields: [tagId], references: [id])
-
-  @@id([projectId, tagId])
-  @@index([tagId])
 }
 
 model User {
-  id          Int              @id @default(autoincrement())
-  userId      String           @unique @db.VarChar(100) @map("user_id")
-  password    String?          @db.VarChar(100)
-  email       String           @unique @db.VarChar(100)
-  nickname    String           @unique @db.VarChar(100)
-  createdAt   DateTime         @default(now()) @map("created_at")
-  updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at")
-  AnswerSheet AnswerSheet[]
-  profileImg  String?          @db.VarChar(100) @map("profile_image")
-  Project     Project[]
-  Like        ProjectOnLikes[]
-  Survey      Survey[]
+  id         Int          @id @default(autoincrement())
+  userId     String       @unique @map("user_id") @db.VarChar(100)
+  password   String?      @db.VarChar(100)
+  email      String       @unique @db.VarChar(100)
+  nickname   String       @unique @db.VarChar(100)
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @default(now()) @updatedAt @map("updated_at")
+  profileImg String?      @map("profile_image") @db.VarChar(100)
 }
 
-model ProjectOnLikes {
+model Like {
+  id        Int     @id @default(autoincrement())
   projectId Int     @map("project_id")
   userId    Int     @map("user_id")
-  project   Project @relation(fields: [projectId], references: [id])
-  user      User    @relation(fields: [userId], references: [id])
-
-  @@id([projectId, userId])
-  @@index([projectId, userId])
-  @@index([userId], map: "ProjectOnLikes_userId_fkey")
 }
 
 model Survey {
-  id          Int           @id @default(autoincrement())
-  userId      Int           @map("user_id")
-  surveyTitle String        @db.VarChar(255) @map("survey_title")
-  User        User          @relation(fields: [userId], references: [id])
-  AnswerSheet AnswerSheet[]
-  Question    Question[]
-  Projects    Project[]
-
-  @@index([userId], map: "Survey_user_id_fkey")
+  id       Int    @id @default(autoincrement())
+  userId   Int    @map("user_id")
+  title    String @db.VarChar(255)
+  question Json   @map("question")
 }
 
-model Question {
-  id               Int      @id @default(autoincrement())
-  surveyId         Int      @map("survey_id")
-  questionTitle    String   @map("question_title") @db.VarChar(255)
-  questionType     String   @map("question_type") @db.VarChar(255)
-  questionModel    String   @map("question_model") @db.VarChar(255)
-  questionRequired Boolean  @default(false) @map("question_required")
-  questionOrder    Int      @map("question_order")
-  Survey           Survey   @relation(fields: [surveyId], references: [id])
-  SurveyAnswer     Answer[]
-
-  @@index([surveyId])
-}
-
-model AnswerSheet {
-  id       Int      @id @default(autoincrement())
-  surveyId Int      @map("survey_id")
-  userId   Int      @map("user_id")
-  Survey   Survey   @relation(fields: [surveyId], references: [id])
-  User     User     @relation(fields: [userId], references: [id])
-  Answer   Answer[]
-
-  @@index([surveyId], map: "AnswerSheet_survey_id_fkey")
-  @@index([userId], map: "AnswerSheet_user_id_fkey")
+model SurveyCopy {
+  id          Int    @id @default(autoincrement())
+  userId      Int    @map("user_id")
+  surveyTitle String @map("survey_title") @db.VarChar(255)
 }
 
 model Answer {
-  id            Int         @id @default(autoincrement())
-  answerSheetId Int         @map("answer_sheet_id")
-  questionId    Int         @map("question_id")
-  answer        String      @db.VarChar(255)
-  AnswerSheet   AnswerSheet @relation(fields: [answerSheetId], references: [id])
-  Question      Question    @relation(fields: [questionId], references: [id])
-
-  @@index([questionId, answerSheetId])
-  @@index([answerSheetId], map: "Answer_answer_sheet_id_fkey")
+  id           Int    @id @default(autoincrement())
+  userId       Int    @map("user_id")
+  surveyCopyId Int    @map("survey_copy_id")
+  answer       String @db.TinyText()
 }
