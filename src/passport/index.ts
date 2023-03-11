@@ -1,15 +1,15 @@
-import passport from "passport";
-import { Strategy as KakaoStrategy } from "passport-kakao";
-import { PrismaClient } from "@prisma/client";
+import passport from 'passport';
+import { Strategy as KakaoStrategy } from 'passport-kakao';
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
-import "dotenv/config";
+import 'dotenv/config';
 
 module.exports = () => {
   passport.use(
     new KakaoStrategy(
       {
         clientID: process.env.KAKAO_ID!,
-        callbackURL: "http://54.180.121.151:8000/api/user/kakao/callback",
+        callbackURL: 'http://localhost:3000',
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -26,7 +26,7 @@ module.exports = () => {
               userId: profile._json.id.toString(),
               nickname: profile._json.kakao_account.profile.nickname,
               email: profile._json.kakao_account.email,
-              provider: "kakao",
+              provider: 'kakao',
             };
             const newUser = await prisma.user.create({
               data: data,
