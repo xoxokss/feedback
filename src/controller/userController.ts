@@ -171,7 +171,8 @@ const userController = {
         const token = jwt.sign({ userId: user.userId }, SECRETKEY, {
           expiresIn: "24h",
         });
-        res.send({ data: "success", token });
+        res.redirect(`http://localhost:3000/oauth?token=${token}`);
+        // res.send({ data: "success", token });
       }
     )(req, res, next);
   },
