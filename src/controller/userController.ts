@@ -7,7 +7,6 @@ import passport from "passport";
 import sendGmail from "~/utils/helper/mail";
 import "dotenv/config";
 import { resObj } from "@helper/resObj";
-import { userModel } from "~/models/user";
 
 const saltRounds = 10;
 const salt = bcrypt.genSaltSync(saltRounds);
@@ -161,6 +160,8 @@ const userController = {
       };
     }
   },
+
+  // Oauth Kakao Login
   kakaoLogin: async (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate(
       "kakao",
@@ -174,6 +175,7 @@ const userController = {
       }
     )(req, res, next);
   },
+
   verifyEmail: async (req: Request, res: Response, next: NextFunction) => {
     const { email } = req.body;
     try {
