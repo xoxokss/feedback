@@ -61,9 +61,12 @@ answer: [
 ]
 */
 interface IAnswer {
-  surveyTitle: string;
-  answer: string;
+	id: number;
+	answer: Array<{}>;
+	survey_copy_id: number;
+	user_id: number;
 }
+
 // 특정 설문의 응답 전체 조회 => answer 콜롬 파싱 (JSON 변환) => 통계 처리 => response
 const getAnswer = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -72,6 +75,9 @@ const getAnswer = async (req: Request, res: Response) => {
     let data = {};
     const auth = await getUserByToken(authorization!);
 
+	const survey = await surveyModel.getSurveyAnswer(parseInt(id));
+	
+
     res.status(200).send(resObj.success({ status: 200, data: data }));
   } catch (err) {
     res.status(500).send(resObj.failed({ status: 500, error: err }));
@@ -79,6 +85,7 @@ const getAnswer = async (req: Request, res: Response) => {
 };
 
 // 설문 응답 개별 조회
+
 
 export const answerController = {
   getAnswer,

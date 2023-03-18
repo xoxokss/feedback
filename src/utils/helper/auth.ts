@@ -17,7 +17,7 @@ export const getUserByToken = async (token: string) => {
   try {
     const { userId } = <jwt.UserIDJwtPayload>jwt.verify(tokenValue, SECRET);
     const user = await prisma.user.findUnique({
-      where: { userId: userId },
+      where: { username: userId },
     });
 
     return {
