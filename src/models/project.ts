@@ -2,112 +2,146 @@ import { PrismaClient, Project, Tag } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// interface IModifyProject {
-// 	id: number;
-// 	title: string;
-// 	intro: string;
-// 	content: string;
-// 	imageId: number;
-// }
+interface ProjectAddParams {
+	title: string;
+	intro: string;
+	content: string;
+	imageId: number;
+	userId: number;
+	surveyCopyId: number;
+}
 
-// class ProjectModel {
-// 	static async findAll() {
-// 		const projects = await prisma.$queryRaw`
-// 			SELECT
-// 				id,
-// 				image_id,
-// 				user_id,
-// 				survey_copy_id,
-// 				title,
-// 				intro,
-// 				content,
-// 				like_count,
-// 				created_at,
-// 				updated_at
-// 			FROM Project;
-// 		`;
+interface TagAddParams {
+	projectId: number;
+	name: string;
+}
 
-// 		// ({
-// 		// include: {
-// 		//   image: true,
-// 		//   ProjectsOnTags: {
-// 		//     select: {
-// 		//       tag: true,
-// 		//     },
-// 		//   },
-// 		//   User: {
-// 		//     select: {
-// 		//       nickname: true,
-// 		//     },
-// 		//   },
-// 		// },
-// 		// });
+export class ProjectModel {
+	static async findAll() {
+		const projects = await prisma.$queryRaw<
+			{
+				id: number;
+				imageId: number;
+				userId: number;
+				surveyCopyId: number;
+				title: string;
+				intro: string;
+				content: string;
+				likeCount: number;
+				createdAt: Date;
+				updatedAt: Date;
+				author: string;
+			}[]
+		>`
+ 			SELECT
+ 				Project.id AS id,
+ 				Project.image_id AS imageId,
+ 				Project.user_id AS userId,
+ 				Project.survey_copy_id AS surveyCopyId,
+ 				Project.title,
+ 				Project.intro,
+ 				Project.content,
+ 				Project.like_count AS likeCount,
+ 				Project.created_at AS createdAt,
+ 				Project.updated_at AS updatedAt,
+        User.nickname AS author
+ 			FROM Project
+      INNER JOIN User
+      ON Project.user_id = User.id
+      ORDER BY Project.id DESC
+      ;
+    `;
 
-// 		return projects.map((project) => {
-// 			const data = {
-// 				id: project.id,
-// 				title: project.title,
-// 				intro: project.intro,
-// 				content: project.content,
-// 				createdAt: project.createdAt,
-// 				updatedAt: project.updatedAt,
-// 				userId: project.userId,
-// 				userNickname: project.userId.nickname,
-// 				imageId: project.imageId,
-// 				imagePath: project.image?.filePath,
-// 				tags: project.ProjectsOnTags.map((projectOnTag) => projectOnTag.tag.name),
-// 			};
-// 			return new ProjectModel(
-// 				data.id,
-// 				data.imageId,
-// 				data.userId,
-// 				data.title,
-// 				data.intro,
-// 				data.content,
-// 				data.likeCount,
-// 				data.createdAt,
-// 				data.updatedAt
-// 			);
-// 		});
-// 	}
-// }
+		return await Promise.all(
+			projects.map(async (project: Project) => {
+				const tags = await prisma.$queryRaw<Tag[]>`
+				SELECT name
+				FROM Tag
+				WHERE project_id = ${project.id}
+			`;
+				return { ...project, tags: tags.map((tag) => tag.name) };
+			})
+		);
+	}
 
-// const getProjectList = async () => {
-// 	// 프로젝트 전체조회
-// 	const projects = await prisma.project.findMany({
-// 		include: {
-// 			image: true,
-// 			ProjectsOnTags: {
-// 				select: {
-// 					tag: true,
-// 				},
-// 			},
-// 			User: {
-// 				select: {
-// 					nickname: true,
-// 				},
-// 			},
-// 		},
-// 	});
+	static async add(
+		{ title, intro, content, imageId, userId, surveyCopyId }: ProjectAddParams,
+		tags: string[]
+	) {
+		const projectResult = await prisma.project.create({
+			data: {
+				title,
+				intro,
+				content,
+				surveyCopyId,
+				imageId,
+				userId,
+			},
+		});
 
-// 	return projects.map((project) => {
-// 		const data = {
-// 			id: project.id,
-// 			title: project.title,
-// 			intro: project.intro,
-// 			content: project.content,
-// 			createdAt: project.createdAt,
-// 			updatedAt: project.updatedAt,
-// 			userId: project.userId,
-// 			userNickname: project.User.nickname,
-// 			imageId: project.imageId,
-// 			imagePath: project.image?.filePath,
-// 			tags: project.ProjectsOnTags.map((projectOnTag) => projectOnTag.tag.name),
-// 		};
+		// 프로젝트와 연관된 태그 생성
+		const tagResult = await prisma.tag.createMany({
+			data: tags.map((tag) => ({ projectId: projectResult.id, name: tag })) as Tag[],
+		});
 
-// 		return data;
-// 	});
-// };
+		return { ...projectResult, tags: tagResult };
+	}
+
+	static async update(
+		id: number,
+		{ title, intro, content, imageId, userId, surveyCopyId }: ProjectAddParams,
+		tags: string[]
+	) {
+		const oldProject = await prisma.project.findUnique({
+			where: { id },
+		});
+
+		// 이부분 추후 수정 필요
+		if (oldProject?.surveyCopyId) {
+			await prisma.surveyCopy.delete({ where: { id: oldProject.surveyCopyId } });
+		}
+
+		const project = await prisma.project.update({
+			where: { id },
+			data: {
+				title,
+				intro,
+				content,
+				surveyCopyId,
+				imageId,
+				userId,
+			},
+		});
+
+		await prisma.tag.deleteMany({
+			where: {
+				projectId: id,
+			},
+		});
+
+		const tagInsertResult = await prisma.tag.createMany({
+			data: tags.map((tag) => ({ projectId: id, name: tag })) as Tag[],
+		});
+
+		return { ...project, tags: tagInsertResult };
+	}
+
+	static async delete(id: number) {
+		const project = await prisma.project.delete({
+			where: { id },
+		});
+
+		const surveyCopyResult = await prisma.surveyCopy.delete({
+			where: { id: project.surveyCopyId },
+		});
+
+		const tagResult = await prisma.tag.deleteMany({
+			where: { projectId: id },
+		});
+
+		return { ...project, tags: tagResult };
+	}
+}
 
 // const getProjectListByUserId = async (userId: number) => {
 // 	// 프로젝트 유저 아이디로 조회

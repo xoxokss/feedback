@@ -18,21 +18,21 @@ model File {
 }
 
 model Project {
-  id        Int      @id @default(autoincrement())
-  imageId   Int      @unique @map("image_id")
-  userId    Int      @map("user_id")
-  SurveyCopyId Int   @unique @map("survey_copy_id")
-  title     String   @db.VarChar(255)
-  intro     String   @db.VarChar(255)
-  content   String   @db.Text
-  likeCount Int      @default(0) @map("like_count") @db.SmallInt
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  id            Int       @id @default(autoincrement())
+  imageId       Int       @map("image_id")
+  userId        Int       @map("user_id")
+  surveyCopyId  Int       @unique @map("survey_copy_id")
+  title         String    @db.VarChar(255)
+  intro         String    @db.VarChar(255)
+  content       String    @db.Text
+  likeCount     Int       @default(0) @map("like_count") @db.SmallInt
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
 }
 
 model Tag {
   id        Int      @id @default(autoincrement())
-  name      String   @unique @db.VarChar(255)
+  name      String   @db.VarChar(255)
   projectId Int      @map("project_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
@@ -65,7 +65,8 @@ model Survey {
 model SurveyCopy {
   id          Int    @id @default(autoincrement())
   userId      Int    @map("user_id")
-  surveyTitle String @map("survey_title") @db.VarChar(255)
+  title       String @db.VarChar(255)
+  question    Json   @map("question")
 }
 
 model Answer {

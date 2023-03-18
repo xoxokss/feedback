@@ -138,7 +138,7 @@ export class SurveyModel {
 			data: {
 				userId: userId,
 				title: title,
-				question: JSON.stringify(question),
+				question: question as any,
 			},
 		});
 	}
@@ -153,7 +153,7 @@ export class SurveyModel {
 			},
 			data: {
 				title: title,
-				question: JSON.stringify(question),
+				question: question as any,
 			},
 		});
 	}

@@ -3,7 +3,6 @@ import { SurveyModel } from "@models/survey";
 import { resObj } from "~/utils/helper/resObj";
 import { getUserByToken } from "@utils/helper/auth";
 import { PrismaClient } from "@prisma/client";
-// import { mgQuestion } from "~/mongoose/mgQuestion";
 
 interface SurveyParams {
 	title: string;
@@ -24,8 +23,6 @@ interface choiceItem {
 	text: string;
 }
 
-const prisma = new PrismaClient();
-
 export class SurveyController {
 	// 설문지 추가
 	static async addSurvey(req: Request, res: Response) {
@@ -42,7 +39,7 @@ export class SurveyController {
 			const result = await SurveyModel.add({
 				userId: auth.user!.id,
 				title,
-				question: question.map((item) => ({ ...item, id: item.order })),
+				question: question,
 			});
 
 			res.status(200).send(resObj.success({ status: 200, data: result }));
@@ -60,7 +57,7 @@ export class SurveyController {
 			res.status(200).send(
 				resObj.success({
 					status: 200,
-					data: { ...result[0], question: JSON.parse(result[0].question) },
+					data: { ...result[0], question: result[0].question },
 				})
 			);
 		} catch (err) {

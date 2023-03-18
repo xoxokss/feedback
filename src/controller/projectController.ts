@@ -1,13 +1,120 @@
 import express from "express";
-// import { projectModel } from "@models/project";
 // import { resObj } from "@helper/resObj";
 // import { tagModel } from "@models/tag";
 import { Tag } from "@prisma/client";
 import { getUserByToken } from "~/utils/helper/auth";
+import { resObj } from "~/utils/helper/resObj";
+// import { ProjectModel } from "~/models/project";
+import { CopyModel } from "~/models/copyModel";
+import { ProjectModel } from "~/models/project";
 
 // /**
 //  * Get List All
 //  */
+
+export class ProjectController {
+	static async getProjectsAll(req: express.Request, res: express.Response) {
+		const query = req.query;
+		const headers = req.headers;
+
+		try {
+			// parameter에 user=0이면 내 정보 조회, 아니면 해당 유저 조회, user가 없다면 전체 조회
+
+			const userId = query?.user;
+
+			// 전체 조회
+			const projects = await ProjectModel.findAll();
+
+			console.log(projects);
+
+			res.status(500).send(resObj.success({ status: 200, data: projects }));
+		} catch (e) {
+			const error = e as Error;
+
+			console.log(error);
+			res.status(500).send(resObj.failed({ status: 500, error: e }));
+		}
+	}
+
+	static async addProject(req: express.Request, res: express.Response) {
+		const { title, intro, content, surveyId, imageId, tags } = req.body;
+
+		const { user } = res.locals;
+
+		try {
+			// Survey to SurveyCopy
+			const surveyCopy = await CopyModel.copySurvey(surveyId, user.id);
+
+			if (!surveyCopy) throw new Error("Survey Copy Error");
+
+			// 프로젝트 추가
+			const projectResult = await ProjectModel.add(
+				{
+					title,
+					intro,
+					content,
+					surveyCopyId: surveyCopy.id,
+					imageId,
+					userId: user.id,
+				},
+				tags
+			);
+
+			// // 모든 처리가 정상적으로 이루어졌다면 201 응답 및 태그 포함 데이터 반환
+			res.status(201).send(resObj.success({ status: 201, data: projectResult }));
+		} catch (err) {
+			res.status(500).send(resObj.failed({ status: 500, error: err }));
+		}
+	}
+
+	static async modifyProject(req: express.Request, res: express.Response) {
+		const { id } = req.params;
+		const { title, intro, content, surveyId, imageId, tags } = req.body;
+
+		const { user } = res.locals;
+
+		try {
+			// Survey to SurveyCopy
+			const surveyCopy = await CopyModel.copySurvey(surveyId, user.id);
+
+			if (!surveyCopy) throw new Error("Survey Copy Error");
+
+			// 프로젝트 추가
+			const projectResult = await ProjectModel.update(
+				Number(id),
+				{
+					title,
+					intro,
+					content,
+					surveyCopyId: surveyCopy.id,
+					imageId,
+					userId: user.id,
+				},
+				tags
+			);
+
+			// // 모든 처리가 정상적으로 이루어졌다면 201 응답 및 태그 포함 데이터 반환
+			res.status(201).send(resObj.success({ status: 201, data: projectResult }));
+		} catch (err) {
+			res.status(500).send(resObj.failed({ status: 500, error: err }));
+		}
+	}
+
+	static async removeProject(req: express.Request, res: express.Response) {
+		const { id } = req.params;
+
+		try {
+			// 프로젝트 추가
+			const projectResult = await ProjectModel.delete(Number(id));
+
+			// // 모든 처리가 정상적으로 이루어졌다면 201 응답 및 태그 포함 데이터 반환
+			res.status(201).send(resObj.success({ status: 201, data: projectResult }));
+		} catch (err) {
+			res.status(500).send(resObj.failed({ status: 500, error: err }));
+		}
+	}
+}
+
 // const getProjectList = async (req: express.Request, res: express.Response) => {
 // 	const query = req.query;
 // 	const headers = req.headers;

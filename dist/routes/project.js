@@ -4,6 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
+var projectController_1 = require("@controller/projectController");
+var authMiddleware_1 = require("~/utils/middleware/authMiddleware");
 var router = express_1.default.Router();
 /**
  * @swagger
@@ -57,7 +59,7 @@ var router = express_1.default.Router();
  *                          example: 제목입니다
  *
  */
-// router.get("/", projectController.getProjectList);
+router.get("/", projectController_1.ProjectController.getProjectsAll);
 /**
  * @swagger
  * paths:
@@ -86,10 +88,10 @@ var router = express_1.default.Router();
  *        200:
  *          description: 프로젝트 리스트 추가 성공
  */
-// router.post("/", authMiddleware, projectController.addProject);
+router.post("/", authMiddleware_1.authMiddleware, projectController_1.ProjectController.addProject);
+router.put("/:id", authMiddleware_1.authMiddleware, projectController_1.ProjectController.modifyProject);
+router.delete("/:id", authMiddleware_1.authMiddleware, projectController_1.ProjectController.removeProject);
 // router.get("/like", projectController.getListOrderByLike);
 // router.put("/like/:id", authMiddleware, projectController.like);
 // router.get("/:id", projectController.getProject);
-// router.put("/:id", authMiddleware, projectController.modifyProject);
-// router.delete("/:id", authMiddleware, projectController.removeProject);
 exports.default = router;
