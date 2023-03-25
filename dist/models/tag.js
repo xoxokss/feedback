@@ -36,126 +36,117 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tagModel = void 0;
+exports.TagModel = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
-var getTagListAll = function () {
-    return prisma.tag.findMany();
-};
-var getTagsByProjectId = function (projectId) { return __awaiter(void 0, void 0, void 0, function () {
-    var tagList;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prisma.projectsOnTags.findMany({
-                    where: {
-                        projectId: projectId,
-                    },
-                    select: {
-                        tag: true,
-                    },
-                })];
-            case 1:
-                tagList = _a.sent();
-                return [2 /*return*/, tagList.map(function (tag) { return tag.tag; })];
-        }
-    });
-}); };
-var getTagByTagName = function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/, prisma.tag.findUnique({
-                where: {
-                    name: tagName,
-                },
-            })];
-    });
-}); };
-var addTag = function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/, prisma.tag.create({
-                data: {
-                    name: tagName,
-                },
-            })];
-    });
-}); };
-/**
- * projectId에 tagId를 연결합니다.
- */
-var setProjectToTag = function (projectId, tagId) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prisma.projectsOnTags.create({
-                    data: {
-                        projectId: projectId,
-                        tagId: tagId,
-                    },
-                })];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
-    });
-}); };
-var modifyProjectToTag = function (id, tags) { return __awaiter(void 0, void 0, void 0, function () {
-    var tagIdList;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prisma.projectsOnTags.deleteMany({
-                    where: {
-                        projectId: id,
-                    },
-                })];
-            case 1:
-                _a.sent();
-                tagIdList = [];
-                // 태그명을 검색하고 있는 태그명은 바로 연결 / 없는 태그명은 생성 후 연결
-                tags.forEach(function (tagName) { return __awaiter(void 0, void 0, void 0, function () {
-                    var findTag, newTag;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, exports.tagModel.getTagByTagName(tagName)];
-                            case 1:
-                                findTag = _a.sent();
-                                if (!findTag) return [3 /*break*/, 3];
-                                // 태그가 있다면
-                                tagIdList.push(findTag.id);
-                                // 프로젝트와 태그 연결
-                                return [4 /*yield*/, prisma.projectsOnTags.create({
-                                        data: {
-                                            projectId: id,
-                                            tagId: findTag.id,
-                                        },
-                                    })];
-                            case 2:
-                                // 프로젝트와 태그 연결
-                                _a.sent();
-                                return [3 /*break*/, 6];
-                            case 3: return [4 /*yield*/, exports.tagModel.addTag(tagName)];
-                            case 4:
-                                newTag = _a.sent();
-                                tagIdList.push(newTag.id);
-                                // 프로젝트와 태그 연결
-                                return [4 /*yield*/, prisma.projectsOnTags.create({
-                                        data: {
-                                            projectId: id,
-                                            tagId: newTag.id,
-                                        },
-                                    })];
-                            case 5:
-                                // 프로젝트와 태그 연결
-                                _a.sent();
-                                _a.label = 6;
-                            case 6: return [2 /*return*/];
-                        }
-                    });
-                }); });
-                return [2 /*return*/];
-        }
-    });
-}); };
-exports.tagModel = {
-    getTagListAll: getTagListAll,
-    getTagsByProjectId: getTagsByProjectId,
-    getTagByTagName: getTagByTagName,
-    addTag: addTag,
-    setProjectToTag: setProjectToTag,
-    modifyProjectToTag: modifyProjectToTag,
-};
+var TagModel = /** @class */ (function () {
+    function TagModel() {
+    }
+    TagModel.addList = function (tags) {
+        return __awaiter(this, void 0, void 0, function () {
+            var tag;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, prisma.tag.createMany({
+                            data: tags.list,
+                        })];
+                    case 1:
+                        tag = _a.sent();
+                        return [2 /*return*/, tag];
+                }
+            });
+        });
+    };
+    return TagModel;
+}());
+exports.TagModel = TagModel;
+// export class TagRepositry {
+// 	static async findAll(): Promise<TagModel[]> {
+// 		const tags = await prisma.tag.findMany();
+// 		return tags.map(
+// 			(tag) => new TagModel(tag.id, tag.name, tag.projectId, tag.createdAt, tag.updatedAt)
+// 		);
+// 	}
+// }
+// const getTagListAll = () => {
+// 	return prisma.tag.findMany();
+// };
+// const getTagsByProjectId = async (projectId: number) => {
+// 	const tagList = await prisma.projectsOnTags.findMany({
+// 		where: {
+// 			projectId,
+// 		},
+// 		select: {
+// 			tag: true,
+// 		},
+// 	});
+// 	return tagList.map((tag) => tag.tag);
+// };
+// const getTagByTagName = async (tagName: string) => {
+// 	return prisma.tag.findUnique({
+// 		where: {
+// 			name: tagName,
+// 		},
+// 	});
+// };
+// const addTag = async (tagName: string) => {
+// 	return prisma.tag.create({
+// 		data: {
+// 			name: tagName,
+// 		},
+// 	});
+// };
+// /**
+//  * projectId에 tagId를 연결합니다.
+//  */
+// const setProjectToTag = async (projectId: number, tagId: number) => {
+// 	return await prisma.projectsOnTags.create({
+// 		data: {
+// 			projectId,
+// 			tagId,
+// 		},
+// 	});
+// };
+// const modifyProjectToTag = async (id: number, tags: Array<string>) => {
+// 	await prisma.projectsOnTags.deleteMany({
+// 		where: {
+// 			projectId: id,
+// 		},
+// 	});
+// 	const tagIdList: Array<number> = [];
+// 	// 태그명을 검색하고 있는 태그명은 바로 연결 / 없는 태그명은 생성 후 연결
+// 	tags.forEach(async (tagName: string) => {
+// 		// 태그 명으로 태그가 있는지 검색
+// 		const findTag = await tagModel.getTagByTagName(tagName);
+// 		if (findTag) {
+// 			// 태그가 있다면
+// 			tagIdList.push(findTag.id);
+// 			// 프로젝트와 태그 연결
+// 			await prisma.projectsOnTags.create({
+// 				data: {
+// 					projectId: id,
+// 					tagId: findTag.id,
+// 				},
+// 			});
+// 		} else {
+// 			// 태그가 없다면
+// 			const newTag = await tagModel.addTag(tagName);
+// 			tagIdList.push(newTag.id);
+// 			// 프로젝트와 태그 연결
+// 			await prisma.projectsOnTags.create({
+// 				data: {
+// 					projectId: id,
+// 					tagId: newTag.id,
+// 				},
+// 			});
+// 		}
+// 	});
+// };
+// export const tagModel = {
+// 	getTagListAll,
+// 	getTagsByProjectId,
+// 	getTagByTagName,
+// 	addTag,
+// 	setProjectToTag,
+// 	modifyProjectToTag,
+// };

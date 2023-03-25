@@ -4,6 +4,7 @@ import cors from "cors";
 import passport from "passport";
 import session from "express-session";
 import { swaggerUi, specs } from "./swagger";
+import "dotenv/config";
 
 const app = express();
 

@@ -59,7 +59,7 @@ var router = express_1.default.Router();
  *                          example: 제목입니다
  *
  */
-router.get("/", projectController_1.projectController.getProjectList);
+router.get("/", projectController_1.ProjectController.getProjectsAll);
 /**
  * @swagger
  * paths:
@@ -88,10 +88,10 @@ router.get("/", projectController_1.projectController.getProjectList);
  *        200:
  *          description: 프로젝트 리스트 추가 성공
  */
-router.post("/", authMiddleware_1.authMiddleware, projectController_1.projectController.addProject);
-router.get("/like", projectController_1.projectController.getListOrderByLike);
-router.put("/like/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.like);
-router.get("/:id", projectController_1.projectController.getProject);
-router.put("/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.modifyProject);
-router.delete("/:id", authMiddleware_1.authMiddleware, projectController_1.projectController.removeProject);
+router.post("/", authMiddleware_1.authMiddleware, projectController_1.ProjectController.addProject);
+router.put("/:id", authMiddleware_1.authMiddleware, projectController_1.ProjectController.modifyProject);
+router.delete("/:id", authMiddleware_1.authMiddleware, projectController_1.ProjectController.removeProject);
+router.get("/like", projectController_1.ProjectController.getProjectsOrderByLike);
+router.put("/like/:id", authMiddleware_1.authMiddleware, projectController_1.ProjectController.likeProject);
+router.get("/:id", projectController_1.ProjectController.getProject);
 exports.default = router;
