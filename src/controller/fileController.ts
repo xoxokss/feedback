@@ -11,6 +11,14 @@ const fileController = {
 			res.status(500).send(resObj.failed({ status: 500, error: err }));
 		}
 	},
+	uploadS3: async (req: express.Request, res: express.Response) => {
+		try {
+			const result = await fileModel.addFileS3(req.file as Express.MulterS3.File);
+			res.status(200).send(resObj.success({ status: 200, data: result }));
+		} catch (err) {
+			res.status(500).send(resObj.failed({ status: 500, error: err }));
+		}
+	}
 };
 
 export { fileController };

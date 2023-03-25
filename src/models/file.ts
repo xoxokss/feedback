@@ -14,4 +14,14 @@ export const fileModel = {
 			},
 		});
 	},
+	addFileS3: (file: Express.MulterS3.File) => {
+		return prisma.file.create({
+			data: {
+				fileName: file.key,
+				filePath: file.location,
+				fileSize: file.size,
+				fileType: file.contentType,
+			},
+		});
+	}
 };
