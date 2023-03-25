@@ -12,6 +12,7 @@ var swagger_1 = require("./swagger");
 require("dotenv/config");
 var app = (0, express_1.default)();
 app.use((0, cors_1.default)());
+// Swagger UI URL : http://localhost:8000/api-docs
 app.use("/api-docs", swagger_1.swaggerUi.serve, swagger_1.swaggerUi.setup(swagger_1.specs));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));

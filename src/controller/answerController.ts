@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { resObj } from '@helper/resObj';
-import { getUserByToken } from '~/utils/helper/auth';
-import { surveyModel } from '@models/survey';
-import { answerModel } from '@models/answer';
+import { Request, Response } from "express";
+import { resObj } from "@helper/resObj";
+import { getUserByToken } from "~/utils/helper/auth";
+import { SurveyModel } from "@models/survey";
+import { answerModel } from "@models/answer";
 
 /*
 DBName: SurveyCopy
@@ -70,24 +70,22 @@ interface IAnswer {
 
 // 특정 설문의 응답 전체 조회 => answer 콜롬 파싱 (JSON 변환) => 통계 처리 => response
 const getAnswer = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { authorization } = req.headers;
-  try {
-    let data = {};
-    const auth = await getUserByToken(authorization!);
+	const { id } = req.params;
+	const { authorization } = req.headers;
+	try {
+		let data = {};
+		const auth = await getUserByToken(authorization!);
 
-	const survey = await surveyModel.getSurveyAnswer(parseInt(id));
-	
+		// const survey = await SurveyModel.getSurveyAnswer(parseInt(id));
 
-    res.status(200).send(resObj.success({ status: 200, data: data }));
-  } catch (err) {
-    res.status(500).send(resObj.failed({ status: 500, error: err }));
-  }
+		res.status(200).send(resObj.success({ status: 200, data: data }));
+	} catch (err) {
+		res.status(500).send(resObj.failed({ status: 500, error: err }));
+	}
 };
 
 // 설문 응답 개별 조회
 
-
 export const answerController = {
-  getAnswer,
+	getAnswer,
 };

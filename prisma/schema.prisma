@@ -47,7 +47,7 @@ model User {
   createdAt  DateTime     @default(now()) @map("created_at")
   updatedAt  DateTime     @default(now()) @updatedAt @map("updated_at")
   provider    String?          @db.VarChar(100)
-  profileImg String?      @map("profile_image") @db.VarChar(100)
+  profileImage String?      @map("profile_image") @db.VarChar(100)
 }
 
 model Like {

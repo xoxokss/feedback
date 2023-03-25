@@ -15,4 +15,14 @@ exports.fileModel = {
             },
         });
     },
+    addFileS3: function (file) {
+        return prisma.file.create({
+            data: {
+                fileName: file.key,
+                filePath: file.location,
+                fileSize: file.size,
+                fileType: file.contentType,
+            },
+        });
+    }
 };
