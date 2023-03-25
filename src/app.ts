@@ -10,6 +10,7 @@ const app = express();
 
 app.use(cors());
 
+// Swagger UI URL : http://localhost:8000/api-docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(express.json());
