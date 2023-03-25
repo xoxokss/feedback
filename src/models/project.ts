@@ -11,12 +11,59 @@ interface ProjectAddParams {
 	surveyCopyId: number;
 }
 
-interface TagAddParams {
-	projectId: number;
-	name: string;
-}
-
 export class ProjectModel {
+	static async getIsLike(userId: number, projectId: number) {
+		const result = await prisma.like.findFirst({
+			where: {
+				userId,
+				projectId,
+			},
+		});
+
+		return result ? true : false;
+	}
+
+	static async findOneById(id: number) {
+		const project = await prisma.$queryRaw<
+			{
+				id: number;
+				imageId: number;
+				userId: number;
+				surveyCopyId: number;
+				title: string;
+				intro: string;
+				content: string;
+				likeCount: number;
+				createdAt: Date;
+				updatedAt: Date;
+				author: string;
+			}[]
+		>`
+ 			SELECT
+ 				Project.id AS id,
+ 				Project.image_id AS imageId,
+ 				Project.user_id AS userId,
+ 				Project.survey_copy_id AS surveyCopyId,
+ 				Project.title,
+ 				Project.intro,
+ 				Project.content,
+ 				Project.like_count AS likeCount,
+ 				Project.created_at AS createdAt,
+ 				Project.updated_at AS updatedAt,
+        User.nickname AS userNickname,
+				File.file_path AS imagePath
+ 			FROM Project
+      INNER JOIN User
+      ON Project.user_id = User.id
+			INNER JOIN File
+			ON Project.image_id = File.id
+			WHERE Project.id = ${id}
+      ORDER BY Project.id DESC
+		`;
+
+		return project;
+	}
+
 	static async findAll() {
 		const projects = await prisma.$queryRaw<
 			{
@@ -44,13 +91,114 @@ export class ProjectModel {
  				Project.like_count AS likeCount,
  				Project.created_at AS createdAt,
  				Project.updated_at AS updatedAt,
-        User.nickname AS author
+        User.nickname AS userNickname,
+				File.file_path AS imagePath
  			FROM Project
       INNER JOIN User
       ON Project.user_id = User.id
+			INNER JOIN File
+			ON Project.image_id = File.id
       ORDER BY Project.id DESC
       ;
     `;
+
+		return await Promise.all(
+			projects.map(async (project: Project) => {
+				const tags = await prisma.$queryRaw<Tag[]>`
+				SELECT name
+				FROM Tag
+				WHERE project_id = ${project.id}
+			`;
+				return { ...project, tags: tags.map((tag) => tag.name) };
+			})
+		);
+	}
+
+	static async findAllByUserId(userId: number) {
+		const projects = await prisma.$queryRaw<
+			{
+				id: number;
+				imageId: number;
+				userId: number;
+				surveyCopyId: number;
+				title: string;
+				intro: string;
+				content: string;
+				likeCount: number;
+				createdAt: Date;
+				updatedAt: Date;
+			}[]
+		>`
+			SELECT
+ 				Project.id AS id,
+ 				Project.image_id AS imageId,
+ 				Project.user_id AS userId,
+ 				Project.survey_copy_id AS surveyCopyId,
+ 				Project.title,
+ 				Project.intro,
+ 				Project.content,
+ 				Project.like_count AS likeCount,
+ 				Project.created_at AS createdAt,
+ 				Project.updated_at AS updatedAt,
+        User.nickname AS userNickname
+				File.file_path AS imagePath
+ 			FROM Project
+      INNER JOIN User
+      ON Project.user_id = User.id
+			INNER JOIN File
+			ON Project.image_id = File.id
+			WHERE User.id = ${userId}
+      ORDER BY Project.like_count DESC
+		`;
+
+		return await Promise.all(
+			projects.map(async (project: Project) => {
+				const tags = await prisma.$queryRaw<Tag[]>`
+				SELECT name
+				FROM Tag
+				WHERE project_id = ${project.id}
+			`;
+				return { ...project, tags: tags.map((tag) => tag.name) };
+			})
+		);
+	}
+
+	static async findAllOrderByLike(limit: number) {
+		const projects = await prisma.$queryRaw<
+			{
+				id: number;
+				imageId: number;
+				userId: number;
+				surveyCopyId: number;
+				title: string;
+				intro: string;
+				content: string;
+				likeCount: number;
+				createdAt: Date;
+				updatedAt: Date;
+			}[]
+		>`
+			SELECT
+ 				Project.id AS id,
+ 				Project.image_id AS imageId,
+ 				Project.user_id AS userId,
+ 				Project.survey_copy_id AS surveyCopyId,
+ 				Project.title,
+ 				Project.intro,
+ 				Project.content,
+ 				Project.like_count AS likeCount,
+ 				Project.created_at AS createdAt,
+ 				Project.updated_at AS updatedAt,
+        User.nickname AS author
+				File.file_path AS imagePath
+ 			FROM Project
+      INNER JOIN User
+      ON Project.user_id = User.id
+			INNER JOIN File
+			ON Project.image_id = File.id
+      ORDER BY Project.like_count DESC
+			LIMIT ${limit}
+		`;
 
 		return await Promise.all(
 			projects.map(async (project: Project) => {
@@ -140,6 +288,53 @@ export class ProjectModel {
 		});
 
 		return { ...project, tags: tagResult };
+	}
+
+	static async like(projectId: number, userId: number) {
+		const like = await prisma.like.findMany({
+			where: {
+				userId,
+				projectId,
+			},
+		});
+
+		if (like.length > 0) {
+			await prisma.like.deleteMany({
+				where: {
+					userId,
+					projectId,
+				},
+			});
+
+			const project = await prisma.project.update({
+				where: { id: projectId },
+				data: {
+					likeCount: {
+						decrement: 1,
+					},
+				},
+			});
+
+			return { ...project, isLike: false };
+		}
+
+		await prisma.like.create({
+			data: {
+				userId,
+				projectId,
+			},
+		});
+
+		const project = await prisma.project.update({
+			where: { id: projectId },
+			data: {
+				likeCount: {
+					increment: 1,
+				},
+			},
+		});
+
+		return { ...project, isLike: true };
 	}
 }
 

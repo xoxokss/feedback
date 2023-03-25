@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import { SurveyController } from "@controller/surveyController";
 import { authMiddleware } from "~/utils/middleware/authMiddleware";
 

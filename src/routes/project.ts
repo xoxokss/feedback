@@ -90,8 +90,8 @@ router.post("/", authMiddleware, ProjectController.addProject);
 router.put("/:id", authMiddleware, ProjectController.modifyProject);
 router.delete("/:id", authMiddleware, ProjectController.removeProject);
 
-// router.get("/like", projectController.getListOrderByLike);
-// router.put("/like/:id", authMiddleware, projectController.like);
-// router.get("/:id", projectController.getProject);
+router.get("/like", ProjectController.getProjectsOrderByLike);
+router.put("/like/:id", authMiddleware, ProjectController.likeProject);
+router.get("/:id", ProjectController.getProject);
 
 export default router;

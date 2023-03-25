@@ -57,20 +57,101 @@ var prisma = new client_1.PrismaClient();
 var ProjectModel = /** @class */ (function () {
     function ProjectModel() {
     }
+    ProjectModel.getIsLike = function (userId, projectId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, prisma.like.findFirst({
+                            where: {
+                                userId: userId,
+                                projectId: projectId,
+                            },
+                        })];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result ? true : false];
+                }
+            });
+        });
+    };
+    ProjectModel.findOneById = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var project;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n \t\t\tSELECT\n \t\t\t\tProject.id AS id,\n \t\t\t\tProject.image_id AS imageId,\n \t\t\t\tProject.user_id AS userId,\n \t\t\t\tProject.survey_copy_id AS surveyCopyId,\n \t\t\t\tProject.title,\n \t\t\t\tProject.intro,\n \t\t\t\tProject.content,\n \t\t\t\tProject.like_count AS likeCount,\n \t\t\t\tProject.created_at AS createdAt,\n \t\t\t\tProject.updated_at AS updatedAt,\n        User.nickname AS userNickname,\n\t\t\t\tFile.file_path AS imagePath\n \t\t\tFROM Project\n      INNER JOIN User\n      ON Project.user_id = User.id\n\t\t\tINNER JOIN File\n\t\t\tON Project.image_id = File.id\n\t\t\tWHERE Project.id = ", "\n      ORDER BY Project.id DESC\n\t\t"], ["\n \t\t\tSELECT\n \t\t\t\tProject.id AS id,\n \t\t\t\tProject.image_id AS imageId,\n \t\t\t\tProject.user_id AS userId,\n \t\t\t\tProject.survey_copy_id AS surveyCopyId,\n \t\t\t\tProject.title,\n \t\t\t\tProject.intro,\n \t\t\t\tProject.content,\n \t\t\t\tProject.like_count AS likeCount,\n \t\t\t\tProject.created_at AS createdAt,\n \t\t\t\tProject.updated_at AS updatedAt,\n        User.nickname AS userNickname,\n\t\t\t\tFile.file_path AS imagePath\n \t\t\tFROM Project\n      INNER JOIN User\n      ON Project.user_id = User.id\n\t\t\tINNER JOIN File\n\t\t\tON Project.image_id = File.id\n\t\t\tWHERE Project.id = ", "\n      ORDER BY Project.id DESC\n\t\t"])), id)];
+                    case 1:
+                        project = _a.sent();
+                        return [2 /*return*/, project];
+                }
+            });
+        });
+    };
     ProjectModel.findAll = function () {
         return __awaiter(this, void 0, void 0, function () {
             var projects;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n \t\t\tSELECT\n \t\t\t\tProject.id AS id,\n \t\t\t\tProject.image_id AS imageId,\n \t\t\t\tProject.user_id AS userId,\n \t\t\t\tProject.survey_copy_id AS surveyCopyId,\n \t\t\t\tProject.title,\n \t\t\t\tProject.intro,\n \t\t\t\tProject.content,\n \t\t\t\tProject.like_count AS likeCount,\n \t\t\t\tProject.created_at AS createdAt,\n \t\t\t\tProject.updated_at AS updatedAt,\n        User.nickname AS author\n \t\t\tFROM Project\n      INNER JOIN User\n      ON Project.user_id = User.id\n      ORDER BY Project.id DESC\n      ;\n    "], ["\n \t\t\tSELECT\n \t\t\t\tProject.id AS id,\n \t\t\t\tProject.image_id AS imageId,\n \t\t\t\tProject.user_id AS userId,\n \t\t\t\tProject.survey_copy_id AS surveyCopyId,\n \t\t\t\tProject.title,\n \t\t\t\tProject.intro,\n \t\t\t\tProject.content,\n \t\t\t\tProject.like_count AS likeCount,\n \t\t\t\tProject.created_at AS createdAt,\n \t\t\t\tProject.updated_at AS updatedAt,\n        User.nickname AS author\n \t\t\tFROM Project\n      INNER JOIN User\n      ON Project.user_id = User.id\n      ORDER BY Project.id DESC\n      ;\n    "])))];
+                    case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n \t\t\tSELECT\n \t\t\t\tProject.id AS id,\n \t\t\t\tProject.image_id AS imageId,\n \t\t\t\tProject.user_id AS userId,\n \t\t\t\tProject.survey_copy_id AS surveyCopyId,\n \t\t\t\tProject.title,\n \t\t\t\tProject.intro,\n \t\t\t\tProject.content,\n \t\t\t\tProject.like_count AS likeCount,\n \t\t\t\tProject.created_at AS createdAt,\n \t\t\t\tProject.updated_at AS updatedAt,\n        User.nickname AS userNickname,\n\t\t\t\tFile.file_path AS imagePath\n \t\t\tFROM Project\n      INNER JOIN User\n      ON Project.user_id = User.id\n\t\t\tINNER JOIN File\n\t\t\tON Project.image_id = File.id\n      ORDER BY Project.id DESC\n      ;\n    "], ["\n \t\t\tSELECT\n \t\t\t\tProject.id AS id,\n \t\t\t\tProject.image_id AS imageId,\n \t\t\t\tProject.user_id AS userId,\n \t\t\t\tProject.survey_copy_id AS surveyCopyId,\n \t\t\t\tProject.title,\n \t\t\t\tProject.intro,\n \t\t\t\tProject.content,\n \t\t\t\tProject.like_count AS likeCount,\n \t\t\t\tProject.created_at AS createdAt,\n \t\t\t\tProject.updated_at AS updatedAt,\n        User.nickname AS userNickname,\n\t\t\t\tFile.file_path AS imagePath\n \t\t\tFROM Project\n      INNER JOIN User\n      ON Project.user_id = User.id\n\t\t\tINNER JOIN File\n\t\t\tON Project.image_id = File.id\n      ORDER BY Project.id DESC\n      ;\n    "])))];
                     case 1:
                         projects = _a.sent();
                         return [4 /*yield*/, Promise.all(projects.map(function (project) { return __awaiter(_this, void 0, void 0, function () {
                                 var tags;
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
-                                        case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n\t\t\t\tSELECT name\n\t\t\t\tFROM Tag\n\t\t\t\tWHERE project_id = ", "\n\t\t\t"], ["\n\t\t\t\tSELECT name\n\t\t\t\tFROM Tag\n\t\t\t\tWHERE project_id = ", "\n\t\t\t"])), project.id)];
+                                        case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n\t\t\t\tSELECT name\n\t\t\t\tFROM Tag\n\t\t\t\tWHERE project_id = ", "\n\t\t\t"], ["\n\t\t\t\tSELECT name\n\t\t\t\tFROM Tag\n\t\t\t\tWHERE project_id = ", "\n\t\t\t"])), project.id)];
+                                        case 1:
+                                            tags = _a.sent();
+                                            return [2 /*return*/, __assign(__assign({}, project), { tags: tags.map(function (tag) { return tag.name; }) })];
+                                    }
+                                });
+                            }); }))];
+                    case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    ProjectModel.findAllByUserId = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var projects;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n\t\t\tSELECT\n \t\t\t\tProject.id AS id,\n \t\t\t\tProject.image_id AS imageId,\n \t\t\t\tProject.user_id AS userId,\n \t\t\t\tProject.survey_copy_id AS surveyCopyId,\n \t\t\t\tProject.title,\n \t\t\t\tProject.intro,\n \t\t\t\tProject.content,\n \t\t\t\tProject.like_count AS likeCount,\n \t\t\t\tProject.created_at AS createdAt,\n \t\t\t\tProject.updated_at AS updatedAt,\n        User.nickname AS userNickname\n\t\t\t\tFile.file_path AS imagePath\n \t\t\tFROM Project\n      INNER JOIN User\n      ON Project.user_id = User.id\n\t\t\tINNER JOIN File\n\t\t\tON Project.image_id = File.id\n\t\t\tWHERE User.id = ", "\n      ORDER BY Project.like_count DESC\n\t\t"], ["\n\t\t\tSELECT\n \t\t\t\tProject.id AS id,\n \t\t\t\tProject.image_id AS imageId,\n \t\t\t\tProject.user_id AS userId,\n \t\t\t\tProject.survey_copy_id AS surveyCopyId,\n \t\t\t\tProject.title,\n \t\t\t\tProject.intro,\n \t\t\t\tProject.content,\n \t\t\t\tProject.like_count AS likeCount,\n \t\t\t\tProject.created_at AS createdAt,\n \t\t\t\tProject.updated_at AS updatedAt,\n        User.nickname AS userNickname\n\t\t\t\tFile.file_path AS imagePath\n \t\t\tFROM Project\n      INNER JOIN User\n      ON Project.user_id = User.id\n\t\t\tINNER JOIN File\n\t\t\tON Project.image_id = File.id\n\t\t\tWHERE User.id = ", "\n      ORDER BY Project.like_count DESC\n\t\t"])), userId)];
+                    case 1:
+                        projects = _a.sent();
+                        return [4 /*yield*/, Promise.all(projects.map(function (project) { return __awaiter(_this, void 0, void 0, function () {
+                                var tags;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n\t\t\t\tSELECT name\n\t\t\t\tFROM Tag\n\t\t\t\tWHERE project_id = ", "\n\t\t\t"], ["\n\t\t\t\tSELECT name\n\t\t\t\tFROM Tag\n\t\t\t\tWHERE project_id = ", "\n\t\t\t"])), project.id)];
+                                        case 1:
+                                            tags = _a.sent();
+                                            return [2 /*return*/, __assign(__assign({}, project), { tags: tags.map(function (tag) { return tag.name; }) })];
+                                    }
+                                });
+                            }); }))];
+                    case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    ProjectModel.findAllOrderByLike = function (limit) {
+        return __awaiter(this, void 0, void 0, function () {
+            var projects;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n\t\t\tSELECT\n \t\t\t\tProject.id AS id,\n \t\t\t\tProject.image_id AS imageId,\n \t\t\t\tProject.user_id AS userId,\n \t\t\t\tProject.survey_copy_id AS surveyCopyId,\n \t\t\t\tProject.title,\n \t\t\t\tProject.intro,\n \t\t\t\tProject.content,\n \t\t\t\tProject.like_count AS likeCount,\n \t\t\t\tProject.created_at AS createdAt,\n \t\t\t\tProject.updated_at AS updatedAt,\n        User.nickname AS author\n\t\t\t\tFile.file_path AS imagePath\n \t\t\tFROM Project\n      INNER JOIN User\n      ON Project.user_id = User.id\n\t\t\tINNER JOIN File\n\t\t\tON Project.image_id = File.id\n      ORDER BY Project.like_count DESC\n\t\t\tLIMIT ", "\n\t\t"], ["\n\t\t\tSELECT\n \t\t\t\tProject.id AS id,\n \t\t\t\tProject.image_id AS imageId,\n \t\t\t\tProject.user_id AS userId,\n \t\t\t\tProject.survey_copy_id AS surveyCopyId,\n \t\t\t\tProject.title,\n \t\t\t\tProject.intro,\n \t\t\t\tProject.content,\n \t\t\t\tProject.like_count AS likeCount,\n \t\t\t\tProject.created_at AS createdAt,\n \t\t\t\tProject.updated_at AS updatedAt,\n        User.nickname AS author\n\t\t\t\tFile.file_path AS imagePath\n \t\t\tFROM Project\n      INNER JOIN User\n      ON Project.user_id = User.id\n\t\t\tINNER JOIN File\n\t\t\tON Project.image_id = File.id\n      ORDER BY Project.like_count DESC\n\t\t\tLIMIT ", "\n\t\t"])), limit)];
+                    case 1:
+                        projects = _a.sent();
+                        return [4 /*yield*/, Promise.all(projects.map(function (project) { return __awaiter(_this, void 0, void 0, function () {
+                                var tags;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, prisma.$queryRaw(templateObject_7 || (templateObject_7 = __makeTemplateObject(["\n\t\t\t\tSELECT name\n\t\t\t\tFROM Tag\n\t\t\t\tWHERE project_id = ", "\n\t\t\t"], ["\n\t\t\t\tSELECT name\n\t\t\t\tFROM Tag\n\t\t\t\tWHERE project_id = ", "\n\t\t\t"])), project.id)];
                                         case 1:
                                             tags = _a.sent();
                                             return [2 /*return*/, __assign(__assign({}, project), { tags: tags.map(function (tag) { return tag.name; }) })];
@@ -181,10 +262,66 @@ var ProjectModel = /** @class */ (function () {
             });
         });
     };
+    ProjectModel.like = function (projectId, userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var like, project_1, project;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, prisma.like.findMany({
+                            where: {
+                                userId: userId,
+                                projectId: projectId,
+                            },
+                        })];
+                    case 1:
+                        like = _a.sent();
+                        if (!(like.length > 0)) return [3 /*break*/, 4];
+                        return [4 /*yield*/, prisma.like.deleteMany({
+                                where: {
+                                    userId: userId,
+                                    projectId: projectId,
+                                },
+                            })];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, prisma.project.update({
+                                where: { id: projectId },
+                                data: {
+                                    likeCount: {
+                                        decrement: 1,
+                                    },
+                                },
+                            })];
+                    case 3:
+                        project_1 = _a.sent();
+                        return [2 /*return*/, __assign(__assign({}, project_1), { isLike: false })];
+                    case 4: return [4 /*yield*/, prisma.like.create({
+                            data: {
+                                userId: userId,
+                                projectId: projectId,
+                            },
+                        })];
+                    case 5:
+                        _a.sent();
+                        return [4 /*yield*/, prisma.project.update({
+                                where: { id: projectId },
+                                data: {
+                                    likeCount: {
+                                        increment: 1,
+                                    },
+                                },
+                            })];
+                    case 6:
+                        project = _a.sent();
+                        return [2 /*return*/, __assign(__assign({}, project), { isLike: true })];
+                }
+            });
+        });
+    };
     return ProjectModel;
 }());
 exports.ProjectModel = ProjectModel;
-var templateObject_1, templateObject_2;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7;
 // const getProjectListByUserId = async (userId: number) => {
 // 	// 프로젝트 유저 아이디로 조회
 // 	const projects = await prisma.project.findMany({
