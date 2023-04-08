@@ -1,8 +1,42 @@
 import { Request, Response } from "express";
 import { resObj } from "@helper/resObj";
 import { getUserByToken } from "~/utils/helper/auth";
-import { SurveyModel } from "@models/survey";
-import { answerModel } from "@models/answer";
+
+/*
+{
+	"success": true,
+	"status": 200,
+	"data": {
+			"id": 4,
+			"userId": 1,
+			"title": "설문지 제목",
+			"question": [
+					{
+							"id": 1,
+							"type": "ONE",
+							"order": 1,
+							"title": "질문1",
+							"choice": [
+									"답변1",
+									"답변2",
+									"답변3"
+							]
+					},
+					{
+							"id": 2,
+							"type": "ONE",
+							"order": 2,
+							"title": "질문2",
+							"choice": [
+									"답변2",
+									"답변3",
+									"답변4"
+							]
+					}
+			]
+	}
+}
+*/
 
 /*
 DBName: SurveyCopy

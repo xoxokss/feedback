@@ -74,5 +74,5 @@ model Answer {
   id           Int    @id @default(autoincrement())
   userId       Int    @map("user_id")
   surveyCopyId Int    @map("survey_copy_id")
-  answer       String @db.TinyText
+  answer       Json   @db.Json
 }

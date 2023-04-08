@@ -3,6 +3,7 @@ import { SurveyModel } from "@models/survey";
 import { resObj } from "~/utils/helper/resObj";
 import { getUserByToken } from "@utils/helper/auth";
 import { PrismaClient } from "@prisma/client";
+import { answerModel } from "~/models/answer";
 
 interface SurveyParams {
 	title: string;
@@ -86,6 +87,35 @@ export class SurveyController {
 
 		try {
 			const result = await SurveyModel.remove(parseInt(id));
+
+			res.status(200).send(resObj.success({ status: 200, data: result }));
+		} catch (err) {
+			res.status(500).send(resObj.failed({ status: 500, error: err }));
+		}
+	}
+
+	static async submitSurvey(req: Request, res: Response) {
+		const { id } = req.params;
+		const { authorization } = req.headers;
+		const reqBody = req.body;
+
+		try {
+			const auth = await getUserByToken(authorization as string);
+
+			// user 정보가 없을 경우 에러 메세지
+			if (!auth.user) {
+				res.status(500).send(resObj.failed({ status: 500, error: "User not found" }));
+				return;
+			}
+
+			await answerModel.checkAnswerByDuplicate(auth.user!.id, parseInt(id));
+
+			// user 정보가 있을 경우
+			// reqBody에 userId 추가
+			reqBody.id = parseInt(id);
+			reqBody.userId = auth.user!.id;
+
+			const result = await SurveyModel.submit(reqBody);
 
 			res.status(200).send(resObj.success({ status: 200, data: result }));
 		} catch (err) {

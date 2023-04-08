@@ -82,7 +82,7 @@ var ProjectController = /** @class */ (function () {
                         return [4 /*yield*/, project_1.ProjectModel.findAllByUserId(Number((_a = auth.user) === null || _a === void 0 ? void 0 : _a.id))];
                     case 3:
                         projects_1 = _b.sent();
-                        res.status(500).send(resObj_1.resObj.success({ status: 200, data: projects_1 }));
+                        res.status(200).send(resObj_1.resObj.success({ status: 200, data: projects_1 }));
                         return [2 /*return*/];
                     case 4:
                         res.status(500).send(resObj_1.resObj.failed({
@@ -93,12 +93,12 @@ var ProjectController = /** @class */ (function () {
                     case 5: return [4 /*yield*/, project_1.ProjectModel.findAllByUserId(Number(userId))];
                     case 6:
                         projects = _b.sent();
-                        res.status(500).send(resObj_1.resObj.success({ status: 200, data: projects }));
+                        res.status(200).send(resObj_1.resObj.success({ status: 200, data: projects }));
                         return [3 /*break*/, 9];
                     case 7: return [4 /*yield*/, project_1.ProjectModel.findAll()];
                     case 8:
                         projects = _b.sent();
-                        res.status(500).send(resObj_1.resObj.success({ status: 200, data: projects }));
+                        res.status(200).send(resObj_1.resObj.success({ status: 200, data: projects }));
                         _b.label = 9;
                     case 9: return [3 /*break*/, 11];
                     case 10:

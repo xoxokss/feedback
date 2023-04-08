@@ -14,11 +14,11 @@ export const getUserByToken = async (token: string) => {
 		};
 	}
 
-  try {
-    const { userId } = <jwt.UserIDJwtPayload>jwt.verify(tokenValue, SECRET);
-    const user = await prisma.user.findUnique({
-      where: { username: userId },
-    });
+	try {
+		const { username } = <jwt.UserIDJwtPayload>jwt.verify(tokenValue, SECRET);
+		const user = await prisma.user.findUnique({
+			where: { username },
+		});
 
 		return {
 			result: true,

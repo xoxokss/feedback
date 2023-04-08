@@ -4,6 +4,7 @@ import { resObj } from "@helper/resObj";
 const testController = {
 	test: async (req: Request, res: Response) => {
 		try {
+			console.log(new Date());
 			res.status(200).send(resObj.success({ status: 200, data: "test" }));
 		} catch (err) {
 			res.status(500).send(resObj.failed({ status: 500, error: err }));

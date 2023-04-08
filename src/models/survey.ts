@@ -78,6 +78,15 @@ interface choiceItem {
 	text: string;
 }
 
+interface answerParams {
+	id: number;
+	userId: number;
+	answers: {
+		id: number;
+		answer: number | string;
+	}[];
+}
+
 export class SurveyModel {
 	static async findOneById(id: number) {
 		const survey = await prisma.$queryRaw<
@@ -162,6 +171,17 @@ export class SurveyModel {
 		return prisma.survey.delete({
 			where: {
 				id: id,
+			},
+		});
+	}
+
+	static async submit(answer: answerParams) {
+		console.log(answer);
+		return prisma.answer.create({
+			data: {
+				userId: answer.userId,
+				surveyCopyId: answer.id,
+				answer: answer.answers as any,
 			},
 		});
 	}

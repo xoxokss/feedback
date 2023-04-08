@@ -166,27 +166,34 @@ var ProjectModel = /** @class */ (function () {
     ProjectModel.add = function (_a, tags) {
         var title = _a.title, intro = _a.intro, content = _a.content, imageId = _a.imageId, userId = _a.userId, surveyCopyId = _a.surveyCopyId;
         return __awaiter(this, void 0, void 0, function () {
-            var projectResult, tagResult;
+            var fileCheck, projectResult_1, tagResult;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, prisma.project.create({
-                            data: {
-                                title: title,
-                                intro: intro,
-                                content: content,
-                                surveyCopyId: surveyCopyId,
-                                imageId: imageId,
-                                userId: userId,
-                            },
+                    case 0: return [4 /*yield*/, prisma.file.findUnique({
+                            where: { id: imageId },
                         })];
                     case 1:
-                        projectResult = _b.sent();
-                        return [4 /*yield*/, prisma.tag.createMany({
-                                data: tags.map(function (tag) { return ({ projectId: projectResult.id, name: tag }); }),
+                        fileCheck = _b.sent();
+                        if (!fileCheck) return [3 /*break*/, 4];
+                        return [4 /*yield*/, prisma.project.create({
+                                data: {
+                                    title: title,
+                                    intro: intro,
+                                    content: content,
+                                    surveyCopyId: surveyCopyId,
+                                    imageId: imageId,
+                                    userId: userId,
+                                },
                             })];
                     case 2:
+                        projectResult_1 = _b.sent();
+                        return [4 /*yield*/, prisma.tag.createMany({
+                                data: tags.map(function (tag) { return ({ projectId: projectResult_1.id, name: tag }); }),
+                            })];
+                    case 3:
                         tagResult = _b.sent();
-                        return [2 /*return*/, __assign(__assign({}, projectResult), { tags: tagResult })];
+                        return [2 /*return*/, __assign(__assign({}, projectResult_1), { tags: tagResult })];
+                    case 4: throw new Error("파일이 존재하지 않습니다.");
                 }
             });
         });
