@@ -19,7 +19,6 @@ export class ProjectController {
 
 		try {
 			// parameter에 user=0이면 내 정보 조회, 아니면 해당 유저 조회, user가 없다면 전체 조회
-
 			const userId = query?.user;
 
 			// 전체 조회
@@ -29,7 +28,7 @@ export class ProjectController {
 						const auth = await getUserByToken(headers.authorization);
 						console.log(auth);
 						const projects = await ProjectModel.findAllByUserId(Number(auth.user?.id));
-						res.status(500).send(resObj.success({ status: 200, data: projects }));
+						res.status(200).send(resObj.success({ status: 200, data: projects }));
 						return;
 					} else {
 						res.status(500).send(
@@ -42,10 +41,10 @@ export class ProjectController {
 					}
 				}
 				const projects = await ProjectModel.findAllByUserId(Number(userId));
-				res.status(500).send(resObj.success({ status: 200, data: projects }));
+				res.status(200).send(resObj.success({ status: 200, data: projects }));
 			} else {
 				const projects = await ProjectModel.findAll();
-				res.status(500).send(resObj.success({ status: 200, data: projects }));
+				res.status(200).send(resObj.success({ status: 200, data: projects }));
 			}
 		} catch (e) {
 			const error = e as Error;

@@ -18,7 +18,7 @@ router.put("/:id", authMiddleware, SurveyController.modifySurvey);
 router.delete("/:id", authMiddleware, SurveyController.removeSurvey);
 
 // 설문 응답
-// router.post("/:id", authMiddleware, surveyController.submitSurvey);
+router.post("/:id", authMiddleware, SurveyController.submitSurvey);
 
 // 전체 설문 답변 조회
 // router.get("/:id/answer", authMiddleware, surveyController.getSurveyAnswerList);

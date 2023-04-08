@@ -216,23 +216,31 @@ export class ProjectModel {
 		{ title, intro, content, imageId, userId, surveyCopyId }: ProjectAddParams,
 		tags: string[]
 	) {
-		const projectResult = await prisma.project.create({
-			data: {
-				title,
-				intro,
-				content,
-				surveyCopyId,
-				imageId,
-				userId,
-			},
+		const fileCheck = await prisma.file.findUnique({
+			where: { id: imageId },
 		});
 
-		// 프로젝트와 연관된 태그 생성
-		const tagResult = await prisma.tag.createMany({
-			data: tags.map((tag) => ({ projectId: projectResult.id, name: tag })) as Tag[],
-		});
+		if (fileCheck) {
+			const projectResult = await prisma.project.create({
+				data: {
+					title,
+					intro,
+					content,
+					surveyCopyId,
+					imageId,
+					userId,
+				},
+			});
 
-		return { ...projectResult, tags: tagResult };
+			// 프로젝트와 연관된 태그 생성
+			const tagResult = await prisma.tag.createMany({
+				data: tags.map((tag) => ({ projectId: projectResult.id, name: tag })) as Tag[],
+			});
+
+			return { ...projectResult, tags: tagResult };
+		} else {
+			throw new Error("파일이 존재하지 않습니다.");
+		}
 	}
 
 	static async update(
