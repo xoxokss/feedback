@@ -61,7 +61,7 @@ export class ProjectController {
 
 			console.log(projects);
 
-			res.status(500).send(resObj.success({ status: 200, data: projects }));
+			res.status(200).send(resObj.success({ status: 200, data: projects }));
 		} catch (e) {
 			const error = e as Error;
 

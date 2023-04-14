@@ -76,3 +76,9 @@ model Answer {
   surveyCopyId Int    @map("survey_copy_id")
   answer       Json   @db.Json
 }
+
+model Statistics {
+  id          Int    @id @default(autoincrement())  @map("id")
+  projectId   Int    @map("project_id")
+  statistics  Json   @db.Json
+}

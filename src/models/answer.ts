@@ -15,7 +15,7 @@ const getSurveyAnswerUser = (id: number) => {};
 
 const checkAnswerByDuplicate = async (userId: number, answerCopyId: number) => {
 	const result =
-		await prisma.$queryRaw`SELECT * FROM Answer WHERE survey_copy_id = ${answerCopyId} and user = ${userId}`;
+		await prisma.$queryRaw`SELECT * FROM Answer WHERE survey_copy_id = ${answerCopyId} and user_id = ${userId}`;
 	if (result) return true;
 	return false;
 };

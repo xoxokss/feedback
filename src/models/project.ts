@@ -189,7 +189,7 @@ export class ProjectModel {
  				Project.like_count AS likeCount,
  				Project.created_at AS createdAt,
  				Project.updated_at AS updatedAt,
-        User.nickname AS author
+        User.nickname AS author,
 				File.file_path AS imagePath
  			FROM Project
       INNER JOIN User
