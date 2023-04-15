@@ -4,9 +4,12 @@ import cors from "cors";
 import passport from "passport";
 import session from "express-session";
 import { swaggerUi, specs } from "./swagger";
+import logger from "morgan";
+import "dotenv/config";
 
 const app = express();
 
+app.use(logger("dev"));
 app.use(cors());
 
 // Swagger UI URL : http://localhost:8000/api-docs
