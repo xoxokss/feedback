@@ -1,7 +1,42 @@
-import { Request, Response } from 'express';
-import { resObj } from '@helper/resObj';
-import { surveyModel } from '@models/survey';
-import { answerModel } from '@models/answer';
+import { Request, Response } from "express";
+import { resObj } from "@helper/resObj";
+import { getUserByToken } from "~/utils/helper/auth";
+
+/*
+{
+	"success": true,
+	"status": 200,
+	"data": {
+			"id": 4,
+			"userId": 1,
+			"title": "설문지 제목",
+			"question": [
+					{
+							"id": 1,
+							"type": "ONE",
+							"order": 1,
+							"title": "질문1",
+							"choice": [
+									"답변1",
+									"답변2",
+									"답변3"
+							]
+					},
+					{
+							"id": 2,
+							"type": "ONE",
+							"order": 2,
+							"title": "질문2",
+							"choice": [
+									"답변2",
+									"답변3",
+									"답변4"
+							]
+					}
+			]
+	}
+}
+*/
 
 /*
 DBName: SurveyCopy
@@ -37,6 +72,7 @@ question: [
 */
 
 /*
+저장시에는 JSON.stringify, 불러올때는 JSON.parse
 DBName: Answer
 id: number
 survey_copy_id: number
@@ -89,20 +125,21 @@ const analysisAnswer = async (req: Request, res: Response) => {
 // 특정 설문의 응답 전체 조회 => answer 콜롬 파싱 (JSON 변환) => 통계 처리 => response
 const getAnswer = async (req: Request, res: Response) => {
 	const { id } = req.params;
+	const { authorization } = req.headers;
 	try {
 		let data = {};
+		const auth = await getUserByToken(authorization!);
+
 		// const survey = await SurveyModel.getSurveyAnswer(parseInt(id));
 
-    res.status(200).send(resObj.success({ status: 200, data: data }));
-  } catch (err) {
-    res.status(500).send(resObj.failed({ status: 500, error: err }));
-  }
+		res.status(200).send(resObj.success({ status: 200, data: data }));
+	} catch (err) {
+		res.status(500).send(resObj.failed({ status: 500, error: err }));
+	}
 };
 
 // 설문 응답 개별 조회
 
-
 export const answerController = {
 	getAnswer,
-	createAnswer
 };

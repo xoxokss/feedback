@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import projectRouter from "@routes/project";
-import tagRouter from "@routes/tag";
+// import tagRouter from "@routes/tag";
 import fileRouter from "@routes/file";
 import testRouter from "@routes/test";
 import userRouter from "@routes/user";
@@ -27,7 +27,7 @@ router.use("/project", projectRouter);
  *  name: Tag
  *  description: 태그 API
  */
-router.use("/tag", tagRouter);
+// router.use("/tag", tagRouter);
 
 /**
  * @swagger

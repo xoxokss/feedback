@@ -16,10 +16,10 @@ userRouter.get("/kakao/callback", userController.kakaoLogin);
 userRouter.post("/verifyEmail", userController.verifyEmail);
 userRouter.delete("/delete", authMiddleware, userController.deleteUser);
 userRouter.post(
-  "/profileImg",
-  multerMiddleware.single("file"),
-  authMiddleware,
-  userController.UpdateProfileImg
+	"/profileImg",
+	multerMiddleware.single("file"),
+	authMiddleware,
+	userController.UpdateProfileImg
 );
 
 export default userRouter;

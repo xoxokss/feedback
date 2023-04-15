@@ -59,5 +59,24 @@ var fileController = {
             }
         });
     }); },
+    uploadS3: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var result, err_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, file_1.fileModel.addFileS3(req.file)];
+                case 1:
+                    result = _a.sent();
+                    res.status(200).send(resObj_1.resObj.success({ status: 200, data: result }));
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_2 = _a.sent();
+                    res.status(500).send(resObj_1.resObj.failed({ status: 500, error: err_2 }));
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
+        });
+    }); }
 };
 exports.fileController = fileController;
