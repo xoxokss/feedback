@@ -7,7 +7,6 @@ import passport from "passport";
 import sendGmail from "~/utils/helper/mail";
 import "dotenv/config";
 import { resObj } from "@helper/resObj";
-import { userModel } from "~/models/user";
 
 const saltRounds = 10;
 const salt = bcrypt.genSaltSync(saltRounds);
