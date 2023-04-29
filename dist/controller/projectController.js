@@ -123,7 +123,7 @@ var ProjectController = /** @class */ (function () {
                     case 1:
                         projects = _a.sent();
                         console.log(projects);
-                        res.status(500).send(resObj_1.resObj.success({ status: 200, data: projects }));
+                        res.status(200).send(resObj_1.resObj.success({ status: 200, data: projects }));
                         return [3 /*break*/, 3];
                     case 2:
                         e_2 = _a.sent();
