@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { resObj } from "@helper/resObj";
 import { getUserByToken } from "~/utils/helper/auth";
+import { answerModel } from "~/models/answer";
 
 /*
 {
@@ -102,24 +103,53 @@ interface IAnswer {
 	user_id: number;
 }
 
-// 특정 설문의 응답 전체 조회 => answer 콜롬 파싱 (JSON 변환) => 통계 처리 => response
-const getAnswer = async (req: Request, res: Response) => {
+// 설문 응답 목록 조회
+const getAnswerList = async (req: Request, res: Response) => {
 	const { id } = req.params;
 	const { authorization } = req.headers;
 	try {
-		let data = {};
 		const auth = await getUserByToken(authorization!);
 
-		// const survey = await SurveyModel.getSurveyAnswer(parseInt(id));
+		const answer = await answerModel.getAnswerList(parseInt(id));
 
-		res.status(200).send(resObj.success({ status: 200, data: data }));
+		res.status(200).send(resObj.success({ status: 200, data: answer }));
 	} catch (err) {
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
 	}
 };
 
-// 설문 응답 개별 조회
+const getAnswerUser = async (req: Request, res: Response) => {
+	const { id } = req.params;
+	const { authorization } = req.headers;
+
+	try {
+		const auth = await getUserByToken(authorization!);
+
+		const answer = await answerModel.getSurveyAnswerUser(parseInt(id));
+
+		let newAnswer = answer[0].question.map((item) => {
+			return {
+				...item,
+				answer: answer[0].answer.find((answerItem) => answerItem.id === item.id),
+			};
+		});
+
+		res.status(200).send(
+			resObj.success({
+				status: 200,
+				data: {
+					...answer[0],
+					question: null,
+					answer: newAnswer,
+				},
+			})
+		);
+	} catch (err) {
+		res.status(500).send(resObj.failed({ status: 500, error: err }));
+	}
+};
 
 export const answerController = {
-	getAnswer,
+	getAnswerList,
+	getAnswerUser,
 };

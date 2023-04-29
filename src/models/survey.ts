@@ -127,9 +127,8 @@ export class SurveyModel {
       SELECT
 				Survey.id as id,
 				Survey.user_id as userId,
-				title,
-				question
-      From
+				title
+      FROM
         Survey
       INNER JOIN
         User
