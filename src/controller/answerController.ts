@@ -144,48 +144,6 @@ arr.push(a[i])
 //퍼센트는 answer.length로 나눠서 구함
 
 
-// resObj.data = { 
-// 	"suveyId" : projectSurvey.id,
-// 			"project" : projectSurvey,
-
-// }
-
-		// for(let i = 0; i < surveyAnswer.length; i++){
-		// 	surveyAnswer[i].answer = JSON.parse(surveyAnswer[i].answer);
-		// 	//console.log(surveyAnswer[i].answer)
-		// }
-
-
-		/*
-		resObj.data = 
-		{
-			{
-				"id": 1,
-				"surveyId": surveyAnswer.surveyId,
-				"questionTitle": "질문1",
-				"questionType": "SEL_ONE",
-				"questionModel": "[\"답변1\",\"답변2\",\"답변3\"]",
-				"questionRequired": true,
-				"questionOrder": 1
-			},
-			{
-				"id": 2,
-				"surveyId": 1,
-				"questionTitle": "질문2",
-				"questionType": "SEL_ONE",
-				"questionModel": "[\"답변1\",\"답변2\",\"답변3\"]",
-				"questionRequired": true,
-				"questionOrder": 2
-			}
-
-			{
-				suveyId : 1,
-				questionTitle : "sdk", // projectSuvey.question.title
-				questionType : "ONE", // projectSuvey.question.type
-				
-			}
-		}*/
-
 		res.status(200).send(resObj.success({ status: 200, data: data }))
 	}catch(err){
 		console.log(err)
