@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { resObj } from "@helper/resObj";
-import { getUserByToken } from "~/utils/helper/auth";
-
+import { SurveyModel } from "@models/survey";
+import { answerModel } from "@models/answer";
+import { stringify } from "querystring";
 /*
 {
 	"success": true,
@@ -101,23 +102,93 @@ interface IAnswer {
 	survey_copy_id: number;
 	user_id: number;
 }
-
-// 설문지 응답 작성
-const createAnswer = async (req: Request, res: Response) => {
-	const { answer } = req.body;
-	const { user } = res.locals;
-	try {
-
-		}catch (err) {
-		res.status(500).send(resObj.failed({ status: 500, error: err }));
-	}
-};
-const analysisAnswer = async (req: Request, res: Response) => {
+interface Ianalysis {
+	project : Array<{}>;
+	answer : Array<{}>;
+}
+// 설문 답변 통계 조회
+const getAnalysis = async (req: Request, res: Response) => {
 	const { id } = req.params;
+
 	try {
 		let data = {};
 
+		const projectSurvey:any = await SurveyModel.findOneById(parseInt(id));
+		//console.log("프로젝트 :", projectSurvey)
+		data = projectSurvey
+		//console.log(projectSurvey)
+		const surveyAnswer:any = await answerModel.getSurveyAnswer(parseInt(id));
+		//console.log("응답 : ",surveyAnswer)	
+
+		const questionOrder:any = projectSurvey[0].question
+		
+
+		let result = []
+for(let i = 0; i < questionOrder.length; i++){
+	//console.log(questionOrder[i].title)
+	const a = {title:questionOrder[i].title, type:questionOrder[i].type}
+	result.push(a)
+}
+data = result
+
+
+console.log("result1 : ",surveyAnswer[0])
+const arr = []
+ for(let i = 0; i < surveyAnswer.length; i++){
+	const a = JSON.parse(surveyAnswer[0].answer)
+arr.push(a[i])
+}
+ console.log(arr)
+
+
+//퍼센트는 answer.length로 나눠서 구함
+
+
+// resObj.data = { 
+// 	"suveyId" : projectSurvey.id,
+// 			"project" : projectSurvey,
+
+// }
+
+		// for(let i = 0; i < surveyAnswer.length; i++){
+		// 	surveyAnswer[i].answer = JSON.parse(surveyAnswer[i].answer);
+		// 	//console.log(surveyAnswer[i].answer)
+		// }
+
+
+		/*
+		resObj.data = 
+		{
+			{
+				"id": 1,
+				"surveyId": surveyAnswer.surveyId,
+				"questionTitle": "질문1",
+				"questionType": "SEL_ONE",
+				"questionModel": "[\"답변1\",\"답변2\",\"답변3\"]",
+				"questionRequired": true,
+				"questionOrder": 1
+			},
+			{
+				"id": 2,
+				"surveyId": 1,
+				"questionTitle": "질문2",
+				"questionType": "SEL_ONE",
+				"questionModel": "[\"답변1\",\"답변2\",\"답변3\"]",
+				"questionRequired": true,
+				"questionOrder": 2
+			}
+
+			{
+				suveyId : 1,
+				questionTitle : "sdk", // projectSuvey.question.title
+				questionType : "ONE", // projectSuvey.question.type
+				
+			}
+		}*/
+
+		res.status(200).send(resObj.success({ status: 200, data: data }))
 	}catch(err){
+		console.log(err)
 		res.status(500).send(resObj.failed({ status: 500, error: err }));
 	}
 }
@@ -125,11 +196,8 @@ const analysisAnswer = async (req: Request, res: Response) => {
 // 특정 설문의 응답 전체 조회 => answer 콜롬 파싱 (JSON 변환) => 통계 처리 => response
 const getAnswer = async (req: Request, res: Response) => {
 	const { id } = req.params;
-	const { authorization } = req.headers;
 	try {
-		let data = {};
-		const auth = await getUserByToken(authorization!);
-
+		const data = {};
 		// const survey = await SurveyModel.getSurveyAnswer(parseInt(id));
 
 		res.status(200).send(resObj.success({ status: 200, data: data }));
@@ -142,4 +210,5 @@ const getAnswer = async (req: Request, res: Response) => {
 
 export const answerController = {
 	getAnswer,
+	getAnalysis
 };

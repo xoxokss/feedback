@@ -7,5 +7,5 @@ const router = express.Router();
 // 설문 응답 목록 조회
 router.get("/", authMiddleware, answerController.getAnswer);
 // 설문 통계 조회
-
+router.get("/analysis/:id", authMiddleware, answerController.getAnalysis);
 export default router;
