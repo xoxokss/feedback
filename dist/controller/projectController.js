@@ -50,8 +50,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectController = void 0;
 var auth_1 = require("~/utils/helper/auth");
 var resObj_1 = require("~/utils/helper/resObj");
-// import { ProjectModel } from "~/models/project";
-var copyModel_1 = require("~/models/copyModel");
+var copy_1 = require("~/models/copy");
 var project_1 = require("~/models/project");
 // /**
 //  * Get List All
@@ -186,7 +185,7 @@ var ProjectController = /** @class */ (function () {
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 4, , 5]);
-                        return [4 /*yield*/, copyModel_1.CopyModel.copySurvey(surveyId, user.id)];
+                        return [4 /*yield*/, copy_1.CopyModel.copySurvey(surveyId, user.id)];
                     case 2:
                         surveyCopy = _b.sent();
                         if (!surveyCopy)
@@ -225,7 +224,7 @@ var ProjectController = /** @class */ (function () {
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 4, , 5]);
-                        return [4 /*yield*/, copyModel_1.CopyModel.copySurvey(surveyId, user.id)];
+                        return [4 /*yield*/, copy_1.CopyModel.copySurvey(surveyId, user.id)];
                     case 2:
                         surveyCopy = _b.sent();
                         if (!surveyCopy)

@@ -1,11 +1,7 @@
 import express from "express";
-// import { resObj } from "@helper/resObj";
-// import { tagModel } from "@models/tag";
-import { Tag } from "@prisma/client";
 import { getUserByToken } from "~/utils/helper/auth";
 import { resObj } from "~/utils/helper/resObj";
-// import { ProjectModel } from "~/models/project";
-import { CopyModel } from "~/models/copyModel";
+import { CopyModel } from "~/models/copy";
 import { ProjectModel } from "~/models/project";
 
 // /**
