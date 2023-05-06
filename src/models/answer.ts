@@ -5,6 +5,9 @@ const prisma = new PrismaClient();
 const getSurveyAnswer = (id: number) => {
 	return prisma.$queryRaw`SELECT * FROM Answer WHERE survey_copy_id = ${id}`;
 };
+const getProject = (id:number) => {
+	return prisma.$queryRaw`SELECT * FROM SurveyCopy WHERE id = ${id}`;
+}
 
 // 응답 개별 조회 목록 (리스트)
 const getSurveyAnswerListShortInfo = (id: number) => {
@@ -25,4 +28,5 @@ export const answerModel = {
 	getSurveyAnswerListShortInfo,
 	getSurveyAnswerUser,
 	checkAnswerByDuplicate,
+	getProject
 };

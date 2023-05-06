@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { resObj } from "@helper/resObj";
 import { SurveyModel } from "@models/survey";
 import { answerModel } from "@models/answer";
-import { stringify } from "querystring";
 /*
 {
 	"success": true,
@@ -113,32 +112,37 @@ const getAnalysis = async (req: Request, res: Response) => {
 	try {
 		let data = {};
 
-		const projectSurvey:any = await SurveyModel.findOneById(parseInt(id));
-		//console.log("프로젝트 :", projectSurvey)
-		data = projectSurvey
-		//console.log(projectSurvey)
-		const surveyAnswer:any = await answerModel.getSurveyAnswer(parseInt(id));
-		//console.log("응답 : ",surveyAnswer)	
+		const projectSurvey:any = await answerModel.getProject(parseInt(id));
+		const header = projectSurvey[0].question
+		//console.log("프로젝트 :", header)
 
-		const questionOrder:any = projectSurvey[0].question
-		
+		const surveyAnswer:any = await answerModel.getSurveyAnswer(parseInt(id));
+		//console.log("응답 : ",surveyAnswer)
+
+		const questionOrder:any = projectSurvey
+		//console.log(questionOrder)
 
 		let result = []
+/*
 for(let i = 0; i < questionOrder.length; i++){
 	//console.log(questionOrder[i].title)
-	const a = {title:questionOrder[i].title, type:questionOrder[i].type}
+	const a = {title:questionOrder[i].title, type:questionOrder[i].type, choice:questionOrder[i].choice}
 	result.push(a)
 }
 data = result
-
-
-console.log("result1 : ",surveyAnswer[0])
+console.log(surveyAnswer[0].answer)
 const arr = []
  for(let i = 0; i < surveyAnswer.length; i++){
-	const a = JSON.parse(surveyAnswer[0].answer)
-arr.push(a[i])
+	const a = JSON.parse(surveyAnswer[i].answer)
+	console.log(a)
+for(let j = 0; j < a.length; j++){
+	if(a[j].id == i+1){
+		const b = {answer:a[j].answer}
+		arr.push(b)
 }
- console.log(arr)
+}
+}*/
+//console.log(arr)
 
 
 //퍼센트는 answer.length로 나눠서 구함
