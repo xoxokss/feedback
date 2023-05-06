@@ -4,8 +4,8 @@ import { authMiddleware } from "~/utils/middleware/authMiddleware";
 
 const router = express.Router();
 
-// 내가 가진 설문지 목록 조회
-router.get("/", authMiddleware, SurveyController.getSurveyByUserId);
+// 설문지 목록 조회
+// router.get("/", authMiddleware, surveyController.getSurveyList);
 
 // 설문 등록
 router.post("/", authMiddleware, SurveyController.addSurvey);

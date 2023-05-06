@@ -6,7 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 var express_1 = __importDefault(require("express"));
 var project_1 = __importDefault(require("@routes/project"));
+// import tagRouter from "@routes/tag";
 var file_1 = __importDefault(require("@routes/file"));
+var test_1 = __importDefault(require("@routes/test"));
 var user_1 = __importDefault(require("@routes/user"));
 var survey_1 = __importDefault(require("@routes/survey"));
 var answer_1 = __importDefault(require("@routes/answer"));
@@ -43,6 +45,13 @@ router.use("/file", file_1.default);
  *  description: 유저 API
  */
 router.use("/user", user_1.default);
+/**
+ * @swagger
+ * tags:
+ *  name: Test
+ *  description: 테스트용 API
+ */
+router.use("/test", test_1.default);
 /**
  * @swagger
  * tags:
