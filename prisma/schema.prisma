@@ -75,6 +75,8 @@ model Answer {
   userId       Int    @map("user_id")
   surveyCopyId Int    @map("survey_copy_id")
   answer       Json   @db.Json
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 }
 
 model Statistics {

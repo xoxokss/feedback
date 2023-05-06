@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { SurveyModel } from "@models/survey";
 import { resObj } from "~/utils/helper/resObj";
 import { getUserByToken } from "@utils/helper/auth";
-import { PrismaClient } from "@prisma/client";
 import { answerModel } from "~/models/answer";
 
 interface SurveyParams {
@@ -40,7 +39,7 @@ export class SurveyController {
 			const result = await SurveyModel.add({
 				userId: auth.user!.id,
 				title,
-				question: question,
+				question: question.map((item) => ({ ...item, id: item.order })),
 			});
 
 			res.status(200).send(resObj.success({ status: 200, data: result }));
@@ -61,6 +60,22 @@ export class SurveyController {
 					data: { ...result[0], question: result[0].question },
 				})
 			);
+		} catch (err) {
+			res.status(500).send(resObj.failed({ status: 500, error: err }));
+		}
+	}
+
+	static async getSurveyByUserId(req: Request, res: Response) {
+		const { authorization } = req.headers;
+
+		try {
+			const auth = await getUserByToken(authorization as string);
+			const result = await SurveyModel.findAllByUserId(auth!.user!.id);
+
+			// user 정보가 없을 경우 에러 메세지
+			if (!auth.user) res.status(500).send(resObj.failed({ status: 500, error: "User not found" }));
+
+			res.status(200).send(resObj.success({ status: 200, data: result }));
 		} catch (err) {
 			res.status(500).send(resObj.failed({ status: 500, error: err }));
 		}
