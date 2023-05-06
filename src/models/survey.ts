@@ -2,64 +2,6 @@ import { PrismaClient, Tag, User, Survey } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-/*
-DBName: SurveyCopy
-id: number
-project_id: number
-title: string
-question: [
-	{
-		question_id: 1,
-		order: 1,
-		question: "질문1",
-		type: "ONE", // ONE, MUL, TXT, LTXT
-		choice: [
-			{
-				choice_id: 1,
-				order: 1,
-				text: "선택지1"
-			},
-			{
-				choice_id: 2,
-				order: 2,
-				text: "선택지2"
-			} 
-		]
-	},
-	{
-		choice_id: 2,
-		order: 2,
-		question: "질문2",
-		type: "LTXT", // ONE, MUL, TXT, LTXT
-	},
-]
-*/
-
-/*
-저장시에는 JSON.stringify, 불러올때는 JSON.parse
-DBName: Answer
-id: number
-survey_copy_id: number
-user_id: number
-answer: [
-	{
-		question_id: 1,
-		type: "ONE",
-		choice_id: 1
-	},
-	{
-		question_id: 2,
-		type: "MUL",
-		choice_id: [1, 2]
-	},
-	{
-		question_id: 3,
-		type: "TXT",
-		text: "답변"
-	}
-]
-*/
-
 interface addSurveyParams {
 	userId: number;
 	title: string;

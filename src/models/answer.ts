@@ -62,8 +62,10 @@ const getAnswerList = async (projectId: number) => {
 		FROM Project AS p
 		INNER JOIN SurveyCopy AS sc
 		ON p.survey_copy_id = sc.id
-		WHERE p.id = ${projectId};
+		WHERE p.id = ${projectId}
 	`;
+
+	console.log(result);
 
 	const answer = await prisma.$queryRaw`
 		SELECT
