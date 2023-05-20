@@ -123,26 +123,31 @@ const getAnalysis = async (req: Request, res: Response) => {
 		//console.log(questionOrder)
 
 		let result = []
-/*
+
 for(let i = 0; i < questionOrder.length; i++){
 	//console.log(questionOrder[i].title)
 	const a = {title:questionOrder[i].title, type:questionOrder[i].type, choice:questionOrder[i].choice}
 	result.push(a)
 }
 data = result
-console.log(surveyAnswer[0].answer)
+
+
+console.log("질문 별  응답",surveyAnswer[0].answer[0].answer)
+
 const arr = []
- for(let i = 0; i < surveyAnswer.length; i++){
-	const a = JSON.parse(surveyAnswer[i].answer)
-	console.log(a)
-for(let j = 0; j < a.length; j++){
-	if(a[j].id == i+1){
-		const b = {answer:a[j].answer}
-		arr.push(b)
+for(let i = 0; i < surveyAnswer.length; i++){
+	console.log(surveyAnswer[i].answer)
+
+	const a = surveyAnswer[i].answer
+	const b = surveyAnswer[i].id
+	// 응답별로 나눠서 배열에 넣기
+	for(let j = 0; j < a.length; j++){
+			arr.push( {result:surveyAnswer[i].answer[j].answer})
+	}
 }
-}
-}*/
-//console.log(arr)
+console.log(arr)
+
+
 
 
 //퍼센트는 answer.length로 나눠서 구함
