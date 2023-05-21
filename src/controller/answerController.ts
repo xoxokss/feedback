@@ -113,40 +113,37 @@ const getAnalysis = async (req: Request, res: Response) => {
 		let data = {};
 
 		const projectSurvey:any = await answerModel.getProject(parseInt(id));
-		const header = projectSurvey[0].question
-		//console.log("프로젝트 :", header)
+		//console.log("프로젝트 :", projectSurvey)
 
 		const surveyAnswer:any = await answerModel.getSurveyAnswer(parseInt(id));
 		//console.log("응답 : ",surveyAnswer)
 
-		const questionOrder:any = projectSurvey
-		//console.log(questionOrder)
-
-		let result = []
-
-for(let i = 0; i < questionOrder.length; i++){
-	//console.log(questionOrder[i].title)
-	const a = {title:questionOrder[i].title, type:questionOrder[i].type, choice:questionOrder[i].choice}
-	result.push(a)
-}
-data = result
+		let result = {}
+		result = {title : projectSurvey[0].title, question : projectSurvey[0].question}
+		data = result
 
 
-console.log("질문 별  응답",surveyAnswer[0].answer[0].answer)
+
+
 
 const arr = []
+//배열에 id와 answer로 하나씩 들어감
 for(let i = 0; i < surveyAnswer.length; i++){
-	console.log(surveyAnswer[i].answer)
-
+	//console.log(surveyAnswer[i].answer) 
 	const a = surveyAnswer[i].answer
-	const b = surveyAnswer[i].id
 	// 응답별로 나눠서 배열에 넣기
 	for(let j = 0; j < a.length; j++){
-			arr.push( {result:surveyAnswer[i].answer[j].answer})
+		const answer = a[j].answer
+		const id = a[j].id
+			arr.push({id, answer})
 	}
 }
-console.log(arr)
+//첫번째 선택지 개수
+const leng = projectSurvey[0].question[0].length
+//선택지 개수만큼 배열 만들기
+//i는 question, j는 choice
 
+console.log(arr)
 
 
 
